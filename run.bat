@@ -1,3 +1,3 @@
 @ECHO OFF
 cwd = %cd%
-start "" "%~dp0\dist\love.exe" "%~dp0\"
+start "" "%~dp0\loveapp\love.exe" "%~dp0\"
