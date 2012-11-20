@@ -28,7 +28,7 @@ function love.load()
 	menu:setButtons()
 	
 	-- viewpoint
-	vspeed = 40						  	
+	vspeed = 100						  	
 	vpxmin = viewWidth / 2
 	vpxmax = (map.width * map.tileSize) - vpxmin
 	vpx = vpxmin
@@ -71,6 +71,12 @@ function love.draw()
 	
 	-- draw menu
 	menu:draw()
+	
+	-- debug
+	love.graphics.setColor(255,255,255)
+	love.graphics.print("Camera Cood: ["..vpx..","..vpy.."]", 0, 0)
+	love.graphics.print("Mouse Cood: ["..love.mouse.getX()..","..love.mouse.getY().."]", 0, 15)
+	love.graphics.reset()
 end
 
 function love.keyreleased(key)
