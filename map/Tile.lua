@@ -10,8 +10,16 @@ blocked = love.graphics.newImage("map/blocked.png")
 function Tile:new()
 	local object = {
 		id = "G", 	-- default grass tile
-		img = grass
-		-- other tile properties
+		img = grass,
+		-- neighbor info
+		N = 0,
+		NE = 0,
+		E = 0,
+		SE = 0,
+		S = 0,
+		SW = 0,
+		W = 0,
+		NW = 0
 	}
 	setmetatable(object, { __index = Tile })
 	return object

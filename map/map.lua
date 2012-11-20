@@ -96,10 +96,8 @@ function Map:drawMap()
 				if (tile.id == "R") then
 					sprite = self.selectRoadTile(tile,tileN,tileNE,tileE,tileSE,tileS,tileSW,tileW,tileNW)
 				elseif (tile.id == "W") then
-					--sprite = self.selectWaterTile()
-					sprite = tile:getImg()
-				end
-				
+					sprite = self.selectWaterTile()
+				end				
 			else
 				sprite = tile:getImg()
 			end

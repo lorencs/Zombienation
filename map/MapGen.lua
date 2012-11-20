@@ -24,6 +24,52 @@ function MapGen:newMap(w, h)
 	-- default map
 	self:blockBoundary() 	-- outline edges black
 	self:addCircleLake(15,15,5)
+	
+	-- save info on each tile's neighbor
+	for x=0,self.width-1 do
+		for y=0,self.height-1 do
+			xb = x * self.map.tileSize
+			yb = y * self.map.tileSize
+
+			
+			index = self.map:index(x,y)
+			tile = self.map.tiles[index]
+			
+			if (y-1 > -1) then
+				tileN  = self.map.tiles[self.map:index(x,y-1)]
+				self.map.tiles[index].N = (tile == tileN)
+			end
+			if ((x+1 < self.width) and (y-1 > -1)) then
+				tileNE  = self.map.tiles[self.map:index(x+1,y-1)]
+				self.map.tiles[index].NE = (tile == tileNE)
+			end
+			if (x+1 < self.width) then
+				tileE  = self.map.tiles[self.map:index(x+1,y)]
+				self.map.tiles[index].E = (tile == tileE)
+			end
+			if ((x+1 < self.width) and (y+1 < self.height)) then
+				tileSE  = self.map.tiles[self.map:index(x+1,y+1)]
+				self.map.tiles[index].SE = (tile == tileSE)
+			end
+			if (y+1 < self.height) then
+				tileS  = self.map.tiles[self.map:index(x,y+1)]
+				self.map.tiles[index].S = (tile == tileS)
+			end
+			if ((x-1 > -1) and (y+1 < self.height)) then
+				tileSW  = self.map.tiles[self.map:index(x-1,y+1)]
+				self.map.tiles[index].SW = (tile == tileSW)
+			end
+			if (x-1 > -1) then
+				tileW  = self.map.tiles[self.map:index(x-1,y)]
+				self.map.tiles[index].W = (tile == tileW)
+			end
+			if ((x-1 > -1) and (y-1 > -1)) then
+				tileNW  = self.map.tiles[self.map:index(x-1,y-1)]
+				self.map.tiles[index].NW = (tile == tileNW)
+			end								
+		end
+	end
+
 end
 
 -- return map reference
