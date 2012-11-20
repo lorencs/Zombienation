@@ -21,13 +21,13 @@ function love.load()
 	
 	-- unit testing BELOW
 	player = Unit:new()
-	print(player:unitAction())
-	print(player:unitAction2())
+	--print(player:unitAction())
+	--print(player:unitAction2())
 	
 	zombie = Zombie:new()
 	zombie:setupUnit()
 	--print(zombie:unitAction())
-	print(zombie:unitAction2())
+	--print(zombie:unitAction2())
 	
 	-- unit testing ABOVE
 	

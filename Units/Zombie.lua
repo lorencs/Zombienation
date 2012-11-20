@@ -34,18 +34,18 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	self.ySpeed = 2
 	self.normalSpeed = 5
 	self.runSpeed = 7
-	print("Zombie is set !")
+	--print("Zombie is set !")
 end
 
 function Zombie:draw()
-	print("Zombie getting drawn !".. self.x..", ".. self.y)
+	--print("Zombie getting drawn !".. self.x..", ".. self.y)
 	playerColor = {24,33,128}
 	love.graphics.setColor(playerColor)
 	love.graphics.rectangle("fill", self.x, self.y, 10, 10)
 end
 
 function Zombie:unitAction()
-    print( " ZOMBIE ! The unit can do this action .." )
+    --print( " ZOMBIE ! The unit can do this action .." )
 
 	--print("x is "..x_rand.. " and y is ".. y_rand)
 end
@@ -58,11 +58,11 @@ end
 function Zombie:update(dt, gravity)
     -- update the unit's position
 	local x_direction = math.random(-1,1)
-	while (x_direction == 0){
-		x_direction = math.random(-1,1)
-	}
+	while (x_direction == 0)
+		do x_direction = math.random(-1,1)
+	end
 	
-	print("x direction is ".. x_direction)
+	--print("x direction is ".. x_direction)
 	--local y_direction = math.random()
     self.x = self.x + (self.xSpeed * dt)
     self.y = self.y + (self.ySpeed * dt)
