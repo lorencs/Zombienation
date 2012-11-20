@@ -31,11 +31,11 @@ function Unit:new()
     return new_object
 end
 
-function SimpleClass:unitAction()
+function Unit:unitAction()
     print( "The unit can do this action .." )
 end
 
-function SimpleClass:unitAction2()
+function Unit:unitAction2()
     print( "Another action it can do .." )
 end
 

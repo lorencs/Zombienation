@@ -60,6 +60,9 @@ end
 
 -- draw map to screen
 function Map:drawMap()
+	resetColor = {255,255,255}
+	love.graphics.setColor(resetColor)
+	
 	for x=0,self.width-1 do
 		for y=0,self.height-1 do
 			xb = x * self.tileSize

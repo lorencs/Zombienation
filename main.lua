@@ -4,11 +4,32 @@ require "map/MapGen"
 require "gui/Menu"
 require "gui/Button"
 require "camera"
+require "Units/Unit"
+require "Units/Zombie"
+
+--[[ 
+	write little messages here so changes arent confusing ? if i do modify something and it still needs to be changed,
+	i put a comment with a tag *change* right by the line
+	
+
+]]--
 
 function love.load()	
 	--map = Map:new() 	-- load map functions
 	--map:initMap(20,20)		-- init map object
 	--map:loadMap("map/mapFile.txt")			-- load map from file
+	
+	-- unit testing BELOW
+	player = Unit:new()
+	print(player:unitAction())
+	print(player:unitAction2())
+	
+	zombie = Zombie:new()
+	zombie:setupUnit()
+	--print(zombie:unitAction())
+	print(zombie:unitAction2())
+	
+	-- unit testing ABOVE
 	
 	-- generate a map
 	generator = MapGen:new()
@@ -20,6 +41,7 @@ function love.load()
 	-- graphics setup
 	width = love.graphics.getWidth()
 	height = love.graphics.getHeight()
+	
 	menuWidth = 150
 	viewWidth = width - menuWidth
 	
@@ -56,18 +78,26 @@ function love.update(dt)
 		vpy = math.clamp(vpy + vspeed, vpymin, vpymax)
 	end
 	
+	-- update unit positions
+	zombie:update(dt)
+	
 	-- center camera
 	camera:setPosition(math.floor(vpx - (viewWidth / 2)), 
 		math.floor(vpy - height / 2))
 end
 
 function love.draw()	
-	camera:set()
+	-- set camera
+	camera:set()					
 	
 	-- draw the map
 	map:drawMap() 		
-		
-	camera:unset()
+	
+	-- draw the units
+	zombie:draw()
+	
+	-- unset camera
+	camera:unset()					
 	
 	-- draw menu
 	menu:draw()
