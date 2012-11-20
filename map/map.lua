@@ -1,6 +1,6 @@
-map = {}
+Map = {}
 
-function map:new()
+function Map:new()
 	local object = {
 		width = 0,
 		height = 0,
@@ -11,11 +11,11 @@ function map:new()
 		water = 0,
 		blocked = 0
 	}
-	setmetatable(object, { __index = map })
+	setmetatable(object, { __index = Map })
 	return object
 end
 
-function map:initMap(w,h)
+function Map:initMap(w,h)
 	self.width = w
 	self.height = h
 	self.tileSize = 25 -- default pixel square size
@@ -27,7 +27,7 @@ function map:initMap(w,h)
 	self.blocked = love.graphics.newImage("map/blocked.png")
 end
 
-function map:loadMap(filename)	
+function Map:loadMap(filename)	
 	io.input(filename)	
 	data = io.read("*all")
 	i = 0
@@ -37,7 +37,7 @@ function map:loadMap(filename)
 	end
 end
 
-function map:drawMap()
+function Map:drawMap()
 	for x=0,self.width-1 do
 		for y=0,self.height-1 do
 			xb = x * self.tileSize
@@ -51,11 +51,11 @@ function map:drawMap()
 	end
 end
 
-function map:index(x,y)
+function Map:index(x,y)
 	return (y * self.width) + x
 end
 
-function map:getTile(id)
+function Map:getTile(id)
 	if (id == "R") then
 		return self.road
 	end
