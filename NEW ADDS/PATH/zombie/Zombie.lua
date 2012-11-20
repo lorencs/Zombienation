@@ -13,7 +13,7 @@ function Zombie:new()
 		maxSpeed = 125,
 		move = ""
 	}
-	setmetatable(object, { __index, Zombie })
+	setmetatable(object, { __index = Zombie })
 	return object
 end
 
