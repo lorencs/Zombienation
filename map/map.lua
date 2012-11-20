@@ -1,5 +1,12 @@
 Map = {}
 
+-- road special tiles
+road = love.graphics.newImage("map/road.png")
+
+-- water special tiles
+water = love.graphics.newImage("map/water.png")
+
+
 function Map:new()
 	local object = {
 		width = 0,
@@ -60,10 +67,43 @@ function Map:drawMap()
 						
 			--id = self.tiles[self:index(x,y)]
 			--tile = self:getTile(id)
+			
+			
 			index = self:index(x,y)
 			tile = self.tiles[index]
+			
+			sprite = 0
+			
+			if (tile.id == "R" or tile.id == "W") then
+				indexN  = self:index(x,y-1)
+				indexNE = self:index(x+1,y-1)
+				indexE  = self:index(x+1,y)
+				indexSE = self:index(x+1,y+1)
+				indexS  = self:index(x,y+1)
+				indexSW = self:index(x-1,y+1)
+				indexW  = self:index(x-1,y)
+				indexNW = self:index(x-1,y-1)			
+				
+				tileN  = self.tiles[indexN]
+				tileNE = self.tiles[indexNE]
+				tileE  = self.tiles[indexE]
+				tileSE = self.tiles[indexSE]
+				tileS  = self.tiles[indexS]
+				tileSW = self.tiles[indexSW]
+				tileW  = self.tiles[indexW]
+				tileNW = self.tiles[indexNW]
+				
+				if (tile.id == "R") then
+					sprite = self.selectRoadTile(tile,tileN,tileNE,tileE,tileSE,tileS,tileSW,tileW,tileNW)
+				else if (tile.id == "W") then
+					sprite = self.selectWaterTile()
+				end
+			else
+				sprite = tile:getImg()
+			end
 	
-			love.graphics.draw(tile:getImg(), xb, yb)
+	
+			love.graphics.draw(sprite, xb, yb)
 		end
 	end
 end
@@ -73,6 +113,14 @@ function Map:index(x,y)
 	return (y * self.width) + x
 end
 
+
+function Map:selectRoadSprite(tile, N, NE, E, SE, S, SW, W, NW)
+	
+end
+
+function Map:selectRoadSprite(tile, N, NE, E, SE, S, SW, W, NW)
+	
+end
 --[[
 function Map:getTile(id)
 	if (id == "R") then

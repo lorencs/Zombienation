@@ -28,6 +28,10 @@ function MapGen:getMap()
 	return self.map
 end
 
+function MapGen:doNothing()
+	-- i dont do nothin
+end
+
 -- outline map with blocked tiles
 function MapGen:blockBoundary()
 	m = self.map
