@@ -25,6 +25,18 @@ function MapGen:newMap(w, h)
 	self:blockBoundary() 	-- outline edges black
 	self:addCircleLake(15,15,5)
 	
+	-- some test roads (for quick testing, until debug map draw mode is in)
+	m.tiles[654]:setId("R")
+	m.tiles[754]:setId("R")
+	m.tiles[854]:setId("R")
+	m.tiles[954]:setId("R")
+	m.tiles[1054]:setId("R")
+	m.tiles[655]:setId("R")
+	m.tiles[653]:setId("R")
+	m.tiles[1053]:setId("R")
+	m.tiles[1052]:setId("R")
+	m.tiles[1051]:setId("R")
+	
 	-- save info on each tile's neighbor
 	for x=0,self.width-1 do
 		for y=0,self.height-1 do
@@ -35,37 +47,38 @@ function MapGen:newMap(w, h)
 			index = self.map:index(x,y)
 			tile = self.map.tiles[index]
 			
+			-- check bounds and set each neighbor to 1 if it is the same tile
 			if (y-1 > -1) then
 				tileN  = self.map.tiles[self.map:index(x,y-1)]
-				self.map.tiles[index].N = (tile == tileN)
+				self.map.tiles[index].N = (tile.id == tileN.id) and 1 or 0
 			end
 			if ((x+1 < self.width) and (y-1 > -1)) then
 				tileNE  = self.map.tiles[self.map:index(x+1,y-1)]
-				self.map.tiles[index].NE = (tile == tileNE)
+				self.map.tiles[index].NE = (tile.id == tileNE.id) and 1 or 0
 			end
 			if (x+1 < self.width) then
 				tileE  = self.map.tiles[self.map:index(x+1,y)]
-				self.map.tiles[index].E = (tile == tileE)
+				self.map.tiles[index].E = (tile.id == tileE.id) and 1 or 0
 			end
 			if ((x+1 < self.width) and (y+1 < self.height)) then
 				tileSE  = self.map.tiles[self.map:index(x+1,y+1)]
-				self.map.tiles[index].SE = (tile == tileSE)
+				self.map.tiles[index].SE = (tile.id == tileSE.id) and 1 or 0
 			end
 			if (y+1 < self.height) then
 				tileS  = self.map.tiles[self.map:index(x,y+1)]
-				self.map.tiles[index].S = (tile == tileS)
+				self.map.tiles[index].S = (tile.id == tileS.id) and 1 or 0
 			end
 			if ((x-1 > -1) and (y+1 < self.height)) then
 				tileSW  = self.map.tiles[self.map:index(x-1,y+1)]
-				self.map.tiles[index].SW = (tile == tileSW)
+				self.map.tiles[index].SW = (tile.id == tileSW.id) and 1 or 0
 			end
 			if (x-1 > -1) then
 				tileW  = self.map.tiles[self.map:index(x-1,y)]
-				self.map.tiles[index].W = (tile == tileW)
+				self.map.tiles[index].W = (tile.id == tileW.id) and 1 or 0
 			end
 			if ((x-1 > -1) and (y-1 > -1)) then
 				tileNW  = self.map.tiles[self.map:index(x-1,y-1)]
-				self.map.tiles[index].NW = (tile == tileNW)
+				self.map.tiles[index].NW = (tile.id == tileNW.id) and 1 or 0
 			end								
 		end
 	end
@@ -75,10 +88,6 @@ end
 -- return map reference
 function MapGen:getMap()
 	return self.map
-end
-
-function MapGen:doNothing()
-	-- i dont do nothin
 end
 
 -- outline map with blocked tiles
@@ -101,6 +110,7 @@ function MapGen:blockBoundary()
 		index = m:index(maxx, i)
 		m.tiles[index]:setId("B")
 	end	
+
 end
 
 -- add rectangular lake
