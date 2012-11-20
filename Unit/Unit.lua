@@ -2,6 +2,7 @@ Unit = {}
 Unit_mt = { __index = Unit }
 
 --[[ 
+d
 	unit info .. 
 	no enumerations in lua so.. 
 	unitTypes:
