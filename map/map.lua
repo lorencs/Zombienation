@@ -1,23 +1,13 @@
 Map = {}
 
--- road special tiles
---road = love.graphics.newImage("map/road.png")
-
--- water special tiles
---water = love.graphics.newImage("map/water.png")
-
 
 function Map:new()
 	local object = {
 		width = 0,
 		height = 0,
 		tileSize = 0,
-		tiles = {}--[[,
-		road = 0,
-		grass = 0,
-		water = 0,
-		blocked = 0
-		--]]
+		tiles = {}
+
 	}
 	setmetatable(object, { __index = Map })
 	return object
@@ -33,12 +23,6 @@ function Map:initMap(w,h)
 		self.tiles[i] = Tile:new()
 	end
 	
-	--[[ tile types
-	self.road = love.graphics.newImage("map/road.png")
-	self.grass = love.graphics.newImage("map/grass.png")
-	self.water = love.graphics.newImage("map/water.png")
-	self.blocked = love.graphics.newImage("map/blocked.png")
-	--]]
 end
 
 -- load map from file
@@ -74,18 +58,8 @@ function Map:drawMap()
 			
 			index = self:index(x,y)
 			tile = self.tiles[index]
-			
-			sprite = 0
-							
-			if (tile.id == "R") then
-				sprite = self:selectRoadSprite(tile)
-			elseif (tile.id == "W") then
-				sprite = self:selectWaterSprite(tile)			
-			else
-				sprite = tile:getImg()
-			end
-	
-			love.graphics.draw(sprite, xb, yb)
+				
+			love.graphics.draw(tile:getImg(), xb, yb)
 		end
 	end
 end
@@ -95,16 +69,6 @@ function Map:index(x,y)
 	return (y * self.width) + x
 end
 
-
-function Map:selectRoadSprite(tile)
-	-- code will go here to select special tile
-	return tile:getImg()
-end
-
-function Map:selectWaterSprite(tile)
-	-- code will go here to select special tile
-	return tile:getImg()
-end
 --[[
 function Map:getTile(id)
 	if (id == "R") then

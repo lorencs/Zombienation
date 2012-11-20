@@ -1,5 +1,10 @@
 Menu = {}
 
+--[[
+Mikus:  added alpha value to menu bg color, so it can be a little bit transparent
+		i think it looks cool, you can change it back if you want
+]]--
+
 -- constructor
 function Menu:new(baseX, w, h)
 	local object = {
@@ -13,8 +18,8 @@ function Menu:new(baseX, w, h)
 		buttonWidth = 100,
 		buttonHeight = 30,
 		
-		backColor = {0,100,0},
-		lineColor = {0,0,100},
+		backColor = {20,20,20,100},
+		lineColor = {0,0,100,100},
 		
 		buttons = {}
 	}	
