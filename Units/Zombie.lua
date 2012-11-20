@@ -13,13 +13,15 @@ function Zombie:new()
     ySpeed = 0,
     state = "",
     normalSpeed = 0,
-    runSpeed = 0
+    runSpeed = 0,
+	timeTracker = 0,
+	initial_direction = 1
     }
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
 	setmetatable(Zombie, { __index = Unit })        -- Zombie is a subclass of class Unit, so set inheritance..
 	
-	--self.setupUnit()								
+	--self.setupUnit()								-- why doesnt this work ?? for now, just calling setupUnit in main..							
 	
     return new_object								--
 end
@@ -30,8 +32,8 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	self.width = 50
 	self.height = 50
 	self.state = "Lurching around"
-	self.xSpeed = 2
-	self.ySpeed = 2
+	self.xSpeed = 5
+	self.ySpeed = 5
 	self.normalSpeed = 5
 	self.runSpeed = 7
 	--print("Zombie is set !")
@@ -56,15 +58,35 @@ end
 
 -- Update function
 function Zombie:update(dt, gravity)
-    -- update the unit's position
-	local x_direction = math.random(-1,1)
-	while (x_direction == 0)
-		do x_direction = math.random(-1,1)
+
+    -- update the unit's position		
+	if not x_direction then x_direction = 1 end		-- this is for the first time an update happens
+	if not y_direction then y_direction = 1 end		-- initial direction will be 1,1
+	
+	if self.timeTracker > 5 then 					-- after 5 seconds, the zombie should change x and y directions
+		x_direction = math.random(2)				-- EXCEPT if he sees a target *change*, need to add stuff here
+		if (x_direction == 1) then 
+			x_direction = -1
+		elseif (x_direction == 2) then
+			x_direction = 1
+		end
+		y_direction = math.random(2)				-- can't randomize -1 OR 1, so this is a way around it
+		if (y_direction == 1) then 
+			y_direction = -1
+		elseif (y_direction == 2) then
+			y_direction = 1
+		end
+		self.timeTracker = 0
 	end
 	
+	self.timeTracker = self.timeTracker + dt			-- increasing timeTracker
+	
+	-- CHECK THE BOUNDARIES HERE. map.width and map.height give the boundaries of the map..
+	
 	--print("x direction is ".. x_direction)
-	--local y_direction = math.random()
-    self.x = self.x + (self.xSpeed * dt)
-    self.y = self.y + (self.ySpeed * dt)
+	--print("x direction is ".. y_direction)
+    self.x = self.x + (self.xSpeed * dt * x_direction) 	-- update zombie's movement
+    self.y = self.y + (self.ySpeed * dt * y_direction)
  
+	
 end

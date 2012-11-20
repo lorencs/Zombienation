@@ -11,7 +11,7 @@ require "Units/Zombie"
 	write little messages here so changes arent confusing ? if i do modify something and it still needs to be changed,
 	i put a comment with a tag *change* right by the line
 	
-
+	
 ]]--
 
 function love.load()	
@@ -19,7 +19,7 @@ function love.load()
 	--map:initMap(20,20)		-- init map object
 	--map:loadMap("map/mapFile.txt")			-- load map from file
 	
-	-- unit testing BELOW
+	-- unit testing BELOW ===========
 	player = Unit:new()
 	--print(player:unitAction())
 	--print(player:unitAction2())
@@ -29,7 +29,7 @@ function love.load()
 	--print(zombie:unitAction())
 	--print(zombie:unitAction2())
 	
-	-- unit testing ABOVE
+	-- unit testing ABOVE ===========
 	
 	-- generate a map
 	generator = MapGen:new()
