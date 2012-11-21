@@ -21,7 +21,8 @@ function Zombie:new(x_new, y_new)
 	x_direction = math.random(2),
 	y_direction = math.random(2),
 	fol_human = 0,									-- index of the human in human_list that this zombie will follow. if it's 0, then this zombie
-    animation = 0
+    animation = 0,
+	spriteImage = 0
 	}												-- is not following a human (yet !)
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
@@ -44,7 +45,7 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	self.ySpeed = 25
 	self.normalSpeed = 5
 	self.runSpeed = 7
-	
+	self.spriteImage = love.graphics.newImage("Units/citizenzombie1.png")
 	--print("NEW ZOMBIE dead x:".. self.x.. ", y:"..self.y)
 	-- zombie animation
 	--delay = 120
@@ -64,6 +65,7 @@ function Zombie:draw(i)
 	playerColor = {255,0,0}
 	love.graphics.setColor(playerColor)
 	love.graphics.rectangle("fill", self.x, self.y, 10, 10)
+	--love.graphics.draw(self.spriteImage, self.x, self.y)
 	
 	-- for debugging:
 	love.graphics.rectangle("line", self.x - see_human_dist, self.y, 10, 10)
@@ -174,9 +176,12 @@ function Zombie:update(dt, zi)
 	local same_location = 2
 	if ( (human_list[self.fol_human].x > (self.x - same_location)) and (human_list[self.fol_human].x < self.x + same_location) ) and 
 	   ( (human_list[self.fol_human].y > self.y - same_location) and (human_list[self.fol_human].y < self.y + same_location) ) then
-	   
+	   print("zombie is attacking human ".. self.fol_human)
+	   human_list[self.fol_human].attacked = 1
 		if (self.time_kill > 2) then								-- unit with index 'fol_human' should be dead by now !
-		
+			
+			
+			
 			local dead_x_coord = human_list[self.fol_human].x
 			local dead_y_coord = human_list[self.fol_human].y
 			

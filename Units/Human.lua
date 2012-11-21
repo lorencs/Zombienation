@@ -17,7 +17,8 @@ function Human:new()
 	timeTracker = 0,
 	initial_direction = 1,
 	x_direction = math.random(2),
-	y_direction = math.random(2)
+	y_direction = math.random(2),
+	attacked = 0								-- if the unit is currently attacked, this var = 1
     }
 
 	setmetatable(new_object, Human_mt )			-- add the new_object to metatable of Human
@@ -63,6 +64,10 @@ end
 -- Update function
 function Human:update(dt, zi)
 
+	if self.attacked == 1 then
+		return										-- if the human is attacked, then he can't move (or could make him move very slow?)
+	end
+	
     -- update the unit's position		
 	if self.x_direction == 2 then self.x_direction = -1 end		-- this is for the first time an update happens
 	if self.y_direction == 2 then self.y_direction = -1 end

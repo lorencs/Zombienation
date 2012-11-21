@@ -4,10 +4,8 @@ require "map/MapGen"
 require "gui/Menu"
 require "gui/Button"
 require "camera"
-require "Units/Unit"
-require "Units/Zombie"
-require "Units/Human"
-require "Units/SpriteAnimation"
+require "Units/UnitManager"
+
 
 --[[ 
 	write little messages here so changes arent confusing ? if i do modify something and it still needs to be changed,
@@ -27,6 +25,10 @@ require "Units/SpriteAnimation"
 		- confuse anything..
 		
 		- mike, can we get rid of the black outline around the map ?
+		
+		-Update: I added some main menu pics.. idk if they're good or not.. use em or not, idc. and here s some other images ( have to look
+		through the pages):
+		http://gmc.yoyogames.com/index.php?showtopic=513891&st=0
 ]]--
 
 -- game settings
@@ -39,24 +41,13 @@ function love.load()
 	--map:initMap(20,20)		-- init map object
 	--map:loadMap("map/mapFile.txt")			-- load map from file
 	
-	randomizer = math.random(30,60)				-- seeding randomizer
+	-- seeding randomizer
+	randomizer = math.random(30,60)				
 	math.randomseed( os.time() + randomizer )
 	
-	-- generating units (Unit Manager coming soon, will make this much shorter )
-	zombie_list = {}							-- array of zombie objects
-	human_list = {}								-- array of human objects
-		
-	for i = 1, number_of_zombies do
-		zombie_list[i] = Zombie:new()
-		zombie_list[i]:setupUnit()
-	end
-	
-	for i = 1, number_of_humans do
-		human_list[i] = Human:new()
-		human_list[i]:setupUnit()
-	end	
-	
-	-- end of generating units
+	-- initiate units
+	unitManager = UnitManager:new()
+	unitManager:initUnits()
 	
 	-- generate a map
 	generator = MapGen:new()
@@ -64,7 +55,7 @@ function love.load()
 	
 	-- get the map
 	map = generator:getMap()
-		
+	
 	-- graphics setup
 	width = love.graphics.getWidth()
 	height = love.graphics.getHeight()
@@ -110,13 +101,7 @@ function love.update(dt)
 	end
 	
 	-- update unit positions
-	for i = 1, number_of_zombies do
-		zombie_list[i]:update(dt, i)
-		--zombie_list[i].animation:update(dt)
-	end
-	for i = 1, number_of_humans do
-		human_list[i]:update(dt,i)
-	end
+	unitManager:update(dt)
 	
 	-- map editing
 	if DEBUG then
@@ -145,13 +130,7 @@ function love.draw()
 	map:drawMap() 		
 	
 	-- draw the units
-	for i = 1, number_of_zombies do
-		zombie_list[i]:draw(i)
-		--zombie_list[i].animation:draw(zombie_list[i].x, zombie_list[i].y)
-	end
-	for i = 1, number_of_humans do
-		human_list[i]:draw(i)
-	end
+	unitManager:draw()
 	
 	-- unset camera
 	camera:unset()					
