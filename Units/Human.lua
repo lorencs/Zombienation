@@ -74,19 +74,8 @@ function Human:update(dt, zi)
 	
 	if self.timeTracker > 5 then 								-- after 5 seconds, the Human should change x and y directions
 		
-		self.x_direction = math.random(2)						-- EXCEPT if he sees a target *change*, need to add stuff here
-		if (self.x_direction == 1) then 
-			self.x_direction = -1
-		elseif (self.x_direction == 2) then
-			self.x_direction = 1
-		end
-
-		self.y_direction = math.random(2)						-- can't randomize -1 OR 1, so this is a way around it
-		if (self.y_direction == 1) then 
-			self.y_direction = -1
-		elseif (self.y_direction == 2) then
-			self.y_direction = 1
-		end
+		self.x_direction = math.random(-1,1)					-- -1 to 1.. 
+		self.y_direction = math.random(-1,1)
 
 		self.timeTracker = 0
 	end

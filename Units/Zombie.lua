@@ -109,19 +109,8 @@ function Zombie:update(dt, zi)
 	if self.timeTracker > 5 then 					-- after 5 seconds, the zombie should change x and y directions
 		
 		--randomizer = randomizer + self.x
-		self.x_direction = math.random(2)				-- EXCEPT if he sees a target *change*, need to add stuff here
-		if (self.x_direction == 1) then 
-			self.x_direction = -1
-		elseif (self.x_direction == 2) then
-			self.x_direction = 1
-		end
-
-		self.y_direction = math.random(2)				-- can't randomize -1 OR 1, so this is a way around it
-		if (self.y_direction == 1) then 
-			self.y_direction = -1
-		elseif (self.y_direction == 2) then
-			self.y_direction = 1
-		end
+		self.x_direction = math.random(-1,1)		-- -1 to 1..
+		self.y_direction = math.random(-1,1)				
 
 		self.timeTracker = 0
 	end
@@ -179,8 +168,6 @@ function Zombie:update(dt, zi)
 	   --print("zombie is attacking human ".. self.fol_human)
 	   human_list[self.fol_human].attacked = 1
 		if (self.time_kill > 2) then								-- unit with index 'fol_human' should be dead by now !
-			
-			
 			
 			local dead_x_coord = human_list[self.fol_human].x
 			local dead_y_coord = human_list[self.fol_human].y
