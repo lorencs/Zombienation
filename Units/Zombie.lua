@@ -174,18 +174,19 @@ function Zombie:update(dt, zi)
 	local same_location = 2
 	if ( (human_list[self.fol_human].x > (self.x - same_location)) and (human_list[self.fol_human].x < self.x + same_location) ) and 
 	   ( (human_list[self.fol_human].y > self.y - same_location) and (human_list[self.fol_human].y < self.y + same_location) ) then
-		--print("hello !")
+	   
 		if (self.time_kill > 2) then								-- unit with index 'fol_human' should be dead by now !
 		
 			local dead_x_coord = human_list[self.fol_human].x
 			local dead_y_coord = human_list[self.fol_human].y
+			
+			table.remove(human_list, self.fol_human)				-- remove human from human_list array
+			number_of_humans = number_of_humans - 1					-- decrease count of humans alive
+			
 			--print("dead x:".. dead_x_coord.. ", y:"..dead_y_coord)
 			number_of_zombies = number_of_zombies + 1				-- increase count of zombies alive
 			zombie_list[number_of_zombies] = Zombie:new(self.x, self.y)	-- create new zombie at the location of
 			zombie_list[number_of_zombies]:setupUnit()														-- the human, and set him up !
-			
-			table.remove(human_list, self.fol_human)				-- remove human from human_list array
-			number_of_humans = number_of_humans - 1					-- decrease count of humans alive
 			
 			self.time_kill = 0										-- reset timer for time to kill a unit
 			self.fol_human = 0										-- reset fol_human as the zombie is not following any units anymore

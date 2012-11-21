@@ -17,7 +17,8 @@ require "Units/SpriteAnimation"
 		- hid cursor, replaced with a zombie hand (just a random image i found for now)
 		- added mouse isDown check to draw road tiles
 	
-	mihai:
+	mihai: (reminder to myself to print out states.. check arrays.. there was a small bug which i cant reproduce. if you find a bug, save the file and line
+	 and write it here please !)
 		- zombies wonder around.. transform human after 2 seconds of 'eating them (??)'
 		- human n zombie moving around while zombie is feasting on human.. will change so they stay in same place when 
 		-- zombie eats human
