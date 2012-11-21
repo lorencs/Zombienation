@@ -176,7 +176,7 @@ function Zombie:update(dt, zi)
 	local same_location = 2
 	if ( (human_list[self.fol_human].x > (self.x - same_location)) and (human_list[self.fol_human].x < self.x + same_location) ) and 
 	   ( (human_list[self.fol_human].y > self.y - same_location) and (human_list[self.fol_human].y < self.y + same_location) ) then
-	   print("zombie is attacking human ".. self.fol_human)
+	   --print("zombie is attacking human ".. self.fol_human)
 	   human_list[self.fol_human].attacked = 1
 		if (self.time_kill > 2) then								-- unit with index 'fol_human' should be dead by now !
 			
