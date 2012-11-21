@@ -124,8 +124,10 @@ function love.update(dt)
 			ypos = love.mouse.getY() + vpy - vpymin
 			xpos = math.floor(xpos / map.tileSize)
 			ypos = math.floor(ypos / map.tileSize)
-			map.tiles[map:index(xpos,ypos)]:setId("R");
-			map:updateTileInfo(xpos,ypos)
+			if (xpos > -1) and (ypos > -1) and (xpos < map.width) and (ypos < map.height) then
+				map.tiles[map:index(xpos,ypos)]:setId("R");
+				map:updateTileInfo(xpos,ypos)
+			end
 		end
 	end
 	
