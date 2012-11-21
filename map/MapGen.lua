@@ -5,9 +5,9 @@ function MapGen:new()
 	local object = {
 		map = nil,
 		width = 0,
-		height = 0		
+		height = 0,
 	}
-	
+			
 	setmetatable(object, { __index = MapGen })
 	return object
 end
@@ -26,16 +26,16 @@ function MapGen:newMap(w, h)
 	self:addCircleLake(15,15,5)
 	
 	-- some test roads (for quick testing, until debug map draw mode is in)
-	m.tiles[654]:setId("R")
-	m.tiles[754]:setId("R")
-	m.tiles[854]:setId("R")
-	m.tiles[954]:setId("R")
-	m.tiles[1054]:setId("R")
-	m.tiles[655]:setId("R")
-	m.tiles[653]:setId("R")
-	m.tiles[1053]:setId("R")
-	m.tiles[1052]:setId("R")
-	m.tiles[1051]:setId("R")
+	m.tiles[624]:setId("R")
+	m.tiles[724]:setId("R")
+	m.tiles[824]:setId("R")
+	m.tiles[924]:setId("R")
+	m.tiles[1024]:setId("R")
+	m.tiles[625]:setId("R")
+	m.tiles[623]:setId("R")
+	m.tiles[1023]:setId("R")
+	m.tiles[1022]:setId("R")
+	m.tiles[1021]:setId("R")
 	
 	-- save info on each tile's neighbor
 	for x=0,self.width-1 do
@@ -49,7 +49,6 @@ end
 function MapGen:getNeighborInfo(x,y)
 	xb = x * self.map.tileSize
 	yb = y * self.map.tileSize
-
 	
 	index = self.map:index(x,y)
 	tile = self.map.tiles[index]
@@ -97,13 +96,35 @@ end
 
 
 function MapGen:selectRoadSprite(tile)
-	-- code will go here to select special tile
-	return tile:getImg()
+	spritei = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+
+	-- eliminate sprites based on neighbor info
+	if (N == 1) then
+		spritei[2], spritei[3], spritei[4], spritei[7], spritei[8], spritei[10], spritei[13], spritei[16] = 0,0,0,0,0,0,0,0 else 
+		spritei[1], spritei[5], spritei[6], spritei[9], spritei[11], spritei[12], spritei[14], spritei[15] = 0,0,0,0,0,0,0,0 end
+	if (E == 1) then
+		spritei[1], spritei[4], spritei[5], spritei[7], spritei[8], spritei[9], spritei[14], spritei[16] = 0,0,0,0,0,0,0,0 else
+		spritei[2], spritei[3], spritei[4], spritei[10], spritei[11], spritei[12], spritei[13], spritei[15] = 0,0,0,0,0,0,0,0 end
+	if (S == 1) then
+		spritei[2], spritei[5], spritei[6], spritei[8], spritei[9], spritei[10], spritei[11], spritei[16] = 0,0,0,0,0,0,0,0 else
+		spritei[1], spritei[3], spritei[4], spritei[7], spritei[12], spritei[13], spritei[14], spritei[15] = 0,0,0,0,0,0,0,0 end
+	if (W == 1) then
+		spritei[1], spritei[3], spritei[6], spritei[7], spritei[9], spritei[10], spritei[12], spritei[16] = 0,0,0,0,0,0,0,0 else
+		spritei[2], spritei[4], spritei[5], spritei[8], spritei[11], spritei[13], spritei[14], spritei[15] = 0,0,0,0,0,0,0,0 end
+		
+	local i = self:findi(spritei)
+	tile.sprite = love.graphics.newQuad((i-1)*25, 0, 25, 25, tile:getImg():getWidth(), 25)
 end
 
-function MapGen:selectWaterSprite(tile)
-	-- code will go here to select special tile
-	return tile:getImg()
+function MapGen:selectWaterSprite(tile)	
+end
+
+function MapGen:findi(spritei)
+	for i,v in ipairs(spritei) do
+		if (v == 1) then return i end
+	end
+	print ("didn't find i")
+	return 0
 end
 
 -- return map reference

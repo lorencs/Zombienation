@@ -1,7 +1,7 @@
 Tile = {}
 
 -- tile images
-road = love.graphics.newImage("map/road.png")
+road = love.graphics.newImage("map/roadSprites.png")
 grass = love.graphics.newImage("map/grass.png")
 water = love.graphics.newImage("map/water.png")
 blocked = love.graphics.newImage("map/blocked.png")
@@ -10,8 +10,10 @@ blocked = love.graphics.newImage("map/blocked.png")
 function Tile:new()
 	local object = {
 		id = "G", 	-- default grass tile
-		img = grass		
+		img = grass,
+		sprite = love.graphics.newQuad(0, 0, 25, 25, 375, 25)
 	}
+	
 	setmetatable(object, { __index = Tile })
 	return object
 end

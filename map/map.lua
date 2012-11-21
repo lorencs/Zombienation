@@ -59,7 +59,7 @@ function Map:drawMap()
 			index = self:index(x,y)
 			tile = self.tiles[index]
 				
-			love.graphics.draw(tile:getImg(), xb, yb)
+			love.graphics.drawq(tile:getImg(), tile.sprite, xb, yb)
 		end
 	end
 end
