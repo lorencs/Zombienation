@@ -7,6 +7,7 @@ require "camera"
 require "Units/Unit"
 require "Units/Zombie"
 require "Units/Human"
+require "Units/SpriteAnimation"
 
 --[[ 
 	write little messages here so changes arent confusing ? if i do modify something and it still needs to be changed,
@@ -15,6 +16,16 @@ require "Units/Human"
 	mikus: 
 		- hid cursor, replaced with a zombie hand (just a random image i found for now)
 		- added mouse isDown check to draw road tiles
+	
+	mihai:
+		- zombies wonder around.. transform human after 2 seconds of 'eating them (??)'
+		- human n zombie moving around while zombie is feasting on human.. will change so they stay in same place when 
+		-- zombie eats human
+		
+		- have some animation code, didnt work out, commented out, ignore it, its together with the unit code so it shouldnt
+		- confuse anything..
+		
+		- mike, can we get rid of the black outline around the map ?
 ]]--
 
 -- game settings
@@ -30,15 +41,10 @@ function love.load()
 	randomizer = math.random(30,60)				-- seeding randomizer
 	math.randomseed( os.time() + randomizer )
 	
-	-- unit testing BELOW ===========
+	-- generating units (Unit Manager coming soon, will make this much shorter )
 	zombie_list = {}							-- array of zombie objects
 	human_list = {}								-- array of human objects
-	
-	player = Unit:new()
-	--print(player:unitAction())
-	--print(player:unitAction2())
-	
-	
+		
 	for i = 1, number_of_zombies do
 		zombie_list[i] = Zombie:new()
 		zombie_list[i]:setupUnit()
@@ -47,15 +53,9 @@ function love.load()
 	for i = 1, number_of_humans do
 		human_list[i] = Human:new()
 		human_list[i]:setupUnit()
-	end
-	--zombie = Zombie:new()
-	--zombie:setupUnit()
+	end	
 	
-	--print(zombie:unitAction())
-	--print(zombie:unitAction2())
-	
-
-	-- unit testing ABOVE ===========
+	-- end of generating units
 	
 	-- generate a map
 	generator = MapGen:new()
@@ -63,7 +63,7 @@ function love.load()
 	
 	-- get the map
 	map = generator:getMap()
-	
+		
 	-- graphics setup
 	width = love.graphics.getWidth()
 	height = love.graphics.getHeight()
@@ -111,6 +111,7 @@ function love.update(dt)
 	-- update unit positions
 	for i = 1, number_of_zombies do
 		zombie_list[i]:update(dt, i)
+		--zombie_list[i].animation:update(dt)
 	end
 	for i = 1, number_of_humans do
 		human_list[i]:update(dt,i)
@@ -143,6 +144,7 @@ function love.draw()
 	-- draw the units
 	for i = 1, number_of_zombies do
 		zombie_list[i]:draw(i)
+		--zombie_list[i].animation:draw(zombie_list[i].x, zombie_list[i].y)
 	end
 	for i = 1, number_of_humans do
 		human_list[i]:draw(i)

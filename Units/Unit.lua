@@ -24,8 +24,7 @@ function Unit:new()
     ySpeed = 0,
     state = "",
     normalSpeed = 0,
-    runSpeed = 0,
-	unitType = 1
+    runSpeed = 0
     }
     setmetatable(new_object, Unit_mt )
     return new_object
