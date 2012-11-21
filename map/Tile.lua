@@ -11,7 +11,7 @@ function Tile:new()
 	local object = {
 		id = "G", 	-- default grass tile
 		img = grass,
-		sprite = love.graphics.newQuad(0, 0, 25, 25, 375, 25)
+		sprite = love.graphics.newQuad(0, 0, 25, 25, 400, 25)
 	}
 	
 	setmetatable(object, { __index = Tile })

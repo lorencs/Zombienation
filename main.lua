@@ -12,6 +12,9 @@ require "Units/Human"
 	write little messages here so changes arent confusing ? if i do modify something and it still needs to be changed,
 	i put a comment with a tag *change* right by the line
 	
+	mikus: 
+		- hid cursor, replaced with a zombie hand (just a random image i found for now)
+		- added mouse isDown check to draw road tiles
 ]]--
 
 -- game settings
@@ -111,6 +114,18 @@ function love.update(dt)
 	end
 	for i = 1, number_of_humans do
 		human_list[i]:update(dt,i)
+	end
+	
+	-- map editing
+	if DEBUG then
+		if love.mouse.isDown("l") then
+			xpos = love.mouse.getX() + vpx - vpxmin
+			ypos = love.mouse.getY() + vpy - vpymin
+			xpos = math.floor(xpos / map.tileSize)
+			ypos = math.floor(ypos / map.tileSize)
+			map.tiles[map:index(xpos,ypos)]:setId("R");
+			map:updateTileInfo(xpos,ypos)
+		end
 	end
 	
 	-- center camera

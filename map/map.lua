@@ -69,6 +69,99 @@ function Map:index(x,y)
 	return (y * self.width) + x
 end
 
+function Map:updateTileInfo(x,y)
+	self:getNeighborInfo(x,y)
+	self:getNeighborInfo(x,y-1)
+	self:getNeighborInfo(x+1,y-1)
+	self:getNeighborInfo(x+1,y)
+	self:getNeighborInfo(x+1,y+1)
+	self:getNeighborInfo(x,y+1)
+	self:getNeighborInfo(x-1,y+1)
+	self:getNeighborInfo(x-1,y)
+	self:getNeighborInfo(x-1,y-1)	
+end
+
+function Map:getNeighborInfo(x,y)
+	xb = x * self.tileSize
+	yb = y * self.tileSize
+	
+	index = self:index(x,y)
+	tile = self.tiles[index]
+	
+	-- check bounds and set each neighbor to 1 if it is the same tile
+	if (y-1 > -1) then
+		tileN  = self.tiles[self:index(x,y-1)]
+		N = (tile.id == tileN.id) and 1 or 0
+	end
+	if ((x+1 < self.width) and (y-1 > -1)) then
+		tileNE  = self.tiles[self:index(x+1,y-1)]
+		NE = (tile.id == tileNE.id) and 1 or 0
+	end
+	if (x+1 < self.width) then
+		tileE  = self.tiles[self:index(x+1,y)]
+		E = (tile.id == tileE.id) and 1 or 0
+	end
+	if ((x+1 < self.width) and (y+1 < self.height)) then
+		tileSE  = self.tiles[self:index(x+1,y+1)]
+		SE = (tile.id == tileSE.id) and 1 or 0
+	end
+	if (y+1 < self.height) then
+		tileS  = self.tiles[self:index(x,y+1)]
+		S = (tile.id == tileS.id) and 1 or 0
+	end
+	if ((x-1 > -1) and (y+1 < self.height)) then
+		tileSW  = self.tiles[self:index(x-1,y+1)]
+		SW = (tile.id == tileSW.id) and 1 or 0
+	end
+	if (x-1 > -1) then
+		tileW  = self.tiles[self:index(x-1,y)]
+		W = (tile.id == tileW.id) and 1 or 0
+	end
+	if ((x-1 > -1) and (y-1 > -1)) then
+		tileNW  = self.tiles[self:index(x-1,y-1)]
+		NW = (tile.id == tileNW.id) and 1 or 0
+	end	
+		
+	if (tile.id == "R") then
+		self:selectRoadSprite(tile)
+	elseif (tile.id == "W") then
+		self:selectWaterSprite(tile)					
+	end
+end
+
+
+function Map:selectRoadSprite(tile)
+	spritei = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+
+	-- eliminate sprites based on neighbor info
+	if (N == 1) then
+		spritei[2], spritei[3], spritei[4], spritei[7], spritei[8], spritei[10], spritei[13], spritei[16] = 0,0,0,0,0,0,0,0 else 
+		spritei[1], spritei[5], spritei[6], spritei[9], spritei[11], spritei[12], spritei[14], spritei[15] = 0,0,0,0,0,0,0,0 end
+	if (E == 1) then
+		spritei[1], spritei[4], spritei[5], spritei[7], spritei[8], spritei[9], spritei[14], spritei[16] = 0,0,0,0,0,0,0,0 else
+		spritei[2], spritei[3], spritei[6], spritei[10], spritei[11], spritei[12], spritei[13], spritei[15] = 0,0,0,0,0,0,0,0 end
+	if (S == 1) then
+		spritei[2], spritei[5], spritei[6], spritei[8], spritei[9], spritei[10], spritei[11], spritei[16] = 0,0,0,0,0,0,0,0 else
+		spritei[1], spritei[3], spritei[4], spritei[7], spritei[12], spritei[13], spritei[14], spritei[15] = 0,0,0,0,0,0,0,0 end
+	if (W == 1) then
+		spritei[1], spritei[3], spritei[6], spritei[7], spritei[9], spritei[10], spritei[12], spritei[16] = 0,0,0,0,0,0,0,0 else
+		spritei[2], spritei[4], spritei[5], spritei[8], spritei[11], spritei[13], spritei[14], spritei[15] = 0,0,0,0,0,0,0,0 end
+		
+	local i = self:findi(spritei)
+	tile.sprite = love.graphics.newQuad((i-1)*25, 0, 25, 25, tile:getImg():getWidth(), 25)
+end
+
+function Map:selectWaterSprite(tile)	
+end
+
+function Map:findi(spritei)
+	for i,v in ipairs(spritei) do
+		if (v == 1) then return i end
+	end
+	print ("didn't find i")
+	return 1
+end
+
 --[[
 function Map:getTile(id)
 	if (id == "R") then
