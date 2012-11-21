@@ -19,6 +19,7 @@ number_of_zombies = 3			-- zombies are red
 number_of_humans = 5			-- humans are blue
 
 function love.load()	
+	DEBUG = true
 	--map = Map:new() 	-- load map functions
 	--map:initMap(20,20)		-- init map object
 	--map:loadMap("map/mapFile.txt")			-- load map from file
@@ -83,6 +84,10 @@ function love.load()
 	-- restrict camera
 	camera:setBounds(0, 0, map.width * map.tileSize - viewWidth, 
 		map.height * map.tileSize - height)
+		
+	-- cursor
+	love.mouse.setVisible(false)
+	cursor = love.graphics.newImage("gui/cursor.png")
 end
 
 function love.update(dt)
@@ -138,6 +143,10 @@ function love.draw()
 	love.graphics.setColor(255,255,255)
 	love.graphics.print("Camera Cood: ["..vpx..","..vpy.."]", 0, 0)
 	love.graphics.print("Mouse Cood: ["..love.mouse.getX()..","..love.mouse.getY().."]", 0, 15)
+	
+	-- cursor
+	love.graphics.draw(cursor, love.mouse.getX(), love.mouse.getY())
+	
 	love.graphics.reset()
 end
 
