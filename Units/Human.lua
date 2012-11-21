@@ -42,11 +42,12 @@ function Human:setupUnit()							-- init vars for Human unit
 	
 end
 
-function Human:draw()
+function Human:draw(i)
 	--print("Human getting drawn !".. self.x..", ".. self.y)
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
 	love.graphics.rectangle("fill", self.x, self.y, 10, 10)
+	love.graphics.print(i, self.x, self.y + 10)
 end
 
 function Human:unitAction()

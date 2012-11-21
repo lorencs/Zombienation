@@ -18,8 +18,8 @@ require "Units/Human"
 ]]--
 
 -- game settings
-number_of_zombies = 3			-- zombies are red
-number_of_humans = 5			-- humans are blue
+number_of_zombies = 1			-- zombies are red
+number_of_humans = 15			-- humans are blue
 
 function love.load()	
 	DEBUG = true
@@ -142,10 +142,10 @@ function love.draw()
 	
 	-- draw the units
 	for i = 1, number_of_zombies do
-		zombie_list[i]:draw()
+		zombie_list[i]:draw(i)
 	end
 	for i = 1, number_of_humans do
-		human_list[i]:draw()
+		human_list[i]:draw(i)
 	end
 	
 	-- unset camera

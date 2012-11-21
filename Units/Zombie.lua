@@ -1,6 +1,7 @@
 Zombie = {}
 Zombie_mt = { __index = Zombie }
 
+see_human_dist = 20				-- at what distance will the zombie see the human ?
 -- Constructor
 function Zombie:new()
 
@@ -17,8 +18,9 @@ function Zombie:new()
 	timeTracker = 0,
 	initial_direction = 1,
 	x_direction = math.random(2),
-	y_direction = math.random(2)
-    }
+	y_direction = math.random(2),
+	fol_human = 0									-- index of the human in human_list that this zombie will follow. if it's 0, then this zombie
+    }												-- is not following a human (yet !)
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
 	setmetatable(Zombie, { __index = Unit })        -- Zombie is a subclass of class Unit, so set inheritance..
@@ -42,12 +44,21 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	
 end
 
-function Zombie:draw()
+function Zombie:draw(i)
 	--print("Zombie getting drawn !".. self.x..", ".. self.y)
 	
 	playerColor = {255,0,0}
 	love.graphics.setColor(playerColor)
 	love.graphics.rectangle("fill", self.x, self.y, 10, 10)
+	
+	-- for debugging:
+	love.graphics.rectangle("line", self.x - see_human_dist, self.y, 10, 10)
+	love.graphics.rectangle("line", self.x, self.y + see_human_dist, 10, 10)
+	love.graphics.rectangle("line", self.x + see_human_dist, self.y, 10, 10)
+	love.graphics.rectangle("line", self.x, self.y - see_human_dist, 10, 10)
+	-- end debugging
+	
+	love.graphics.print(i, self.x, self.y + 10)
 end
 
 function Zombie:unitAction()
@@ -66,7 +77,11 @@ function Zombie:update(dt, zi)
 	--if not x_direction then x_direction = 1 end		
 	--if not y_direction then y_direction = 1 end		-- initial direction will be 1,1
 	
-	self:lookAround()
+	if self.fol_human ~= 0 then
+		self:follow_human(dt)
+	else	
+		self:lookAround(zi)
+	end
 	
 	if self.x_direction == 2 then self.x_direction = -1 end		-- this is for the first time an update happens
 	if self.y_direction == 2 then self.y_direction = -1 end
@@ -112,23 +127,45 @@ function Zombie:update(dt, zi)
     self.y = self.y + (self.ySpeed * dt * self.y_direction)
  end
  
- function Zombie:lookAround()
+ function Zombie:lookAround(zi)
 	
-	local closest_human = 9999									-- closest_human holds the index of the human
+	-- fol_human is the index of the human object to follow and eat
 	for i = 1, number_of_humans do								-- that is within this zombie's rand
 		--print( human_list[i].x.. " and ".. human_list[i].y )	-- If there are none within range, closest_human will stay 9999
-		if ( (human_list[i].x > (self.x - 50)) and (human_list[i].x > self.x + 50) ) and 
-		   ( (human_list[i].y > self.y - 50) and (human_list[i].y > self.y + 50) ) then
-			print("zombie ")
+		if ( (human_list[i].x > (self.x - see_human_dist)) and (human_list[i].x < self.x + see_human_dist) ) and 
+		   ( (human_list[i].y > self.y - see_human_dist) and (human_list[i].y < self.y + see_human_dist) ) then
+			self.fol_human = i
 		end
 		
-		--if human_list[i].x > (self.x - 50) then
+		if self.fol_human ~= 0 then break end
+
+		--if human_list[i].x > (self.x - see_human_dist) then
 		--	print("zombie ".. zi)
 		--end
 	end
 	
+	if self.fol_human ~= 0 then
+		print("following human ".. self.fol_human)
+	end
 	
-	--if closest_human != 9999 then
-		
-	--end
  end
+
+ function Zombie:follow_human(dt)
+	print("im still following ".. self.fol_human)
+	
+	-- if human.x = self.x (or y) , then self.x (or y) will stay the same so no need to add cond for it
+	if human_list[self.fol_human].y > self.y then
+		self.y = self.y + (self.ySpeed * dt * 1)
+	elseif human_list[self.fol_human].y < self.y then
+		self.y = self.y + (self.ySpeed * dt * (-1))
+	end
+	
+	if human_list[self.fol_human].x > self.x then
+		self.x = self.x + (self.xSpeed * dt * 1)
+	elseif human_list[self.fol_human].x < self.x then
+		self.x = self.x + (self.xSpeed * dt * (-1))
+	end															
+	
+	
+ end
+ 
