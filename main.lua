@@ -6,6 +6,7 @@ require "gui/Button"
 require "camera"
 require "Units/Unit"
 require "Units/Zombie"
+require "Units/Human"
 
 --[[ 
 	write little messages here so changes arent confusing ? if i do modify something and it still needs to be changed,
@@ -13,20 +14,39 @@ require "Units/Zombie"
 	
 ]]--
 
+-- game settings
+number_of_zombies = 3			-- zombies are red
+number_of_humans = 5			-- humans are blue
+
 function love.load()	
 	--map = Map:new() 	-- load map functions
 	--map:initMap(20,20)		-- init map object
 	--map:loadMap("map/mapFile.txt")			-- load map from file
 	
-
+	randomizer = math.random(30,60)				-- seeding randomizer
+	math.randomseed( os.time() + randomizer )
+	
 	-- unit testing BELOW ===========
-
+	zombie_list = {}							-- array of zombie objects
+	human_list = {}								-- array of human objects
+	
 	player = Unit:new()
 	--print(player:unitAction())
 	--print(player:unitAction2())
 	
-	zombie = Zombie:new()
-	zombie:setupUnit()
+	
+	for i = 1, number_of_zombies do
+		zombie_list[i] = Zombie:new()
+		zombie_list[i]:setupUnit()
+	end
+	
+	for i = 1, number_of_humans do
+		human_list[i] = Human:new()
+		human_list[i]:setupUnit()
+	end
+	--zombie = Zombie:new()
+	--zombie:setupUnit()
+	
 	--print(zombie:unitAction())
 	--print(zombie:unitAction2())
 	
@@ -81,7 +101,12 @@ function love.update(dt)
 	end
 	
 	-- update unit positions
-	zombie:update(dt)
+	for i = 1, number_of_zombies do
+		zombie_list[i]:update(dt, i)
+	end
+	for i = 1, number_of_humans do
+		human_list[i]:update(dt,i)
+	end
 	
 	-- center camera
 	camera:setPosition(math.floor(vpx - (viewWidth / 2)), 
@@ -96,7 +121,12 @@ function love.draw()
 	map:drawMap() 		
 	
 	-- draw the units
-	zombie:draw()
+	for i = 1, number_of_zombies do
+		zombie_list[i]:draw()
+	end
+	for i = 1, number_of_humans do
+		human_list[i]:draw()
+	end
 	
 	-- unset camera
 	camera:unset()					
