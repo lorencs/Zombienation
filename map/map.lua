@@ -82,6 +82,7 @@ function Map:updateTileInfo(x,y)
 end
 
 function Map:getNeighborInfo(x,y)
+	if (x < 0) or (y < 0) or (x > self.width-1) or (y > self.height-1) then return end
 	xb = x * self.tileSize
 	yb = y * self.tileSize
 	
