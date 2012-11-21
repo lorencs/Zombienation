@@ -66,7 +66,7 @@ function Zombie:update(dt, zi)
 	--if not x_direction then x_direction = 1 end		
 	--if not y_direction then y_direction = 1 end		-- initial direction will be 1,1
 	
-	--self.lookAround()
+	self:lookAround()
 	
 	if self.x_direction == 2 then self.x_direction = -1 end		-- this is for the first time an update happens
 	if self.y_direction == 2 then self.y_direction = -1 end
@@ -113,14 +113,14 @@ function Zombie:update(dt, zi)
  end
  
  function Zombie:lookAround()
-	print(zombie_list[zi].x)
+	
 	local closest_human = 9999									-- closest_human holds the index of the human
 	for i = 1, number_of_humans do								-- that is within this zombie's rand
-		print( human_list[i].x.. " and ".. human_list[i].y )	-- If there are none within range, closest_human will stay 9999
-		--if ( (human_list[i].x > (self.x - 50)) and (human_list[i].x > self.x + 50) ) and 
-		--   ( (human_list[i].y > self.y - 50) and (human_list[i].y > self.y + 50) ) then
-		--	print("zombie ".. zi)
-		--end
+		--print( human_list[i].x.. " and ".. human_list[i].y )	-- If there are none within range, closest_human will stay 9999
+		if ( (human_list[i].x > (self.x - 50)) and (human_list[i].x > self.x + 50) ) and 
+		   ( (human_list[i].y > self.y - 50) and (human_list[i].y > self.y + 50) ) then
+			print("zombie ")
+		end
 		
 		--if human_list[i].x > (self.x - 50) then
 		--	print("zombie ".. zi)

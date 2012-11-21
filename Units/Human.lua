@@ -38,7 +38,7 @@ function Human:setupUnit()							-- init vars for Human unit
 	self.ySpeed = 10
 	self.normalSpeed = 5
 	self.runSpeed = 7
-	print("Human is set !")
+	--print("Human is set !")
 	
 end
 
