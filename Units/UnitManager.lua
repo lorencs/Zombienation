@@ -60,7 +60,6 @@ function UnitManager:update(dt, gravity)
 	for i = 1, number_of_humans do
 		human_list[i]:update(dt,i)
 	end
- 
 	
 end
 

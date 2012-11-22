@@ -1,6 +1,14 @@
 Zombie = {}
 Zombie_mt = { __index = Zombie }
 
+--[[ 
+		BUG TO BE FIXED: zombies eating humans at the same time.. gives error at line 169
+				ADD THE STATE OF EACH ZOMBIE ON SCREEEN AND SEE WHATS GOING ON ! AFTER EATING A HUMAN, THE ZOMBIE SHOULD GO BACK
+				TO HUNTING ! SOMETIMES IT IGNORES HUMANS AFTER IT EATS ONE
+				
+		BUG FIX : HAVE TO ADD A CHECK IF THE HUMAN IS STILL ALIVE (if 2 zombies chase her.. check if human is still alive before attempting to
+		remove human from human_list)
+]]
 see_human_dist = 20				-- at what distance will the zombie see the human ?
 -- Constructor
 function Zombie:new(x_new, y_new)
@@ -45,14 +53,14 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	self.ySpeed = 25
 	self.normalSpeed = 5
 	self.runSpeed = 7
-	self.spriteImage = love.graphics.newImage("Units/citizenzombie1.png")
+	--self.spriteImage = love.graphics.newImage("Units/citizenzombie1.png")
 	--print("NEW ZOMBIE dead x:".. self.x.. ", y:"..self.y)
 	-- zombie animation
-	--delay = 120
-	--self.animation = SpriteAnimation:new("Units/Untitled.png", 128, 128, 16, 3)
+	delay = 120
+	self.animation = SpriteAnimation:new("Units/s2.png", 32, 32, 3, 1)
 	--self.animation:start(1)
 	--self.animation:switch(1,1,100)
-	--self.animation:load(120)
+	self.animation:load(delay)
 	
 	--print("Zombie is set !")
 
@@ -67,6 +75,7 @@ function Zombie:draw(i)
 	love.graphics.rectangle("fill", self.x, self.y, 10, 10)
 	--love.graphics.draw(self.spriteImage, self.x, self.y)
 	
+	self.animation:draw(self.x,self.y)
 	-- for debugging:
 	love.graphics.rectangle("line", self.x - see_human_dist, self.y, 10, 10)
 	love.graphics.rectangle("line", self.x, self.y + see_human_dist, 10, 10)
@@ -132,6 +141,8 @@ function Zombie:update(dt, zi)
 	
     self.x = self.x + (self.xSpeed * dt * self.x_direction) 	-- update zombie's movement
     self.y = self.y + (self.ySpeed * dt * self.y_direction)
+	
+	self.animation:update(dt)
  end
  
  function Zombie:lookAround(zi)

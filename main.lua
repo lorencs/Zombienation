@@ -33,7 +33,7 @@ require "Units/UnitManager"
 
 -- game settings
 number_of_zombies = 1			-- zombies are red
-number_of_humans = 15			-- humans are blue
+number_of_humans = 50			-- humans are blue
 
 function love.load()	
 	DEBUG = true
@@ -142,6 +142,8 @@ function love.draw()
 	love.graphics.setColor(255,255,255)
 	love.graphics.print("Camera Cood: ["..vpx..","..vpy.."]", 0, 0)
 	love.graphics.print("Mouse Cood: ["..love.mouse.getX()..","..love.mouse.getY().."]", 0, 15)
+	love.graphics.print("Zombies alive: " .. number_of_zombies, 0, 30)
+	love.graphics.print("Humans alive: " .. number_of_humans, 0, 45)
 	
 	-- cursor
 	love.graphics.draw(cursor, love.mouse.getX(), love.mouse.getY())
