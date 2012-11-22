@@ -9,7 +9,10 @@ Zombie_mt = { __index = Zombie }
 		BUG FIX : HAVE TO ADD A CHECK IF THE HUMAN IS STILL ALIVE (if 2 zombies chase her.. check if human is still alive before attempting to
 		remove human from human_list)
 ]]
+
 see_human_dist = 20				-- at what distance will the zombie see the human ?
+
+
 -- Constructor
 function Zombie:new(x_new, y_new)
 

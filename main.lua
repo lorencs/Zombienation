@@ -7,7 +7,7 @@ require "gui/View"
 require "camera"
 require "units/UnitManager"
 require "loveframes/init"
-require "Point"
+require "Units/Point"
 
 --[[ 
 	write little messages here so changes arent confusing ? if i do modify something and it still needs to be changed,
