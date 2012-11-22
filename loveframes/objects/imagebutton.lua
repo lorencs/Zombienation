@@ -13,7 +13,7 @@ imagebutton = class("imagebutton", base)
 function imagebutton:initialize()
 
 	self.type           = "imagebutton"
-	self.text           = "Image Button"
+	self.text           = ""
 	self.width          = 50
 	self.height         = 50
 	self.internal       = false

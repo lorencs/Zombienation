@@ -37,7 +37,9 @@ number_of_zombies = 1			-- zombies are red
 number_of_humans = 50			-- humans are blue
 
 function love.load()	
+	-- debug menu bools
 	DEBUG = false
+	drawTile = "R"
 	
 	--map = Map:new() 	-- load map functions
 	--map:initMap(20,20)		-- init map object
@@ -68,16 +70,63 @@ function love.load()
 	-- init menu
 	menu = Menu:new(viewWidth, menuWidth, height)
 	menu:setButtons()
-		-- loveframes menu stuff (for testing)
-		local checkDebug = loveframes.Create("checkbox")
-		checkDebug:SetPos(width-140, height - 30)
-		checkDebug.OnChanged = function(object)
-			DEBUG = not DEBUG
-		end
+	
+	-- loveframes debug menu stuff (for testing)
+		
+		-- debug text
 		local textDebug = loveframes.Create("text")
 		textDebug:SetPos(width-115, height - 27)
 		textDebug:SetMaxWidth(100)
 		textDebug:SetText("Debug")
+		
+		-- button to select road tile draw
+		roadButton = loveframes.Create("imagebutton")
+		roadButton:SetSize(25, 25)
+		roadButton:SetPos(width-140, height-65)		
+		roadButton:SetImage(love.graphics.newImage("gui/roadBtnSelect.png"))
+		roadButton:SetVisible(false)
+		roadButton.OnClick = function(object)
+			roadButton:SetImage(love.graphics.newImage("gui/roadBtnSelect.png"))
+			waterButton:SetImage(love.graphics.newImage("gui/waterBtn.png"))
+			groundButton:SetImage(love.graphics.newImage("gui/groundBtn.png"))
+			drawTile = "R" 
+		end
+		
+		-- button to select water tile draw
+		waterButton = loveframes.Create("imagebutton")
+		waterButton:SetSize(25, 25)
+		waterButton:SetPos(width-114, height-65)		
+		waterButton:SetImage(love.graphics.newImage("gui/waterBtn.png"))
+		waterButton:SetVisible(false)
+		waterButton.OnClick = function(object)
+			roadButton:SetImage(love.graphics.newImage("gui/roadBtn.png"))
+			waterButton:SetImage(love.graphics.newImage("gui/waterBtnSelect.png"))
+			groundButton:SetImage(love.graphics.newImage("gui/groundBtn.png"))
+			drawTile = "W" 
+		end
+		
+		-- button to select ground tile draw
+		groundButton = loveframes.Create("imagebutton")
+		groundButton:SetSize(25, 25)
+		groundButton:SetPos(width-88, height-65)		
+		groundButton:SetImage(love.graphics.newImage("gui/groundBtn.png"))
+		groundButton:SetVisible(false)
+		groundButton.OnClick = function(object)
+			roadButton:SetImage(love.graphics.newImage("gui/roadBtn.png"))
+			waterButton:SetImage(love.graphics.newImage("gui/waterBtn.png"))
+			groundButton:SetImage(love.graphics.newImage("gui/groundBtnSelect.png"))
+			drawTile = "G" 
+		end
+		
+		-- checkbox to enable Debug
+		local checkDebug = loveframes.Create("checkbox")
+		checkDebug:SetPos(width-140, height - 30)
+		checkDebug.OnChanged = function(object)
+			DEBUG = not DEBUG
+			roadButton:SetVisible(not roadButton:GetVisible())
+			waterButton:SetVisible(not waterButton:GetVisible())
+			groundButton:SetVisible(not groundButton:GetVisible())
+		end
 	
 	-- viewpoint
 	vspeed = 100						  	
@@ -123,7 +172,7 @@ function love.update(dt)
 			xpos = math.floor(xpos / map.tileSize)
 			ypos = math.floor(ypos / map.tileSize)
 			if (xpos > -1) and (ypos > -1) and (xpos < map.width) and (ypos < map.height) then
-				map.tiles[map:index(xpos,ypos)]:setId("R");
+				map.tiles[map:index(xpos,ypos)]:setId(drawTile);
 				map:updateTileInfo(xpos,ypos)
 			end
 		end
@@ -138,6 +187,8 @@ function love.update(dt)
 end
 
 function love.draw()	
+	-- gotta set font to default because loveframes imagebutton messes it up for some reason
+	love.graphics.setFont(love.graphics.newFont(12))
 	-- set camera
 	camera:set()					
 	
