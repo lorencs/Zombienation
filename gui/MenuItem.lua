@@ -1,7 +1,7 @@
 MenuItem = {}
 
 function MenuItem:new()
-{
+
 	local object = {
 		height = 0,
 		width = 0,
@@ -9,4 +9,4 @@ function MenuItem:new()
 	}
 	setmetatable(object, { __index = MenuItem })
 	return object
-}
+end

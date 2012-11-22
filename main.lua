@@ -49,7 +49,7 @@ function love.load()
 	drawTile = "R"
 	
 	-- music
-	music = love.audio.newSource("/units/fellowship.mp3")
+	--music = love.audio.newSource("/units/fellowship.mp3")
 	
 	-- seeding randomizer
 	randomizer = math.random(30,60)				
@@ -202,11 +202,8 @@ function love.draw()
 	love.graphics.print("Mouse Cood: ["..love.mouse.getX()..","..love.mouse.getY().."]", 0, 15)
 	love.graphics.print("Zombies alive: " .. number_of_zombies, 0, 30)
 	love.graphics.print("Humans alive: " .. number_of_humans, 0, 45)
-<<<<<<< HEAD
 	love.graphics.print("Framerate: " .. love.timer.getFPS(), 0, 60)
-=======
 	love.graphics.print("Press ( P / S ) for music", 0, 60)
->>>>>>> fixed bug with zombies and indices
 	
 	-- loveframes
 	loveframes.draw()
