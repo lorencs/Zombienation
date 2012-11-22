@@ -93,35 +93,35 @@ function Map:getNeighborInfo(x,y)
 	if (y-1 > -1) then
 		tileN  = self.tiles[self:index(x,y-1)]
 		N = (tile.id == tileN.id) and 1 or 0
-	end
+	else N = 0 end
 	if ((x+1 < self.width) and (y-1 > -1)) then
 		tileNE  = self.tiles[self:index(x+1,y-1)]
 		NE = (tile.id == tileNE.id) and 1 or 0
-	end
+	else NE = 0 end
 	if (x+1 < self.width) then
 		tileE  = self.tiles[self:index(x+1,y)]
 		E = (tile.id == tileE.id) and 1 or 0
-	end
+	else E = 0 end
 	if ((x+1 < self.width) and (y+1 < self.height)) then
 		tileSE  = self.tiles[self:index(x+1,y+1)]
 		SE = (tile.id == tileSE.id) and 1 or 0
-	end
+	else SE = 0 end
 	if (y+1 < self.height) then
 		tileS  = self.tiles[self:index(x,y+1)]
 		S = (tile.id == tileS.id) and 1 or 0
-	end
+	else S = 0 end
 	if ((x-1 > -1) and (y+1 < self.height)) then
 		tileSW  = self.tiles[self:index(x-1,y+1)]
 		SW = (tile.id == tileSW.id) and 1 or 0
-	end
+	else SW = 0 end
 	if (x-1 > -1) then
 		tileW  = self.tiles[self:index(x-1,y)]
 		W = (tile.id == tileW.id) and 1 or 0
-	end
+	else W = 0 end
 	if ((x-1 > -1) and (y-1 > -1)) then
 		tileNW  = self.tiles[self:index(x-1,y-1)]
 		NW = (tile.id == tileNW.id) and 1 or 0
-	end	
+	else NW = 0 end	
 		
 	if (tile.id == "R") then
 		self:selectRoadSprite(tile)
