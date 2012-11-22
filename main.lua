@@ -203,7 +203,7 @@ function love.draw()
 	love.graphics.print("Zombies alive: " .. number_of_zombies, 0, 30)
 	love.graphics.print("Humans alive: " .. number_of_humans, 0, 45)
 	love.graphics.print("Framerate: " .. love.timer.getFPS(), 0, 60)
-	love.graphics.print("Press ( P / S ) for music", 0, 60)
+	love.graphics.print("Press ( P / S ) for music", 0, 75)
 	
 	-- loveframes
 	loveframes.draw()
