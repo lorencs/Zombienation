@@ -5,6 +5,7 @@ require "gui/Menu"
 require "gui/Button"
 require "camera"
 require "Units/UnitManager"
+require "loveframes/init"
 
 
 --[[ 
@@ -36,7 +37,8 @@ number_of_zombies = 1			-- zombies are red
 number_of_humans = 50			-- humans are blue
 
 function love.load()	
-	DEBUG = true
+	DEBUG = false
+	
 	--map = Map:new() 	-- load map functions
 	--map:initMap(20,20)		-- init map object
 	--map:loadMap("map/mapFile.txt")			-- load map from file
@@ -66,6 +68,16 @@ function love.load()
 	-- init menu
 	menu = Menu:new(viewWidth, menuWidth, height)
 	menu:setButtons()
+		-- loveframes menu stuff (for testing)
+		local checkDebug = loveframes.Create("checkbox")
+		checkDebug:SetPos(width-140, height - 30)
+		checkDebug.OnChanged = function(object)
+			DEBUG = not DEBUG
+		end
+		local textDebug = loveframes.Create("text")
+		textDebug:SetPos(width-115, height - 27)
+		textDebug:SetMaxWidth(100)
+		textDebug:SetText("Debug")
 	
 	-- viewpoint
 	vspeed = 100						  	
@@ -105,7 +117,7 @@ function love.update(dt)
 	
 	-- map editing
 	if DEBUG then
-		if love.mouse.isDown("l") then
+		if love.mouse.isDown("l") and (love.mouse.getX() < viewWidth)then
 			xpos = love.mouse.getX() + vpx - vpxmin
 			ypos = love.mouse.getY() + vpy - vpymin
 			xpos = math.floor(xpos / map.tileSize)
@@ -120,6 +132,9 @@ function love.update(dt)
 	-- center camera
 	camera:setPosition(math.floor(vpx - (viewWidth / 2)), 
 		math.floor(vpy - height / 2))
+		
+	-- loveframes
+	loveframes.update(dt)
 end
 
 function love.draw()	
@@ -145,16 +160,37 @@ function love.draw()
 	love.graphics.print("Zombies alive: " .. number_of_zombies, 0, 30)
 	love.graphics.print("Humans alive: " .. number_of_humans, 0, 45)
 	
-	-- cursor
-	love.graphics.draw(cursor, love.mouse.getX(), love.mouse.getY())
+	-- loveframes
+	loveframes.draw()
 	
-	love.graphics.reset()
+	-- cursor
+	love.graphics.reset()	
+	love.graphics.draw(cursor, love.mouse.getX(), love.mouse.getY())	
+	
+	love.graphics.reset()	
 end
+
+-- callback functions needed by loveframes, we can use them too
+function love.mousepressed(x, y, button)
+	loveframes.mousepressed(x, y, button)
+end
+
+function love.mousereleased(x, y, button)
+	loveframes.mousereleased(x, y, button)
+end
+
+function love.keypressed(key, unicode)
+	loveframes.keypressed(key, unicode)
+end
+
 
 function love.keyreleased(key)
 	if key == "escape" then -- kill app
 		love.event.quit()
 	end	
+	
+	--loveframes
+	loveframes.keyreleased(key)
 end
 
 function math.clamp(x, min, max)
