@@ -5,6 +5,7 @@ Human_mt = { __index = Human }
 function Human:new()
 
     local new_object = {							-- define our parameters here
+	tag = 0,
     x = 0,
     y = 0,
     width = 0,
@@ -39,6 +40,8 @@ function Human:setupUnit()							-- init vars for Human unit
 	self.ySpeed = 10
 	self.normalSpeed = 5
 	self.runSpeed = 7
+	self.tag = human_tag
+	human_tag = human_tag + 1
 	--print("Human is set !")
 	
 end
@@ -48,7 +51,7 @@ function Human:draw(i)
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
 	love.graphics.rectangle("fill", self.x, self.y, 10, 10)
-	love.graphics.print(i, self.x, self.y + 10)
+	love.graphics.print(self.tag, self.x, self.y + 10)
 end
 
 function Human:unitAction()

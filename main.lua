@@ -48,6 +48,9 @@ function love.load()
 	DEBUG = false
 	drawTile = "R"
 	
+	-- music
+	music = love.audio.newSource("/units/fellowship.mp3")
+	
 	-- seeding randomizer
 	randomizer = math.random(30,60)				
 	math.randomseed( os.time() + randomizer )
@@ -199,7 +202,11 @@ function love.draw()
 	love.graphics.print("Mouse Cood: ["..love.mouse.getX()..","..love.mouse.getY().."]", 0, 15)
 	love.graphics.print("Zombies alive: " .. number_of_zombies, 0, 30)
 	love.graphics.print("Humans alive: " .. number_of_humans, 0, 45)
+<<<<<<< HEAD
 	love.graphics.print("Framerate: " .. love.timer.getFPS(), 0, 60)
+=======
+	love.graphics.print("Press ( P / S ) for music", 0, 60)
+>>>>>>> fixed bug with zombies and indices
 	
 	-- loveframes
 	loveframes.draw()
@@ -228,6 +235,10 @@ end
 function love.keyreleased(key)
 	if key == "escape" then -- kill app
 		love.event.quit()
+	elseif key == "p" then
+		love.audio.play(music)
+	elseif key == "s" then
+		love.audio.stop()
 	end	
 	
 	--loveframes

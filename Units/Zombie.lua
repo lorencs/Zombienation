@@ -14,7 +14,8 @@ see_human_dist = 20				-- at what distance will the zombie see the human ?
 function Zombie:new(x_new, y_new)
 
     local new_object = {							-- define our parameters here
-    x = x_new,
+    tag = 0,
+	x = x_new,
     y = y_new,
     width = 0,
     height = 0,
@@ -48,19 +49,22 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	--self.y = math.random(love.graphics.getHeight() - self.height)
 	self.width = 50
 	self.height = 50
-	self.state = "Lurching around"
+	self.state = "Looking around"
 	self.xSpeed = 25
 	self.ySpeed = 25
 	self.normalSpeed = 5
 	self.runSpeed = 7
+	self.tag = zombie_tag
+	zombie_tag = zombie_tag + 1
+	
 	--self.spriteImage = love.graphics.newImage("Units/citizenzombie1.png")
 	--print("NEW ZOMBIE dead x:".. self.x.. ", y:"..self.y)
 	-- zombie animation
-	delay = 120
-	self.animation = SpriteAnimation:new("Units/s2.png", 32, 32, 3, 1)
+	--delay = 120
+	--self.animation = SpriteAnimation:new("Units/s2.png", 32, 32, 3, 1)
 	--self.animation:start(1)
 	--self.animation:switch(1,1,100)
-	self.animation:load(delay)
+	--self.animation:load(delay)
 	
 	--print("Zombie is set !")
 
@@ -75,7 +79,7 @@ function Zombie:draw(i)
 	love.graphics.rectangle("fill", self.x, self.y, 10, 10)
 	--love.graphics.draw(self.spriteImage, self.x, self.y)
 	
-	self.animation:draw(self.x,self.y)
+	--self.animation:draw(self.x,self.y)
 	-- for debugging:
 	love.graphics.rectangle("line", self.x - see_human_dist, self.y, 10, 10)
 	love.graphics.rectangle("line", self.x, self.y + see_human_dist, 10, 10)
@@ -83,7 +87,7 @@ function Zombie:draw(i)
 	love.graphics.rectangle("line", self.x, self.y - see_human_dist, 10, 10)
 	-- end debugging
 	
-	love.graphics.print(i, self.x, self.y + 10)
+	love.graphics.print(self.tag.. " ".. self.state, self.x, self.y + 10)
 end
 
 function Zombie:unitAction()
@@ -142,76 +146,96 @@ function Zombie:update(dt, zi)
     self.x = self.x + (self.xSpeed * dt * self.x_direction) 	-- update zombie's movement
     self.y = self.y + (self.ySpeed * dt * self.y_direction)
 	
-	self.animation:update(dt)
+	--self.animation:update(dt)
  end
  
+ -- look around; if there is a human at a dist of 'see_human_dist', then follow human
  function Zombie:lookAround(zi)
 	
 	-- fol_human is the index of the human object to follow and eat
 	for i = 1, number_of_humans do								-- that is within this zombie's rand
-		--print( human_list[i].x.. " and ".. human_list[i].y )	-- If there are none within range, closest_human will stay 9999
 		if ( (human_list[i].x > (self.x - see_human_dist)) and (human_list[i].x < self.x + see_human_dist) ) and 
 		   ( (human_list[i].y > self.y - see_human_dist) and (human_list[i].y < self.y + see_human_dist) ) then
-			self.fol_human = i
+		   
+			--self.fol_human = i
+			self.fol_human = human_list[i].tag
+			self.state = "Chasing ".. self.fol_human
 		end
 		
 		if self.fol_human ~= 0 then break end
 
-		--if human_list[i].x > (self.x - see_human_dist) then
-		--	print("zombie ".. zi)
-		--end
-	end
-	
-	if self.fol_human ~= 0 then
-		--print("following human ".. self.fol_human)
 	end
 	
  end
 
  function Zombie:follow_human(dt)
-	--print("im still following ".. self.fol_human)
-	--print("zombie x ".. self.x.. ", y:".. self.y)
-	--print("human x ".. human_list[self.fol_human].x.. ", y:".. human_list[self.fol_human].y)
-	--print(self.x)
+	
+	
+	-- find the index of the human followed in the 'human_list' array
+	local h_index = 0
+	for i = 1, number_of_humans do
+		if human_list[i].tag == self.fol_human then
+			h_index = i
+		end
+	end
+	
+	-- if zombie is 'same_location' distance away from unit.. it is attacking the unit !
 	local same_location = 2
-	if ( (human_list[self.fol_human].x > (self.x - same_location)) and (human_list[self.fol_human].x < self.x + same_location) ) and 
-	   ( (human_list[self.fol_human].y > self.y - same_location) and (human_list[self.fol_human].y < self.y + same_location) ) then
-	   --print("zombie is attacking human ".. self.fol_human)
-	   human_list[self.fol_human].attacked = 1
+	
+	if ( (human_list[h_index].x > (self.x - same_location)) and (human_list[h_index].x < self.x + same_location) ) and 
+	   ( (human_list[h_index].y > self.y - same_location) and (human_list[h_index].y < self.y + same_location) ) then
+	   
+	   -- human wi
+		human_list[h_index].attacked = 1
+		
 		if (self.time_kill > 2) then								-- unit with index 'fol_human' should be dead by now !
+		
+			local dead_x_coord = human_list[h_index].x				-- save coords of dead unit
+			local dead_y_coord = human_list[h_index].y
 			
-			local dead_x_coord = human_list[self.fol_human].x
-			local dead_y_coord = human_list[self.fol_human].y
-			
-			table.remove(human_list, self.fol_human)				-- remove human from human_list array
+			table.remove(human_list, h_index)						-- remove human from human_list array
 			number_of_humans = number_of_humans - 1					-- decrease count of humans alive
 			
-			--print("dead x:".. dead_x_coord.. ", y:"..dead_y_coord)
-			number_of_zombies = number_of_zombies + 1				-- increase count of zombies alive
-			zombie_list[number_of_zombies] = Zombie:new(self.x, self.y)	-- create new zombie at the location of
-			zombie_list[number_of_zombies]:setupUnit()														-- the human, and set him up !
+			number_of_zombies = number_of_zombies + 1					-- increase count of zombies alive
+			zombie_list[number_of_zombies] = Zombie:new(self.x, self.y)	-- create new zombie at the location of this zombie
+			zombie_list[number_of_zombies]:setupUnit()					-- setup zombie
 			
-			self.time_kill = 0										-- reset timer for time to kill a unit
-			self.fol_human = 0										-- reset fol_human as the zombie is not following any units anymore
+			-- tell all zombies that human with tag 'self.fol_human' is dead
+			self:tellZombies(self.fol_human)		
 			
+			-- reset timer for time to kill a unit
+			self.time_kill = 0										
+			self.fol_human = 0				-- reset fol_human as the zombie is not following any units anymore
+			self.state = "Looking around"
 			return
 		end
+		
 		self.time_kill = self.time_kill + dt
 	end
 	
 	-- if human.x = self.x (or y) , then self.x (or y) will stay the same so no need to add cond for it
-	if human_list[self.fol_human].y > self.y then
+	if human_list[h_index].y > self.y then
 		self.y = self.y + (self.ySpeed * dt * 1)
-	elseif human_list[self.fol_human].y < self.y then
+	elseif human_list[h_index].y < self.y then
 		self.y = self.y + (self.ySpeed * dt * (-1))
 	end
 	
-	if human_list[self.fol_human].x > self.x then
+	if human_list[h_index].x > self.x then
 		self.x = self.x + (self.xSpeed * dt * 1)
-	elseif human_list[self.fol_human].x < self.x then
+	elseif human_list[h_index].x < self.x then
 		self.x = self.x + (self.xSpeed * dt * (-1))
 	end															
 	
 	
  end
+ 
+ function Zombie:tellZombies(human_index)
+	for i = 1, number_of_zombies do
+		if zombie_list[i].fol_human == human_index then		-- if zombie i is following human with index fol_human, it should stop as that human is dead
+			zombie_list[i].fol_human = 0
+			zombie_list[i].time_kill = 0
+			self.state = "Looking around"
+		end
+	end
+end
  
