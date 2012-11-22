@@ -121,7 +121,7 @@ function Map:getNeighborInfo(x,y)
 	if ((x-1 > -1) and (y-1 > -1)) then
 		tileNW  = self.tiles[self:index(x-1,y-1)]
 		NW = (tile.id == tileNW.id) and 1 or 0
-	else NW = 0 end	
+	else NW = 0 end
 		
 	if (tile.id == "R") then
 		self:selectRoadSprite(tile)
