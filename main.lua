@@ -40,6 +40,8 @@ require "loveframes/init"
 -- game settings
 number_of_zombies = 1			-- zombies are red
 number_of_humans = 50			-- humans are blue
+								-- i thought this was a poem
+								-- i wish it was too
 
 function love.load()	
 	-- debug menu bools
@@ -197,6 +199,7 @@ function love.draw()
 	love.graphics.print("Mouse Cood: ["..love.mouse.getX()..","..love.mouse.getY().."]", 0, 15)
 	love.graphics.print("Zombies alive: " .. number_of_zombies, 0, 30)
 	love.graphics.print("Humans alive: " .. number_of_humans, 0, 45)
+	love.graphics.print("Framerate: " .. love.timer.getFPS(), 0, 60)
 	
 	-- loveframes
 	loveframes.draw()
