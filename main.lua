@@ -3,6 +3,7 @@ require "map/Tile"
 require "map/MapGen"
 require "gui/Menu"
 require "gui/Button"
+require "gui/View"
 require "camera"
 require "Units/UnitManager"
 require "loveframes/init"
@@ -11,6 +12,9 @@ require "loveframes/init"
 --[[ 
 	write little messages here so changes arent confusing ? if i do modify something and it still needs to be changed,
 	i put a comment with a tag *change* right by the line
+	
+	mike:
+		- viewpoint code, clean up this main file a bit
 	
 	mikus: 
 		- hid cursor, replaced with a zombie hand (just a random image i found for now)
@@ -26,6 +30,7 @@ require "loveframes/init"
 		- confuse anything..
 		
 		- mike, can we get rid of the black outline around the map ?
+			-- if you want to..it was a boundary those are just blocked tiles
 		
 		-Update: I added some main menu pics.. idk if they're good or not.. use em or not, idc. and here s some other images ( have to look
 		through the pages):
@@ -40,10 +45,6 @@ function love.load()
 	-- debug menu bools
 	DEBUG = false
 	drawTile = "R"
-	
-	--map = Map:new() 	-- load map functions
-	--map:initMap(20,20)		-- init map object
-	--map:loadMap("map/mapFile.txt")			-- load map from file
 	
 	-- seeding randomizer
 	randomizer = math.random(30,60)				
@@ -64,8 +65,11 @@ function love.load()
 	width = love.graphics.getWidth()
 	height = love.graphics.getHeight()
 	
-	menuWidth = 150
+	menuWidth = 200
 	viewWidth = width - menuWidth
+	
+	-- viewpoint
+	view = View:new(viewWidth, map)
 	
 	-- init menu
 	menu = Menu:new(viewWidth, menuWidth, height)
@@ -126,16 +130,7 @@ function love.load()
 			roadButton:SetVisible(not roadButton:GetVisible())
 			waterButton:SetVisible(not waterButton:GetVisible())
 			groundButton:SetVisible(not groundButton:GetVisible())
-		end
-	
-	-- viewpoint
-	vspeed = 100						  	
-	vpxmin = viewWidth / 2
-	vpxmax = (map.width * map.tileSize) - vpxmin
-	vpx = vpxmin
-	vpymin = height / 2
-	vpymax = (map.height * map.tileSize) - vpymin
-	vpy = vpymin
+		end	
 	
 	-- restrict camera
 	camera:setBounds(0, 0, map.width * map.tileSize - viewWidth, 
@@ -148,18 +143,7 @@ end
 
 function love.update(dt)
 	-- viewpoint movement - arrow keys
-	if love.keyboard.isDown("right") then
-		vpx = math.clamp(vpx + vspeed, vpxmin, vpxmax)
-	end
-	if love.keyboard.isDown("left") then
-		vpx = math.clamp(vpx - vspeed, vpxmin, vpxmax)
-	end
-	if love.keyboard.isDown("up") then
-		vpy = math.clamp(vpy - vspeed, vpymin, vpymax)
-	end
-	if love.keyboard.isDown("down") then
-		vpy = math.clamp(vpy + vspeed, vpymin, vpymax)
-	end
+	view:update()
 	
 	-- update unit positions
 	unitManager:update(dt)
@@ -167,8 +151,10 @@ function love.update(dt)
 	-- map editing
 	if DEBUG then
 		if love.mouse.isDown("l") and (love.mouse.getX() < viewWidth)then
-			xpos = love.mouse.getX() + vpx - vpxmin
-			ypos = love.mouse.getY() + vpy - vpymin
+			--xpos = love.mouse.getX() + vpx - vpxmin
+			xpos = love.mouse.getX() + view.x 
+			--ypos = love.mouse.getY() + vpy - vpymin
+			ypos = love.mouse.getY() + view.y
 			xpos = math.floor(xpos / map.tileSize)
 			ypos = math.floor(ypos / map.tileSize)
 			if (xpos > -1) and (ypos > -1) and (xpos < map.width) and (ypos < map.height) then
@@ -179,8 +165,9 @@ function love.update(dt)
 	end
 	
 	-- center camera
-	camera:setPosition(math.floor(vpx - (viewWidth / 2)), 
-		math.floor(vpy - height / 2))
+	--camera:setPosition(math.floor(vpx - (viewWidth / 2)), 
+	--	math.floor(vpy - height / 2))
+	camera:setPosition(math.floor(view.x), math.floor(view.y))
 		
 	-- loveframes
 	loveframes.update(dt)
@@ -206,7 +193,7 @@ function love.draw()
 	
 	-- debug
 	love.graphics.setColor(255,255,255)
-	love.graphics.print("Camera Cood: ["..vpx..","..vpy.."]", 0, 0)
+	love.graphics.print("Camera Cood: ["..view.x..","..view.y.."]", 0, 0)
 	love.graphics.print("Mouse Cood: ["..love.mouse.getX()..","..love.mouse.getY().."]", 0, 15)
 	love.graphics.print("Zombies alive: " .. number_of_zombies, 0, 30)
 	love.graphics.print("Humans alive: " .. number_of_humans, 0, 45)
