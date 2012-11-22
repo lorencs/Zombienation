@@ -3,7 +3,7 @@ Tile = {}
 -- tile images
 road = love.graphics.newImage("map/roadSprites.png")
 grass = love.graphics.newImage("map/grass.png")
-water = love.graphics.newImage("map/water.png")
+water = love.graphics.newImage("map/waterSprites.png")
 blocked = love.graphics.newImage("map/blocked.png")
 
 -- constructor

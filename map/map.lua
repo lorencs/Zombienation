@@ -132,6 +132,7 @@ end
 
 
 function Map:selectRoadSprite(tile)
+	local w = self.tileSize
 	spritei = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 
 	-- eliminate sprites based on neighbor info
@@ -149,10 +150,29 @@ function Map:selectRoadSprite(tile)
 		spritei[2], spritei[4], spritei[5], spritei[8], spritei[11], spritei[13], spritei[14], spritei[15] = 0,0,0,0,0,0,0,0 end
 		
 	local i = self:findi(spritei)
-	tile.sprite = love.graphics.newQuad((i-1)*25, 0, 25, 25, tile:getImg():getWidth(), 25)
+	tile.sprite = love.graphics.newQuad((i-1)*w, 0, w, w, tile:getImg():getWidth(), w)
 end
 
-function Map:selectWaterSprite(tile)	
+function Map:selectWaterSprite(tile)
+	local w = self.tileSize
+	spritei = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+
+	-- eliminate sprites based on neighbor info
+	if (N == 1) then
+		spritei[1], spritei[5], spritei[4], spritei[11], spritei[3], spritei[7], spritei[10], spritei[14] = 0,0,0,0,0,0,0,0 else 
+		spritei[2], spritei[9], spritei[6], spritei[15], spritei[8], spritei[12], spritei[13], spritei[16] = 0,0,0,0,0,0,0,0 end
+	if (E == 1) then
+		spritei[1], spritei[5], spritei[4], spritei[11], spritei[2], spritei[9], spritei[6], spritei[15] = 0,0,0,0,0,0,0,0 else
+		spritei[3], spritei[7], spritei[10], spritei[14], spritei[8], spritei[12], spritei[13], spritei[16] = 0,0,0,0,0,0,0,0 end
+	if (S == 1) then
+		spritei[1], spritei[5], spritei[3], spritei[7], spritei[2], spritei[9], spritei[8], spritei[12] = 0,0,0,0,0,0,0,0 else
+		spritei[4], spritei[11], spritei[10], spritei[14], spritei[6], spritei[15], spritei[13], spritei[16] = 0,0,0,0,0,0,0,0 end
+	if (W == 1) then
+		spritei[1], spritei[4], spritei[3], spritei[10], spritei[2], spritei[6], spritei[8], spritei[13] = 0,0,0,0,0,0,0,0 else
+		spritei[5], spritei[11], spritei[7], spritei[14], spritei[9], spritei[15], spritei[12], spritei[16] = 0,0,0,0,0,0,0,0 end
+		
+	local i = self:findi(spritei)
+	tile.sprite = love.graphics.newQuad(0, (i-1)*w, w, w, w, tile:getImg():getHeight())
 end
 
 function Map:findi(spritei)
