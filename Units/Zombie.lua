@@ -15,6 +15,7 @@ function Zombie:new(x_new, y_new)
 
     local new_object = {							-- define our parameters here
     tag = 0,
+	--pos = Point:new(x_new,y_new)					-- position (x and y)
 	x = x_new,
     y = y_new,
     width = 0,
@@ -24,11 +25,11 @@ function Zombie:new(x_new, y_new)
     state = "",
     normalSpeed = 0,
     runSpeed = 0,
-	timeTracker = 0,
+	directionTimer = 0,
 	time_kill = 0,
 	initial_direction = 1,
-	x_direction = math.random(2),
-	y_direction = math.random(2),
+	x_direction = math.random(-1,1),
+	y_direction = math.random(-1,1),
 	fol_human = 0,									-- index of the human in human_list that this zombie will follow. if it's 0, then this zombie
     animation = 0,
 	spriteImage = 0
@@ -37,7 +38,7 @@ function Zombie:new(x_new, y_new)
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
 	setmetatable(Zombie, { __index = Unit })        -- Zombie is a subclass of class Unit, so set inheritance..
 	
-	--self.setupUnit()								-- why doesnt this work ?? for now, just calling setupUnit in main..							
+	--self:setupUnit()					
 	
     return new_object								--
 end
@@ -45,8 +46,7 @@ end
 function Zombie:setupUnit()							-- init vars for Zombie unit
 	if not self.x then self.x = math.random(650) end
 	if not self.y then self.y = math.random(love.graphics.getHeight() - self.height) end
-	--self.x = math.random(650) 						-- NOTE ! need to change this to (screenWidth - menuWidth) *change*
-	--self.y = math.random(love.graphics.getHeight() - self.height)
+	
 	self.width = 50
 	self.height = 50
 	self.state = "Looking around"
@@ -92,58 +92,42 @@ end
 
 function Zombie:unitAction()
     --print( " ZOMBIE ! The unit can do this action .." )
-
 	--print("x is "..x_rand.. " and y is ".. y_rand)
 end
 
---function Zombie:unitAction2()						-- can overwrite this .. 
-  --  print( "aaa Another action it can do .." )
---end
-
 -- Update function
 function Zombie:update(dt, zi)
-
 	--print("map width tiles:".. map.width.. ", height tiles:".. map.height)
 	--print("map width:".. map.width*map.tileSize.. ", height:".. map.height*map.tileSize)
 	
-    -- update the unit's position		
-	
 	if self.fol_human ~= 0 then									-- if zombie is following a human
-		self:follow_human(dt)									-- ..
+		self:follow_human(dt)									
 		return
 	else														-- else look around 
 		self:lookAround(zi)
 	end
 	
-	if self.x_direction == 2 then self.x_direction = -1 end		-- this is for the first time an update happens
-	if self.y_direction == 2 then self.y_direction = -1 end
-	
-	--randomizer = self.x
-	if self.timeTracker > 5 then 					-- after 5 seconds, the zombie should change x and y directions
-		
-		--randomizer = randomizer + self.x
+	-- after 5 seconds, the zombie should change his direction (x and y)
+	if self.directionTimer > 5 then 					
 		self.x_direction = math.random(-1,1)		-- -1 to 1..
 		self.y_direction = math.random(-1,1)				
-
-		self.timeTracker = 0
+		self.directionTimer = 0						-- reset directionTimer
 	end
 	
-	self.timeTracker = self.timeTracker + dt			-- increasing timeTracker
+	-- update direction time ( after 5 seconds, the unit will randomly change direction )
+	self.directionTimer = self.directionTimer + dt			-- increasing directionTimer
 	
-	-- CHECK MAP BOUNDARIES HERE
-	--[[
-	print("map width is ".. map.width .. " and map height ".. map.height )
-	if (self.x < 26) or (self.x > 624) or (self.y < 26) or (self.y > 574) then
+	-- checking map boundaries
+	local map_w = map.width*map.tileSize
+	local map_h = map.height*map.tileSize
+	if (self.x < 2) or (self.x > (map_w - 2)) or (self.y < 2) or (self.y > (map_h -2)) then
 		x_direction = 0
 		y_direction = 0
-		self.timeTracker = self.timeTracker + 5
+		self.directionTimer = self.directionTimer + 5
 	end
-	]]--
 	
-	--print("x direction is ".. x_direction)
-	--print("x direction is ".. y_direction)
-	
-    self.x = self.x + (self.xSpeed * dt * self.x_direction) 	-- update zombie's movement
+	-- update zombie's movement
+    self.x = self.x + (self.xSpeed * dt * self.x_direction)
     self.y = self.y + (self.ySpeed * dt * self.y_direction)
 	
 	--self.animation:update(dt)
@@ -162,6 +146,7 @@ function Zombie:update(dt, zi)
 			self.state = "Chasing ".. self.fol_human
 		end
 		
+		-- if zombie saw a human close enough and it is following it, break out of loop
 		if self.fol_human ~= 0 then break end
 
 	end
@@ -169,8 +154,7 @@ function Zombie:update(dt, zi)
  end
 
  function Zombie:follow_human(dt)
-	
-	
+
 	-- find the index of the human followed in the 'human_list' array
 	local h_index = 0
 	for i = 1, number_of_humans do
@@ -185,13 +169,13 @@ function Zombie:update(dt, zi)
 	if ( (human_list[h_index].x > (self.x - same_location)) and (human_list[h_index].x < self.x + same_location) ) and 
 	   ( (human_list[h_index].y > self.y - same_location) and (human_list[h_index].y < self.y + same_location) ) then
 	   
-	   -- human wi
+	   -- set human's attacked state to 1
 		human_list[h_index].attacked = 1
 		
 		if (self.time_kill > 2) then								-- unit with index 'fol_human' should be dead by now !
-		
-			local dead_x_coord = human_list[h_index].x				-- save coords of dead unit
-			local dead_y_coord = human_list[h_index].y
+			
+			--local dead_x_coord = human_list[h_index].x				-- save coords of dead unit
+			--local dead_y_coord = human_list[h_index].y
 			
 			table.remove(human_list, h_index)						-- remove human from human_list array
 			number_of_humans = number_of_humans - 1					-- decrease count of humans alive
@@ -213,6 +197,7 @@ function Zombie:update(dt, zi)
 		self.time_kill = self.time_kill + dt
 	end
 	
+	-- code for following the human unit
 	-- if human.x = self.x (or y) , then self.x (or y) will stay the same so no need to add cond for it
 	if human_list[h_index].y > self.y then
 		self.y = self.y + (self.ySpeed * dt * 1)
@@ -229,12 +214,14 @@ function Zombie:update(dt, zi)
 	
  end
  
- function Zombie:tellZombies(human_index)
+ -- alerting all zombies that human with tag 'human_tag' is dead
+ function Zombie:tellZombies(human_tag)
+	-- if zombie i is following human with index fol_human, it should stop as that human is dead
 	for i = 1, number_of_zombies do
-		if zombie_list[i].fol_human == human_index then		-- if zombie i is following human with index fol_human, it should stop as that human is dead
+		if zombie_list[i].fol_human == human_tag then		
 			zombie_list[i].fol_human = 0
 			zombie_list[i].time_kill = 0
-			self.state = "Looking around"
+			zombie_list[i].state = "Looking around"
 		end
 	end
 end

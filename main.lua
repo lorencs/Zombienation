@@ -5,9 +5,9 @@ require "gui/Menu"
 require "gui/Button"
 require "gui/View"
 require "camera"
-require "Units/UnitManager"
+require "units/UnitManager"
 require "loveframes/init"
-
+require "Point"
 
 --[[ 
 	write little messages here so changes arent confusing ? if i do modify something and it still needs to be changed,
@@ -49,7 +49,7 @@ function love.load()
 	drawTile = "R"
 	
 	-- music
-	--music = love.audio.newSource("/units/fellowship.mp3")
+	music = love.audio.newSource("/units/fellowship.mp3")
 	
 	-- seeding randomizer
 	randomizer = math.random(30,60)				

@@ -6,6 +6,7 @@ function Human:new()
 
     local new_object = {							-- define our parameters here
 	tag = 0,
+	--pos = Point:new(),
     x = 0,
     y = 0,
     width = 0,
@@ -17,8 +18,8 @@ function Human:new()
     runSpeed = 0,
 	timeTracker = 0,
 	initial_direction = 1,
-	x_direction = math.random(2),
-	y_direction = math.random(2),
+	x_direction = math.random(-1,1),
+	y_direction = math.random(-1,1),
 	attacked = 0								-- if the unit is currently attacked, this var = 1
     }
 
@@ -54,26 +55,17 @@ function Human:draw(i)
 	love.graphics.print(self.tag, self.x, self.y + 10)
 end
 
-function Human:unitAction()
-    --print( " Human ! The unit can do this action .." )
-
-	--print("x is "..x_rand.. " and y is ".. y_rand)
-end
-
---function Human:unitAction2()						-- can overwrite this .. 
-  --  print( "aaa Another action it can do .." )
---end
-
 -- Update function
 function Human:update(dt, zi)
 
+	-- if the human is attacked, then he can't move (or could make him move very slow?)
 	if self.attacked == 1 then
-		return										-- if the human is attacked, then he can't move (or could make him move very slow?)
+		return							
 	end
 	
     -- update the unit's position		
-	if self.x_direction == 2 then self.x_direction = -1 end		-- this is for the first time an update happens
-	if self.y_direction == 2 then self.y_direction = -1 end
+	--if self.x_direction == 2 then self.x_direction = -1 end		-- this is for the first time an update happens
+	--if self.y_direction == 2 then self.y_direction = -1 end
 	
 	if self.timeTracker > 5 then 								-- after 5 seconds, the Human should change x and y directions
 		
