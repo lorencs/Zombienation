@@ -1,13 +1,14 @@
 Map = {}
 
 
+
 function Map:new()
 	local object = {
 		width = 0,
 		height = 0,
 		tileSize = 0,
-		tiles = {}
-
+		tiles = {},
+		canvas = 0
 	}
 	setmetatable(object, { __index = Map })
 	return object
@@ -18,9 +19,15 @@ function Map:initMap(w,h)
 	self.width = w
 	self.height = h
 	self.tileSize = 25 -- default pixel square size
-	
-	for i=0, (w * h - 1) do
+	self.canvas = love.graphics.newCanvas(100*25, 100*25)
+	--[[for i=0, (w * h - 1) do
 		self.tiles[i] = Tile:new()
+	end]]--
+	for i=0, w-1 do
+		self.tiles[i] = {}
+		for j=0, h-1 do
+			self.tiles[i][j] = Tile:new()
+		end
 	end
 	
 end
@@ -42,10 +49,12 @@ function Map:saveMap(filename)
 	-- save representation
 end	
 
--- draw map to screen
+-- draw map to canvas
 function Map:drawMap()
 	resetColor = {255,255,255}
 	love.graphics.setColor(resetColor)
+	
+	self.canvas = love.graphics.newCanvas(100*25, 100*25)
 	
 	for x=0,self.width-1 do
 		for y=0,self.height-1 do
@@ -56,12 +65,22 @@ function Map:drawMap()
 			--tile = self:getTile(id)
 			
 			
-			index = self:index(x,y)
-			tile = self.tiles[index]
+			--index = self:index(x,y)
+			tile = self.tiles[x][y]
 				
-			love.graphics.drawq(tile:getImg(), tile.sprite, xb, yb)
+			--love.graphics.drawq(tile:getImg(), tile.sprite, xb, yb)
+			-- draw to canvas instead, and on each main draw call, draw the canvas
+			--self.canvas:renderTo(function()
+			love.graphics.setCanvas(self.canvas)
+				love.graphics.drawq(tile:getImg(), tile.sprite, xb, yb)
+			love.graphics.setCanvas()
+			--end)
 		end
 	end
+end
+
+function Map:draw()
+	love.graphics.draw(self.canvas, 0,0)
 end
 
 -- tile index
@@ -79,6 +98,7 @@ function Map:updateTileInfo(x,y)
 	self:getNeighborInfo(x-1,y+1)
 	self:getNeighborInfo(x-1,y)
 	self:getNeighborInfo(x-1,y-1)	
+	--self:drawMap()
 end
 
 function Map:getNeighborInfo(x,y)
@@ -86,40 +106,48 @@ function Map:getNeighborInfo(x,y)
 	xb = x * self.tileSize
 	yb = y * self.tileSize
 	
-	index = self:index(x,y)
-	tile = self.tiles[index]
+	--index = self:index(x,y)
+	tile = self.tiles[x][y]
 	
 	-- check bounds and set each neighbor to 1 if it is the same tile
 	if (y-1 > -1) then
-		tileN  = self.tiles[self:index(x,y-1)]
+		--tileN  = self.tiles[self:index(x,y-1)]
+		tileN  = self.tiles[x][y-1]
 		N = (tile.id == tileN.id) and 1 or 0
 	else N = 0 end
 	if ((x+1 < self.width) and (y-1 > -1)) then
-		tileNE  = self.tiles[self:index(x+1,y-1)]
+		--tileNE  = self.tiles[self:index(x+1,y-1)]
+		tileNE  = self.tiles[x+1][y-1]
 		NE = (tile.id == tileNE.id) and 1 or 0
 	else NE = 0 end
 	if (x+1 < self.width) then
-		tileE  = self.tiles[self:index(x+1,y)]
+		--tileE  = self.tiles[self:index(x+1,y)]
+		tileE  = self.tiles[x+1][y]
 		E = (tile.id == tileE.id) and 1 or 0
 	else E = 0 end
 	if ((x+1 < self.width) and (y+1 < self.height)) then
-		tileSE  = self.tiles[self:index(x+1,y+1)]
+		--tileSE  = self.tiles[self:index(x+1,y+1)]
+		tileSE  = self.tiles[x+1][y+1]
 		SE = (tile.id == tileSE.id) and 1 or 0
 	else SE = 0 end
 	if (y+1 < self.height) then
-		tileS  = self.tiles[self:index(x,y+1)]
+		--tileS  = self.tiles[self:index(x,y+1)]
+		tileS  = self.tiles[x][y+1]
 		S = (tile.id == tileS.id) and 1 or 0
 	else S = 0 end
 	if ((x-1 > -1) and (y+1 < self.height)) then
-		tileSW  = self.tiles[self:index(x-1,y+1)]
+		--tileSW  = self.tiles[self:index(x-1,y+1)]
+		tileSW  = self.tiles[x-1][y+1]
 		SW = (tile.id == tileSW.id) and 1 or 0
 	else SW = 0 end
 	if (x-1 > -1) then
-		tileW  = self.tiles[self:index(x-1,y)]
+		--tileW  = self.tiles[self:index(x-1,y)]
+		tileW  = self.tiles[x-1][y]
 		W = (tile.id == tileW.id) and 1 or 0
 	else W = 0 end
 	if ((x-1 > -1) and (y-1 > -1)) then
-		tileNW  = self.tiles[self:index(x-1,y-1)]
+		--tileNW  = self.tiles[self:index(x-1,y-1)]
+		tileNW  = self.tiles[x-1][y-1]
 		NW = (tile.id == tileNW.id) and 1 or 0
 	else NW = 0 end
 		
@@ -128,6 +156,12 @@ function Map:getNeighborInfo(x,y)
 	elseif (tile.id == "W") then
 		self:selectWaterSprite(tile)					
 	end
+	
+	--self.canvas:renderTo(function()
+	love.graphics.setCanvas(self.canvas)
+		love.graphics.drawq(tile:getImg(), tile.sprite, xb, yb)
+	love.graphics.setCanvas()
+	--end)
 end
 
 

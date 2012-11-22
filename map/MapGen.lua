@@ -26,16 +26,16 @@ function MapGen:newMap(w, h)
 	self:addCircleLake(15,15,5)
 	
 	-- some test roads (for quick testing, until debug map draw mode is in)
-	m.tiles[624]:setId("R")
-	m.tiles[724]:setId("R")
-	m.tiles[824]:setId("R")
-	m.tiles[924]:setId("R")
-	m.tiles[1024]:setId("R")
-	m.tiles[625]:setId("R")
-	m.tiles[623]:setId("R")
-	m.tiles[1023]:setId("R")
-	m.tiles[1022]:setId("R")
-	m.tiles[1021]:setId("R")
+	m.tiles[24][6]:setId("R")
+	m.tiles[24][7]:setId("R")
+	m.tiles[24][8]:setId("R")
+	m.tiles[24][9]:setId("R")
+	m.tiles[24][10]:setId("R")
+	m.tiles[25][6]:setId("R")
+	m.tiles[23][6]:setId("R")
+	m.tiles[23][10]:setId("R")
+	m.tiles[22][10]:setId("R")
+	m.tiles[21][10]:setId("R")
 	
 	-- save info on each tile's neighbor
 	for x=0,self.width-1 do
@@ -43,6 +43,8 @@ function MapGen:newMap(w, h)
 			self.map:getNeighborInfo(x,y)						
 		end
 	end
+	
+	self.map:drawMap()
 
 end
 
@@ -59,17 +61,17 @@ function MapGen:blockBoundary()
 	
 	-- top/bottom tiles
 	for i=0,maxx do
-		m.tiles[i]:setId("B")
-		index = m:index(i, maxy)
-		m.tiles[index]:setId("B")
+		m.tiles[i][0]:setId("B")
+		--index = m:index(i, maxy)
+		m.tiles[i][maxy]:setId("B")
 	end
 	
 	-- left/right tiles
 	for i=0,maxy do
-		index = m:index(0,i)
-		m.tiles[index]:setId("B")
-		index = m:index(maxx, i)
-		m.tiles[index]:setId("B")
+		--index = m:index(0,i)
+		m.tiles[0][i]:setId("B")
+		--index = m:index(maxx, i)
+		m.tiles[maxx][i]:setId("B")
 	end	
 
 end
@@ -80,8 +82,8 @@ function MapGen:addLake(x, y, width, height)
 	
 	for xi=0,width-1 do
 		for yi=0,height-1 do
-			index = m:index(x+xi, y+yi)
-			m.tiles[index]:setId("W")
+			--index = m:index(x+xi, y+yi)
+			m.tiles[x+xi][y+yi]:setId("W")
 		end
 	end
 end

@@ -2,7 +2,7 @@ View = {}
 
 function View:new(w, map)
 	local object = {
-		speed = 100,
+		speed = 1000,
 		width = w,
 		--x = love.graphics.getWidth() / 2,
 		--y = love.graphics.getHeight() / 2,
@@ -18,22 +18,22 @@ function View:new(w, map)
 	return object
 end
 
-function View:update()
+function View:update(dt)
 	-- viewpoint movement - arrow keys
 	if love.keyboard.isDown("right") then
-		self.x = math.clamp(self.x + self.speed, 
+		self.x = math.clamp(self.x + dt*self.speed, 
 			self.xmin, self.xmax)
 	end
 	if love.keyboard.isDown("left") then
-		self.x = math.clamp(self.x - self.speed, 
+		self.x = math.clamp(self.x - dt*self.speed, 
 			self.xmin, self.xmax)
 	end
 	if love.keyboard.isDown("up") then
-		self.y = math.clamp(self.y - self.speed, 
+		self.y = math.clamp(self.y - dt*self.speed, 
 			self.ymin, self.ymax)
 	end
 	if love.keyboard.isDown("down") then
-		self.y = math.clamp(self.y + self.speed, 
+		self.y = math.clamp(self.y + dt*self.speed, 
 			self.ymin, self.ymax)
 	end
 end

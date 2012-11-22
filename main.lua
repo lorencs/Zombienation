@@ -148,7 +148,7 @@ end
 
 function love.update(dt)
 	-- viewpoint movement - arrow keys
-	view:update()
+	view:update(dt)
 	
 	-- update unit positions
 	unitManager:update(dt)
@@ -163,7 +163,8 @@ function love.update(dt)
 			xpos = math.floor(xpos / map.tileSize)
 			ypos = math.floor(ypos / map.tileSize)
 			if (xpos > -1) and (ypos > -1) and (xpos < map.width) and (ypos < map.height) then
-				map.tiles[map:index(xpos,ypos)]:setId(drawTile);
+				--map.tiles[map:index(xpos,ypos)]:setId(drawTile)
+				map.tiles[xpos][ypos]:setId(drawTile);
 				map:updateTileInfo(xpos,ypos)
 			end
 		end
@@ -185,7 +186,7 @@ function love.draw()
 	camera:set()					
 	
 	-- draw the map
-	map:drawMap() 		
+	map:draw() 		
 	
 	-- draw the units
 	unitManager:draw()
