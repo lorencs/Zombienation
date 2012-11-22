@@ -1,3 +1,5 @@
+require "gui/MenuItem"
+
 Menu = {}
 
 --[[
@@ -21,7 +23,8 @@ function Menu:new(baseX, w, h)
 		backColor = {20,20,20,100},
 		lineColor = {0,0,100,100},
 		
-		buttons = {}
+		buttons = {},
+		items = {}
 	}	
 	
 	setmetatable(object, { __index = Menu })
@@ -37,6 +40,7 @@ function Menu:setButtons()
 	b_new = Button:new(xn, yn, self.buttonWidth, self.buttonHeight,
 		"New Game")
 	table.insert(self.buttons, b_new)
+	
 
 end
 
