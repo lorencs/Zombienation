@@ -21,8 +21,9 @@ function Human:new()
 	initial_direction = 1,
 	x_direction = math.random(-1,1),
 	y_direction = math.random(-1,1),
-	attacked = 0								-- if the unit is currently attacked, this var = 1
-    }
+	attacked = 0,								-- if the unit is currently attacked, this var = 1
+    selected = false
+	}
 
 	setmetatable(new_object, Human_mt )			-- add the new_object to metatable of Human
 	setmetatable(Human, { __index = Unit })        -- Human is a subclass of class Unit, so set inheritance..
@@ -49,7 +50,13 @@ function Human:setupUnit()							-- init vars for Human unit
 end
 
 function Human:draw(i)
-	--print("Human getting drawn !".. self.x..", ".. self.y)
+	
+	if self.selected then
+		love.graphics.setColor(0,255,0, 150)
+		love.graphics.circle( "line", self.x + 5, self.y + 5, 9, 15 )
+		love.graphics.circle( "line", self.x + 5, self.y + 5, 10, 15 )
+	end
+	
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
 	love.graphics.circle("fill", self.x, self.y, 8, 15)

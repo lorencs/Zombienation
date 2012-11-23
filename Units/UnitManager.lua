@@ -80,6 +80,8 @@ end
 
 function UnitManager:selectUnits(x1,y1,x2,y2)
 	-- get the max y and x coords
+	--if not x1
+	
 	local max_x = 0
 	local min_x = 0
 	if x1 < x2 then
@@ -100,20 +102,22 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 		min_y = y2
 	end
 	
-	for i = 1, number_of_zombies do
-		if ( ( zombie_list[i].x > min_x ) and ( zombie_list[i].x < max_x )
-			and ( zombie_list[i].y > min_y ) and ( zombie_list[i].y < max_y ) ) then
-			zombie_list[i].selected = true	-- set the selected value to true
-			selected_units[i] = zombie_list[i].tag
+	for i = 1, number_of_humans do
+		if ( ( human_list[i].x > min_x ) and ( human_list[i].x < max_x )
+			and ( human_list[i].y > min_y ) and ( human_list[i].y < max_y ) ) then
+			human_list[i].selected = true	-- set the selected value to true
+			selected_units[i] = human_list[i].tag
 			selectedUnitsCount = selectedUnitsCount + 1
 		end
 	end
 	
+	
+	
 end
 
 function UnitManager:deselectUnits()
-	for i = 1, selectedUnitsCount do
-		zombie_list[i].selected = false	-- deselect all zombies 
+	for i = 1, number_of_humans do
+		human_list[i].selected = false	-- deselect all zombies 
 	end
 	selectedUnitsCount = 0
 	
