@@ -16,6 +16,7 @@ require "Units/Point"
 	mike:
 		- viewpoint code, clean up this main file a bit
 		- moved all the menu type code to the menu type file
+		- map changes saved in "map/defaultMap.txt"
 	
 	mikus: 
 		- hid cursor, replaced with a zombie hand (just a random image i found for now)
@@ -63,7 +64,7 @@ function love.load()
 	
 	-- generate a map
 	generator = MapGen:new()
-	generator:newMap(100,100)
+	generator:defaultMap()
 	
 	-- get the map
 	map = generator:getMap()
@@ -216,6 +217,8 @@ end
 
 function love.keyreleased(key)
 	if key == "escape" then -- kill app
+		-- save map
+		map:saveMap("map/defaultMap.txt")
 		love.event.quit()
 	elseif key == "p" then
 		love.audio.play(music)

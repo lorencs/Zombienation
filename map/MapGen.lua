@@ -41,6 +41,28 @@ function MapGen:newMap(w, h)
 
 end
 
+-- load default map
+function MapGen:defaultMap()
+	--defaultMap = ("map/defaultMap.txt")
+	
+	if io.open("map/defaultMap.txt", "r") then
+		self.map = Map:new()
+		self.map:initMap(100, 100)
+		self.map:loadMap("map/defaultMap.txt")
+		
+		-- save info on each tile's neighbor
+		for x=0,self.map.width-1 do
+			for y=0,self.map.height-1 do
+				self.map:getNeighborInfo(x,y)						
+			end
+		end
+		
+		self.map:drawMap()
+	else
+		self:newMap(100,100)
+	end
+end
+
 -- return map reference
 function MapGen:getMap()
 	return self.map

@@ -38,16 +38,29 @@ end
 function Map:loadMap(filename)	
 	io.input(filename)	
 	data = io.read("*all")
-	i = 0
+	x = 0
+	y = 0
 	for c in data:gmatch"%u" do -- match all upper case chars
-		self.tiles[i] = c
-		i = i + 1	
+		self.tiles[x][y]:setId(c)
+		
+		x = x + 1	
+		if x == self.width then
+			x = 0
+			y = y + 1
+		end
 	end
 end
 
 -- save map to file
 function Map:saveMap(filename)
-	
+	-- check dupe??
+	io.output(filename)
+	for y=0,self.height-1 do
+		for x=0,self.width-1 do
+			io.write(self.tiles[x][y]:getId())
+		end
+		io.write("\n")
+	end
 end	
 
 -- draw map to canvas
