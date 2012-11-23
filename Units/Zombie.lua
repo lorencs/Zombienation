@@ -138,15 +138,15 @@ function Zombie:update(dt, zi)
 			self.dirVec = 1								-- unit's angle will decrease (negative) each update
 		end
 		self.directionTimer = 0						-- reset directionTimer
-		print("diff is ".. diff.. " direction:".. self.dirVec)
-		print("target angle is ".. self.targetAngle.. ", angle is ".. self.angle.." direction is ".. self.dirVec)
+		--print("diff is ".. diff.. " direction:".. self.dirVec)
+		--print("target angle is ".. self.targetAngle.. ", angle is ".. self.angle.." direction is ".. self.dirVec)
 	end
 	
 
 		
 	-- if it did not reach the targetAngle
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then
-		print("target reached ")
+		--print("target reached ")
 	else
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
 		if self.dirVec == 1 then

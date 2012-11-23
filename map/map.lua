@@ -1,7 +1,5 @@
 Map = {}
 
-require "map/Minimap"
-
 function Map:new()
 	local object = {
 		width = 0,
@@ -30,8 +28,6 @@ function Map:initMap(w,h)
 			self.tiles[i][j] = Tile:new()
 		end
 	end
-	self.minimap = Minimap:new(self)
-	self.minimap:init()
 end
 
 -- load map from file
@@ -83,7 +79,6 @@ end
 
 function Map:draw()
 	love.graphics.draw(self.canvas, 0,0)
-	self.minimap:draw()
 end
 
 -- tile index

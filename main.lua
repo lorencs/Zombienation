@@ -1,6 +1,7 @@
 require "map/Map"
 require "map/Tile"
 require "map/MapGen"
+require "map/Minimap"
 require "gui/Menu"
 require "gui/Button"
 require "gui/View"
@@ -51,7 +52,7 @@ function love.load()
 	dragx, dragy = 0, 0
 	
 	-- music
-	music = love.audio.newSource("/units/fellowship.mp3")
+	music = love.audio.newSource("/units/fellowship.mp3") 
 	
 	-- seeding randomizer
 	randomizer = math.random(30,60)				
@@ -67,6 +68,8 @@ function love.load()
 	
 	-- get the map
 	map = generator:getMap()
+	minimap = Minimap:new(map)
+	minimap:init()
 	
 	-- graphics setup
 	width = love.graphics.getWidth()
@@ -208,6 +211,9 @@ function love.draw()
 	-- draw menu
 	menu:draw()
 	
+	-- draw minimap
+	minimap:draw()
+	
 	-- drag selection
 	if (dragSelect) then 
 		love.graphics.setColor(50,50,50,50)
@@ -238,9 +244,9 @@ end
 
 -- callback functions needed by loveframes, we can use them too
 function love.mousepressed(x, y, button)
-	if (x < viewWidth) then
+	if (x < viewWidth) and not DEBUG then
 		unitManager:deselectUnits()
-		if (button == "l") and not DEBUG then		
+		if (button == "l") then		
 			dragSelect = true
 			dragx, dragy = x, y
 		end
@@ -250,12 +256,13 @@ function love.mousepressed(x, y, button)
 end
 
 function love.mousereleased(x, y, button)
-	if (button == "l") then
+	-- process loveframes callback first so that DEBUG can be set to false
+	loveframes.mousereleased(x, y, button)
+	
+	if (button == "l") and not DEBUG then
 		dragSelect = false
 		unitManager:selectUnits(dragx+view.x, dragy+view.y, x+view.x, y+view.y)
-	end
-	
-	loveframes.mousereleased(x, y, button)
+	end	
 end
 
 function love.keypressed(key, unicode)

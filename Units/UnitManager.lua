@@ -81,7 +81,7 @@ end
 function UnitManager:selectUnits(x1,y1,x2,y2)
 	-- get the max y and x coords
 	--if not x1
-	
+	print("select")
 	local max_x = 0
 	local min_x = 0
 	if x1 < x2 then
@@ -116,6 +116,7 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 end
 
 function UnitManager:deselectUnits()
+print("deselect")
 	for i = 1, number_of_humans do
 		human_list[i].selected = false	-- deselect all zombies 
 	end
