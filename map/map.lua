@@ -1,6 +1,6 @@
 Map = {}
 
-
+require "map/Minimap"
 
 function Map:new()
 	local object = {
@@ -8,7 +8,8 @@ function Map:new()
 		height = 0,
 		tileSize = 0,
 		tiles = {},
-		canvas = 0
+		canvas = 0,
+		minimap = nil
 	}
 	setmetatable(object, { __index = Map })
 	return object
@@ -19,7 +20,7 @@ function Map:initMap(w,h)
 	self.width = w
 	self.height = h
 	self.tileSize = 25 -- default pixel square size
-	self.canvas = love.graphics.newCanvas(100*25, 100*25)
+	self.canvas = love.graphics.newCanvas(self.width*self.tileSize, self.height*self.tileSize)
 	--[[for i=0, (w * h - 1) do
 		self.tiles[i] = Tile:new()
 	end]]--
@@ -29,7 +30,8 @@ function Map:initMap(w,h)
 			self.tiles[i][j] = Tile:new()
 		end
 	end
-	
+	self.minimap = Minimap:new(self)
+	self.minimap:init()
 end
 
 -- load map from file
@@ -54,7 +56,7 @@ function Map:drawMap()
 	resetColor = {255,255,255}
 	love.graphics.setColor(resetColor)
 	
-	self.canvas = love.graphics.newCanvas(100*25, 100*25)
+	self.canvas = love.graphics.newCanvas(self.width*self.tileSize, self.height*self.tileSize)
 	
 	for x=0,self.width-1 do
 		for y=0,self.height-1 do
@@ -81,6 +83,7 @@ end
 
 function Map:draw()
 	love.graphics.draw(self.canvas, 0,0)
+	self.minimap:draw()
 end
 
 -- tile index

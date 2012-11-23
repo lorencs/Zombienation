@@ -149,6 +149,11 @@ function love.load()
 end
 
 function love.update(dt)
+	-- restrict drag select
+	if dragSelect and (love.mouse.getX() >= viewWidth) then
+		love.mouse.setPosition(viewWidth - (love.mouse.getX() - viewWidth), love.mouse.getY())
+	end
+
 	-- viewpoint movement - arrow keys
 	view:update(dt)
 	
@@ -181,7 +186,11 @@ function love.update(dt)
 	loveframes.update(dt)
 end
 
-function love.draw()	
+function love.draw()
+-- restrict drag select
+	if dragSelect and (love.mouse.getX() >= viewWidth) then
+		love.mouse.setPosition(viewWidth - (love.mouse.getX() - viewWidth), love.mouse.getY())
+	end	
 	-- gotta set font to default because loveframes imagebutton messes it up for some reason
 	love.graphics.setFont(love.graphics.newFont(12))
 	-- set camera
@@ -231,7 +240,7 @@ end
 function love.mousepressed(x, y, button)
 	if (x < viewWidth) then
 		unitManager:deselectUnits()
-		if (button == "l") then		
+		if (button == "l") and not DEBUG then		
 			dragSelect = true
 			dragx, dragy = x, y
 		end
