@@ -12,12 +12,15 @@ UnitManager_mt = { __index = UnitManager }
 	-> number_of_"unit_type" keeps track of all the alive units of that type. They are also the upper limit of the array "unit_type"_list
 	
   ]]
-
+  
+  		selectedUnitsCount = 0
+		selected_units = {}
+		
 -- Constructor
 function UnitManager:new()
     -- define our parameters here
     local new_object = {
-		
+
     }
     setmetatable(new_object, UnitManager_mt )
     return new_object
@@ -101,7 +104,17 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 		if ( ( zombie_list[i].x > min_x ) and ( zombie_list[i].x < max_x )
 			and ( zombie_list[i].y > min_y ) and ( zombie_list[i].y < max_y ) ) then
 			zombie_list[i].selected = true	-- set the selected value to true
+			selected_units[i] = zombie_list[i].tag
+			selectedUnitsCount = selectedUnitsCount + 1
 		end
 	end
+	
+end
+
+function UnitManager:deselectUnits()
+	for i = 1, selectedUnitsCount do
+		zombie_list[i].selected = false	-- deselect all zombies 
+	end
+	selectedUnitsCount = 0
 	
 end

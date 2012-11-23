@@ -36,7 +36,7 @@ function Zombie:new(x_new, y_new)
 	fol_human = 0,									-- index of the human in human_list that this zombie will follow. if it's 0, then this zombie
     animation = 0,
 	spriteImage = 0,
-	selected = true
+	selected = false
 	}												-- is not following a human (yet !)
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
