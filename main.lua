@@ -189,7 +189,7 @@ end
 
 -- callback functions needed by loveframes, we can use them too
 function love.mousepressed(x, y, button)
-	if (x < viewWidth) and not DEBUG then
+	if (x < viewWidth) and not menu.debugMode then
 		unitManager:deselectUnits()
 		if (button == "l") then		
 			dragSelect = true
@@ -204,7 +204,7 @@ function love.mousereleased(x, y, button)
 	-- process loveframes callback first so that DEBUG can be set to false
 	loveframes.mousereleased(x, y, button)
 	
-	if (button == "l") and not DEBUG and (x < viewWidth) then
+	if (button == "l") and not menu.debugMode and (x < viewWidth) then
 		dragSelect = false
 		unitManager:selectUnits(dragx+view.x, dragy+view.y, x+view.x, y+view.y)
 	end	
