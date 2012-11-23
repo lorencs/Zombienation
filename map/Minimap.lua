@@ -22,6 +22,12 @@ function Minimap:init()
 	end
 end
 
-function Minimap:draw()
-	love.graphics.draw(self.canvas, 0,0)
+function Minimap:updateCanvas(i,j)
+	love.graphics.setCanvas(self.canvas)
+		love.graphics.draw(self.map.tiles[i][j].mm, i-1, j-1)
+	love.graphics.setCanvas()
+end
+
+function Minimap:draw(x,y)
+	love.graphics.draw(self.canvas, x,y)
 end

@@ -70,6 +70,7 @@ function love.load()
 	map = generator:getMap()
 	minimap = Minimap:new(map)
 	minimap:init()
+	map:setMinimap(minimap)
 	
 	-- graphics setup
 	width = love.graphics.getWidth()
@@ -212,7 +213,7 @@ function love.draw()
 	menu:draw()
 	
 	-- draw minimap
-	minimap:draw()
+	minimap:draw(width - 150, height - 170)
 	
 	-- drag selection
 	if (dragSelect) then 
@@ -259,7 +260,7 @@ function love.mousereleased(x, y, button)
 	-- process loveframes callback first so that DEBUG can be set to false
 	loveframes.mousereleased(x, y, button)
 	
-	if (button == "l") and not DEBUG then
+	if (button == "l") and not DEBUG and (x < viewWidth) then
 		dragSelect = false
 		unitManager:selectUnits(dragx+view.x, dragy+view.y, x+view.x, y+view.y)
 	end	
