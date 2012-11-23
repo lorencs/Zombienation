@@ -12,7 +12,6 @@ Zombie_mt = { __index = Zombie }
 
 see_human_dist = 20				-- at what distance will the zombie see the human ?
 
-
 -- Constructor
 function Zombie:new(x_new, y_new)
 
@@ -35,7 +34,8 @@ function Zombie:new(x_new, y_new)
 	y_direction = math.random(-1,1),
 	fol_human = 0,									-- index of the human in human_list that this zombie will follow. if it's 0, then this zombie
     animation = 0,
-	spriteImage = 0
+	spriteImage = 0,
+	selected = true
 	}												-- is not following a human (yet !)
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
@@ -60,30 +60,28 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	self.tag = zombie_tag
 	zombie_tag = zombie_tag + 1
 	
-	--self.spriteImage = love.graphics.newImage("Units/citizenzombie1.png")
-	--print("NEW ZOMBIE dead x:".. self.x.. ", y:"..self.y)
-	-- zombie animation
+	--self.spriteImage = love.graphics.newImage("Units/images/pika.png")
 	--delay = 120
-	--self.animation = SpriteAnimation:new("Units/s2.png", 32, 32, 3, 1)
-	--self.animation:start(1)
-	--self.animation:switch(1,1,100)
-	--self.animation:load(delay)
-	
-	--print("Zombie is set !")
-
-	
+	--self.animation = SpriteAnimation:new("Units/images/robosprites.png", 32, 32, 4, 4)
+    --self.animation:load(delay)
 end
 
 function Zombie:draw(i)
-	--print("Zombie getting drawn !".. self.x..", ".. self.y)
+	--self.animation:draw(self.x,self.y)
+	--love.graphics.draw(self.spriteImage, self.x, self.y)
+	
+	if self.selected then
+		love.graphics.setColor(0,255,0, 150)
+		love.graphics.circle( "line", self.x + 5, self.y + 5, 9, 15 )
+		love.graphics.circle( "line", self.x + 5, self.y + 5, 10, 15 )
+	end
 	
 	playerColor = {255,0,0}
 	love.graphics.setColor(playerColor)
-	love.graphics.rectangle("fill", self.x, self.y, 10, 10)
-	--love.graphics.draw(self.spriteImage, self.x, self.y)
+	--love.graphics.rectangle("fill", self.x, self.y, 10, 10)
+	love.graphics.circle("fill", self.x + 5, self.y + 5, 8, 15)
 	
-	--self.animation:draw(self.x,self.y)
-	-- for debugging:
+	-- for debugging:	
 	love.graphics.rectangle("line", self.x - see_human_dist, self.y, 10, 10)
 	love.graphics.rectangle("line", self.x, self.y + see_human_dist, 10, 10)
 	love.graphics.rectangle("line", self.x + see_human_dist, self.y, 10, 10)
@@ -102,6 +100,8 @@ end
 function Zombie:update(dt, zi)
 	--print("map width tiles:".. map.width.. ", height tiles:".. map.height)
 	--print("map width:".. map.width*map.tileSize.. ", height:".. map.height*map.tileSize)
+	
+	--self.animation:update(dt)
 	
 	if self.fol_human ~= 0 then									-- if zombie is following a human
 		self:follow_human(dt)									

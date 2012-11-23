@@ -74,3 +74,34 @@ function UnitManager:draw()
 		human_list[i]:draw(i)
 	end
 end
+
+function select_units(x1,y1,x2,y2)
+	-- get the max y and x coords
+	local max_x = 0
+	local min_x = 0
+	if x1 < x2 then
+		max_x = x2
+		min_x = x1
+	else
+		max_x = x1
+		min_x = x2
+	end
+	
+	local max_y = 0
+	local min_y = 0
+		if y1 < y2 then
+		max_y = y2
+		min_y = y1
+	else
+		max_y = y1
+		min_y = y2
+	end
+	
+	for i = 1, number_of_zombies do
+		if ( ( zombie_list[i].x > min_x ) and ( zombie_list[i].x < max_x )
+			and ( zombie_list[i].y > min_y ) and ( zombie_list[i].y < max_y ) ) then
+			zombie_list[i].selected = true	-- set the selected value to true
+		end
+	end
+	
+end
