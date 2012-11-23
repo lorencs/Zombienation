@@ -47,6 +47,8 @@ function love.load()
 	-- debug menu bools
 	DEBUG = false
 	drawTile = "R"
+	dragSelect = false
+	dragx, dragy = 0
 	
 	-- music
 	music = love.audio.newSource("/units/fellowship.mp3")
@@ -142,7 +144,7 @@ function love.load()
 		map.height * map.tileSize - height)
 		
 	-- cursor
-	--love.mouse.setVisible(false)
+	love.mouse.setVisible(false)
 	cursor = love.graphics.newImage("gui/cursor.png")
 end
 
@@ -197,6 +199,15 @@ function love.draw()
 	-- draw menu
 	menu:draw()
 	
+	-- drag selection
+	if (dragSelect) then 
+		love.graphics.setColor(50,50,50,50)
+		love.graphics.rectangle("fill", dragx, dragy, love.mouse.getX() - dragx, love.mouse.getY() - dragy)
+		love.graphics.setColor(50,50,50,150)
+		love.graphics.setLineWidth(1)
+		love.graphics.rectangle("line", dragx+0.5, dragy+0.5, math.floor(love.mouse.getX()) - dragx, math.floor(love.mouse.getY()) - dragy)
+	end
+	
 	-- debug
 	love.graphics.setColor(255,255,255)
 	love.graphics.print("Camera Cood: ["..view.x..","..view.y.."]", 0, 0)
@@ -218,10 +229,20 @@ end
 
 -- callback functions needed by loveframes, we can use them too
 function love.mousepressed(x, y, button)
+	if (button == "l") and (x < viewWidth) then
+		dragSelect = true
+		dragx, dragy = math.floor(love.mouse.getX()), math.floor(love.mouse.getY())
+	end
+	
 	loveframes.mousepressed(x, y, button)
 end
 
 function love.mousereleased(x, y, button)
+	if (button == "l") then
+		dragSelect = false
+		unitManager:selectUnits(dragx, dragy, love.mouse.getX(), love.mouse.getY())
+	end
+	
 	loveframes.mousereleased(x, y, button)
 end
 
