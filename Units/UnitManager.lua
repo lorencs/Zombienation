@@ -75,7 +75,7 @@ function UnitManager:draw()
 	end
 end
 
-function selectUnits(x1,y1,x2,y2)
+function UnitManager:selectUnits(x1,y1,x2,y2)
 	-- get the max y and x coords
 	local max_x = 0
 	local min_x = 0
