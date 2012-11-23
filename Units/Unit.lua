@@ -32,8 +32,14 @@ function Unit:new()
     return new_object
 end
 
-function Unit:unitAction()
-    print( "The unit can do this action .." )
+function Unit:getDirection(angle, unitSpeed)				-- returns a point (x and y) given an angle
+    
+	dvector = Point:new()
+	local angle_rad = self.angle * (math.pi/180)
+	dvector.x = math.cos(angle_rad) * unitSpeed
+	dvector.y = math.sin(angle_rad) * unitSpeed
+	--print( "x and y are ".. " "..math.cos(angle).. ", ".. dvector.y )
+	return dvector
 end
 
 function Unit:unitAction2()

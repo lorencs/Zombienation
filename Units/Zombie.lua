@@ -17,15 +17,16 @@ function Zombie:new(x_new, y_new)
 
     local new_object = {							-- define our parameters here
     tag = 0,
-	--pos = Point:new(x_new,y_new)					-- position (x and y)
+	dirVector = 0,
 	x = x_new,
     y = y_new,
-	angle = 0,
+	angle = 30,
+	targetAngle = 0,
+	dirVec = 0,										-- 0 for negative, 1 for positive
 	radius = 4,
     width = 0,
     height = 0,
-    xSpeed = 0,
-    ySpeed = 0,
+	speed = 0,
     state = "",
     normalSpeed = 0,
     runSpeed = 0,
@@ -52,7 +53,12 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	if not self.x then self.x = math.random(650) end
 	if not self.y then self.y = math.random(love.graphics.getHeight() - self.height) end
 	
-	print(self.radius3)
+	self.speed = 20
+	self.dirVector = self:getDirection(self.angle, self.speed)
+	self.x_direction = 0
+	self.y_direction = 0
+	--hey = 345.1235
+	--print(hey)
 	self.width = 50
 	self.height = 50
 	self.state = "Looking around"
@@ -83,7 +89,9 @@ function Zombie:draw(i)
 	love.graphics.setColor(playerColor)
 	--love.graphics.rectangle("fill", self.x, self.y, 10, 10)
 	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, 8, 15)
-	
+	love.graphics.line(self.x + self.radius,self.y + self.radius, self.x + math.cos(self.angle * (math.pi/180) )*30 + self.radius , self.y + math.sin(self.angle * (math.pi/180))* 30 + self.radius)
+	love.graphics.setColor(0,255,0)
+	love.graphics.line(self.x + self.radius,self.y + self.radius, self.x + math.cos(self.targetAngle * (math.pi/180) )*30 + self.radius , self.y + math.sin(self.targetAngle * (math.pi/180))* 30 + self.radius)
 	-- for debugging:	FIELD OF VIEW OF ZOMBIE:
 	
 	--love.graphics.rectangle("line", self.x - see_human_dist, self.y, 10, 10)
@@ -106,37 +114,74 @@ function Zombie:update(dt, zi)
 	--print("map width:".. map.width*map.tileSize.. ", height:".. map.height*map.tileSize)
 	
 	--self.animation:update(dt)
-	
+	--
+	--[[
 	if self.fol_human ~= 0 then									-- if zombie is following a human
 		self:follow_human(dt)									
 		return
 	else														-- else look around 
 		self:lookAround(zi)
 	end
+	]]
 	
 	-- after 5 seconds, the zombie should change his direction (x and y)
 	if self.directionTimer > 5 then 					
-		self.x_direction = math.random(-1,1)		-- -1 to 1..
-		self.y_direction = math.random(-1,1)				
+		--self.x_direction = math.random(-1,1)		-- -1 to 1..
+		--self.y_direction = math.random(-1,1)				
+		self.targetAngle = math.random(360)
+		
+		local diff = math.abs(self.targetAngle - self.angle)
+		
+		if diff <= 180 then
+			self.dirVec = 0								-- unit's angle will increase (positive) each update
+		elseif diff > 180 then
+			self.dirVec = 1								-- unit's angle will decrease (negative) each update
+		end
 		self.directionTimer = 0						-- reset directionTimer
+		print("diff is ".. diff.. " direction:".. self.dirVec)
+		print("target angle is ".. self.targetAngle.. ", angle is ".. self.angle.." direction is ".. self.dirVec)
 	end
 	
+
+		
+	-- if it did not reach the targetAngle
+	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then
+		print("target reached ")
+	else
+		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
+		if self.dirVec == 1 then
+			self.angle = self.angle + 0.2
+		elseif self.dirVec == 0 then
+			self.angle = self.angle - 0.2
+		end
+		
+		if self.angle < 0 then
+			self.angle = 360
+		elseif self.angle > 360 then
+			self.angle = 0
+		end
+		
+	end
+		self.dirVector = self:getDirection(self.angle, self.speed)
+		self.x = self.x + (dt * self.dirVector.x)
+		self.y = self.y + (dt * self.dirVector.y)
 	-- update direction time ( after 5 seconds, the unit will randomly change direction )
 	self.directionTimer = self.directionTimer + dt			-- increasing directionTimer
 	
 	-- checking map boundaries
-	local map_w = map.width*map.tileSize
+	--[[local map_w = map.width*map.tileSize
 	local map_h = map.height*map.tileSize
 	if (self.x < 2) or (self.x > (map_w - 2)) or (self.y < 2) or (self.y > (map_h -2)) then
 		x_direction = 0
 		y_direction = 0
 		self.directionTimer = self.directionTimer + 5
-	end
+	end]]
 	
 	-- update zombie's movement
-    self.x = self.x + (self.xSpeed * dt * self.x_direction)
-    self.y = self.y + (self.ySpeed * dt * self.y_direction)
-	
+    --self.x = self.x + (self.xSpeed * dt * self.x_direction)
+    --self.y = self.y + (self.ySpeed * dt * self.y_direction)
+	--self.x = self.x + (dt * self.dirVector.x)
+	--self.y = self.y + (dt * self.dirVector.y)
 	--self.animation:update(dt)
  end
  
