@@ -53,13 +53,13 @@ function Human:draw(i)
 	
 	if self.selected then
 		love.graphics.setColor(0,255,0, 150)
-		love.graphics.circle( "line", self.x + 5, self.y + 5, 9, 15 )
-		love.graphics.circle( "line", self.x + 5, self.y + 5, 10, 15 )
+		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 9, 15 )
+		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 10, 15 )
 	end
 	
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
-	love.graphics.circle("fill", self.x, self.y, 8, 15)
+	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, 8, 15)
 	--love.graphics.rectangle("fill", self.x, self.y, 10, 10)
 	love.graphics.print(self.tag, self.x, self.y + 10)
 end

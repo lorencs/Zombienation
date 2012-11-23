@@ -18,6 +18,7 @@ function Unit:new()
     local new_object = {
     x = 0,
     y = 0,
+	--radius = 5,
     width = 0,
     height = 0,
     xSpeed = 0,

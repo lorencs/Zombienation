@@ -10,7 +10,7 @@ Zombie_mt = { __index = Zombie }
 		remove human from human_list)
 ]]
 
-see_human_dist = 20				-- at what distance will the zombie see the human ?
+see_human_dist = 50				-- at what distance will the zombie see the human ?
 
 -- Constructor
 function Zombie:new(x_new, y_new)
@@ -20,6 +20,7 @@ function Zombie:new(x_new, y_new)
 	--pos = Point:new(x_new,y_new)					-- position (x and y)
 	x = x_new,
     y = y_new,
+	angle = 0,
 	radius = 4,
     width = 0,
     height = 0,
@@ -51,6 +52,7 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	if not self.x then self.x = math.random(650) end
 	if not self.y then self.y = math.random(love.graphics.getHeight() - self.height) end
 	
+	print(self.radius3)
 	self.width = 50
 	self.height = 50
 	self.state = "Looking around"
@@ -73,20 +75,21 @@ function Zombie:draw(i)
 	
 	if self.selected then
 		love.graphics.setColor(0,255,0, 150)
-		love.graphics.circle( "line", self.x + 5, self.y + 5, 9, 15 )
-		love.graphics.circle( "line", self.x + 5, self.y + 5, 10, 15 )
+		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 9, 15 )
+		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 10, 15 )
 	end
 	
 	playerColor = {255,0,0}
 	love.graphics.setColor(playerColor)
 	--love.graphics.rectangle("fill", self.x, self.y, 10, 10)
-	love.graphics.circle("fill", self.x + 4, self.y + 4, 8, 15)
+	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, 8, 15)
 	
-	-- for debugging:	
-	love.graphics.rectangle("line", self.x - see_human_dist, self.y, 10, 10)
-	love.graphics.rectangle("line", self.x, self.y + see_human_dist, 10, 10)
-	love.graphics.rectangle("line", self.x + see_human_dist, self.y, 10, 10)
-	love.graphics.rectangle("line", self.x, self.y - see_human_dist, 10, 10)
+	-- for debugging:	FIELD OF VIEW OF ZOMBIE:
+	
+	--love.graphics.rectangle("line", self.x - see_human_dist, self.y, 10, 10)
+	--love.graphics.rectangle("line", self.x, self.y + see_human_dist, 10, 10)
+	--love.graphics.rectangle("line", self.x + see_human_dist, self.y, 10, 10)
+	--love.graphics.rectangle("line", self.x, self.y - see_human_dist, 10, 10)
 	-- end debugging
 	
 	love.graphics.print(self.tag.. " ".. self.state, self.x, self.y + 10)
@@ -142,7 +145,7 @@ function Zombie:update(dt, zi)
 	
 	-- fol_human is the index of the human object to follow and eat
 	for i = 1, number_of_humans do								-- that is within this zombie's rand
-		if ( (human_list[i].x > (self.x - see_human_dist)) and (human_list[i].x < self.x + see_human_dist) ) and 
+		if ( (human_list[i].x > (self.x - see_human_dist)) and (human_list[i].x < self.x + see_human_dist) ) and 		-- IF human is within field of view
 		   ( (human_list[i].y > self.y - see_human_dist) and (human_list[i].y < self.y + see_human_dist) ) then
 		   
 			--self.fol_human = i
