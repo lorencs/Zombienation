@@ -48,7 +48,7 @@ function love.load()
 	DEBUG = false
 	drawTile = "R"
 	dragSelect = false
-	dragx, dragy = 0
+	dragx, dragy = 0, 0
 	
 	-- music
 	music = love.audio.newSource("/units/fellowship.mp3")
@@ -231,10 +231,9 @@ end
 function love.mousepressed(x, y, button)
 	if (x < viewWidth) then
 		unitManager:deselectUnits()
-		if (button == "l") then
-		
+		if (button == "l") then		
 			dragSelect = true
-			dragx, dragy = math.floor(love.mouse.getX()), math.floor(love.mouse.getY())
+			dragx, dragy = x, y
 		end
 	end
 	
@@ -244,7 +243,7 @@ end
 function love.mousereleased(x, y, button)
 	if (button == "l") then
 		dragSelect = false
-		unitManager:selectUnits(dragx, dragy, love.mouse.getX(), love.mouse.getY())
+		unitManager:selectUnits(dragx+view.x, dragy+view.y, x+view.x, y+view.y)
 	end
 	
 	loveframes.mousereleased(x, y, button)
