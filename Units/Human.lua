@@ -9,6 +9,7 @@ function Human:new()
 	--pos = Point:new(),
     x = 0,
     y = 0,
+	radius = 4,
     width = 0,
     height = 0,
     xSpeed = 0,
@@ -51,7 +52,8 @@ function Human:draw(i)
 	--print("Human getting drawn !".. self.x..", ".. self.y)
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
-	love.graphics.rectangle("fill", self.x, self.y, 10, 10)
+	love.graphics.circle("fill", self.x, self.y, 8, 15)
+	--love.graphics.rectangle("fill", self.x, self.y, 10, 10)
 	love.graphics.print(self.tag, self.x, self.y + 10)
 end
 

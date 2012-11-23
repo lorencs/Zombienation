@@ -20,6 +20,7 @@ function Zombie:new(x_new, y_new)
 	--pos = Point:new(x_new,y_new)					-- position (x and y)
 	x = x_new,
     y = y_new,
+	radius = 4,
     width = 0,
     height = 0,
     xSpeed = 0,
@@ -79,7 +80,7 @@ function Zombie:draw(i)
 	playerColor = {255,0,0}
 	love.graphics.setColor(playerColor)
 	--love.graphics.rectangle("fill", self.x, self.y, 10, 10)
-	love.graphics.circle("fill", self.x + 5, self.y + 5, 8, 15)
+	love.graphics.circle("fill", self.x + 4, self.y + 4, 8, 15)
 	
 	-- for debugging:	
 	love.graphics.rectangle("line", self.x - see_human_dist, self.y, 10, 10)
