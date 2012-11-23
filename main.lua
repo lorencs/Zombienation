@@ -229,9 +229,13 @@ end
 
 -- callback functions needed by loveframes, we can use them too
 function love.mousepressed(x, y, button)
-	if (button == "l") and (x < viewWidth) then
-		dragSelect = true
-		dragx, dragy = math.floor(love.mouse.getX()), math.floor(love.mouse.getY())
+	if (x < viewWidth) then
+		unitManager:deselectUnits()
+		if (button == "l") then
+		
+			dragSelect = true
+			dragx, dragy = math.floor(love.mouse.getX()), math.floor(love.mouse.getY())
+		end
 	end
 	
 	loveframes.mousepressed(x, y, button)
