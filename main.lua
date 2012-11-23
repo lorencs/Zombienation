@@ -142,7 +142,7 @@ function love.load()
 		map.height * map.tileSize - height)
 		
 	-- cursor
-	love.mouse.setVisible(false)
+	--love.mouse.setVisible(false)
 	cursor = love.graphics.newImage("gui/cursor.png")
 end
 
