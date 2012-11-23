@@ -3,7 +3,6 @@ require "map/Tile"
 require "map/MapGen"
 require "map/Minimap"
 require "gui/Menu"
-require "gui/Button"
 require "gui/View"
 require "camera"
 require "units/UnitManager"
@@ -16,6 +15,7 @@ require "Units/Point"
 	
 	mike:
 		- viewpoint code, clean up this main file a bit
+		- moved all the menu type code to the menu type file
 	
 	mikus: 
 		- hid cursor, replaced with a zombie hand (just a random image i found for now)
@@ -46,7 +46,6 @@ number_of_humans = 50			-- humans are blue
 
 function love.load()	
 	-- debug menu bools
-	DEBUG = false
 	drawTile = "R"
 	dragSelect = false
 	dragx, dragy = 0, 0
@@ -84,64 +83,8 @@ function love.load()
 	
 	-- init menu
 	menu = Menu:new(viewWidth, menuWidth, height)
-	menu:setButtons()
-	
-	-- loveframes debug menu stuff (for testing)
-		
-		-- debug text
-		local textDebug = loveframes.Create("text")
-		textDebug:SetPos(width-115, height - 27)
-		textDebug:SetMaxWidth(100)
-		textDebug:SetText("Debug")
-		
-		-- button to select road tile draw
-		roadButton = loveframes.Create("imagebutton")
-		roadButton:SetSize(25, 25)
-		roadButton:SetPos(width-140, height-62)		
-		roadButton:SetImage(love.graphics.newImage("gui/roadBtnSelect.png"))
-		roadButton:SetVisible(false)
-		roadButton.OnClick = function(object)
-			roadButton:SetImage(love.graphics.newImage("gui/roadBtnSelect.png"))
-			waterButton:SetImage(love.graphics.newImage("gui/waterBtn.png"))
-			groundButton:SetImage(love.graphics.newImage("gui/groundBtn.png"))
-			drawTile = "R" 
-		end
-		
-		-- button to select water tile draw
-		waterButton = loveframes.Create("imagebutton")
-		waterButton:SetSize(25, 25)
-		waterButton:SetPos(width-114, height-62)		
-		waterButton:SetImage(love.graphics.newImage("gui/waterBtn.png"))
-		waterButton:SetVisible(false)
-		waterButton.OnClick = function(object)
-			roadButton:SetImage(love.graphics.newImage("gui/roadBtn.png"))
-			waterButton:SetImage(love.graphics.newImage("gui/waterBtnSelect.png"))
-			groundButton:SetImage(love.graphics.newImage("gui/groundBtn.png"))
-			drawTile = "W" 
-		end
-		
-		-- button to select ground tile draw
-		groundButton = loveframes.Create("imagebutton")
-		groundButton:SetSize(25, 25)
-		groundButton:SetPos(width-88, height-62)		
-		groundButton:SetImage(love.graphics.newImage("gui/groundBtn.png"))
-		groundButton:SetVisible(false)
-		groundButton.OnClick = function(object)
-			roadButton:SetImage(love.graphics.newImage("gui/roadBtn.png"))
-			waterButton:SetImage(love.graphics.newImage("gui/waterBtn.png"))
-			groundButton:SetImage(love.graphics.newImage("gui/groundBtnSelect.png"))
-			drawTile = "G" 
-		end
-		
-		-- checkbox to enable Debug
-		local checkDebug = loveframes.Create("checkbox")
-		checkDebug:SetPos(width-140, height - 30)
-		checkDebug.OnChanged = function(object)
-			DEBUG = not DEBUG
-			roadButton:SetVisible(not roadButton:GetVisible())
-			waterButton:SetVisible(not waterButton:GetVisible())
-			groundButton:SetVisible(not groundButton:GetVisible())
-		end	
+	menu:setMainMenu()
+	menu:setDebugMenu()
 	
 	-- restrict camera
 	camera:setBounds(0, 0, map.width * map.tileSize - viewWidth, 
@@ -165,7 +108,7 @@ function love.update(dt)
 	unitManager:update(dt)
 	
 	-- map editing
-	if DEBUG then
+	if menu.debugMode then
 		if love.mouse.isDown("l") and (love.mouse.getX() < viewWidth)then
 			--xpos = love.mouse.getX() + vpx - vpxmin
 			xpos = love.mouse.getX() + view.x 
@@ -216,7 +159,7 @@ function love.draw()
 	minimap:draw(width - 150, height - 170)
 	
 	-- drag selection
-	if (dragSelect) then 
+	if (not(menu.debugMode) and dragSelect) then 
 		love.graphics.setColor(50,50,50,50)
 		love.graphics.rectangle("fill", dragx, dragy, love.mouse.getX() - dragx, love.mouse.getY() - dragy)
 		love.graphics.setColor(50,50,50,150)

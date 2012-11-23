@@ -22,20 +22,13 @@ function MapGen:newMap(w, h)
 	
 	
 	-- default map
-	self:blockBoundary() 	-- outline edges black
+	--self:blockBoundary() 	-- outline edges black
 	self:addCircleLake(15,15,5)
 	
 	-- some test roads (for quick testing, until debug map draw mode is in)
-	m.tiles[24][6]:setId("R")
-	m.tiles[24][7]:setId("R")
-	m.tiles[24][8]:setId("R")
-	m.tiles[24][9]:setId("R")
-	m.tiles[24][10]:setId("R")
-	m.tiles[25][6]:setId("R")
-	m.tiles[23][6]:setId("R")
-	m.tiles[23][10]:setId("R")
-	m.tiles[22][10]:setId("R")
-	m.tiles[21][10]:setId("R")
+	self:addRoad(24, 6, 24, 10)
+	self:addRoad(23, 6, 25, 6)
+	self:addRoad(21, 10, 23, 10)
 	
 	-- save info on each tile's neighbor
 	for x=0,self.width-1 do
@@ -101,7 +94,19 @@ function MapGen:addCircleLake(x, y, r)
 	end
 end
 
--- add road 
+-- add road - only right angles
 function MapGen:addRoad(x1, y1, x2, y2)
+	m = self.map
 	
+	-- vertical
+	if x1 == x2 then
+		for y=y1,y2 do
+			m.tiles[x1][y]:setId("R")
+		end
+	-- horizontal
+	elseif y1 == y2 then		
+		for x=x1,x2 do
+			m.tiles[x][y1]:setId("R")
+		end
+	end
 end

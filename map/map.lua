@@ -47,8 +47,7 @@ end
 
 -- save map to file
 function Map:saveMap(filename)
-	-- check overwrite
-	-- save representation
+	
 end	
 
 -- draw map to canvas
