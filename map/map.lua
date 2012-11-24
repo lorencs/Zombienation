@@ -168,7 +168,9 @@ function Map:getNeighborInfo(x,y)
 	if (tile.id == "R") then
 		self:selectRoadSprite(tile)
 	elseif (tile.id == "W") then
-		self:selectWaterSprite(tile)					
+		self:selectWaterSprite(tile)	
+	elseif (tile.id == "G") then
+		self:selectGroundSprite(tile)
 	elseif (tile.id == "D") then	-- builDing tile
 		--self:selectBuildingSprite(tile, x, y)												** COMMENTED OUT
 	end
@@ -223,6 +225,14 @@ function Map:selectWaterSprite(tile)
 		
 	local i = self:findi(spritei)
 	tile.sprite = love.graphics.newQuad(0, (i-1)*w, w, w, w, tile:getImg():getHeight())
+end
+
+function Map:selectGroundSprite(tile)
+	local w = self.tileSize
+
+	i = math.random(0, tile:getImg():getWidth()/w - 1)
+	--print(i)
+	tile.sprite = love.graphics.newQuad(i*w, 0, w, w, tile:getImg():getWidth(), w)
 end
 
 -- find the correct sprite within building

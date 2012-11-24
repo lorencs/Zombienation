@@ -2,7 +2,7 @@ Tile = {}
 
 -- tile images
 road = love.graphics.newImage("map/roadSprites.png")
-grass = love.graphics.newImage("map/grass.png")
+grass = love.graphics.newImage("map/grassTest.png")
 water = love.graphics.newImage("map/waterSprites.png")
 blocked = love.graphics.newImage("map/blocked.png")
 roadMM = love.graphics.newImage("map/roadMM.png")
@@ -14,7 +14,7 @@ blockedMM = love.graphics.newImage("map/blockedMM.png")
 function Tile:new()
 	local object = {
 		id = "G", 	-- default grass tile
-		img = grass,
+		img = blocked,
 		mm = grassMM,
 		sprite = love.graphics.newQuad(0, 0, 25, 25, 400, 25)
 	}
