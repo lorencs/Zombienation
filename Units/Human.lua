@@ -77,7 +77,6 @@ function Human:update(dt, zi)
 		return							
 	end
 	
-	
 	-- after 5 seconds, the zombie should change his direction (x and y)
 	if self.directionTimer > 5 then 
 	
