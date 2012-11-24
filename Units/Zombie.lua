@@ -172,7 +172,7 @@ function Zombie:update(dt, zi)
 	self.y = self.y + (dt * self.dirVector.y)
 	-- update the center x and y values of the unit
 	self.cx = self.x + self.radius
-	self.cy = self.y - self.radius
+	self.cy = self.y + self.radius
 	
 	-- update direction time ( after 5 seconds, the unit will randomly change direction )
 	self.directionTimer = self.directionTimer + dt			-- increasing directionTimer
@@ -245,8 +245,8 @@ function Zombie:update(dt, zi)
 	-- if zombie is 'same_location' distance away from unit.. it is attacking the unit !
 	local same_location = 2
 
-	local dist = self:distanceBetweenHZ(self.x,self.y,human_list[h_index].x, human_list[h_index].y)
-	if dist < (self.radius * 2) then
+	local dist = self:distanceBetweenHZ(self.cx,self.cy,human_list[h_index].cx, human_list[h_index].cy)
+	if dist < (self.radius * 2 + 7) then
 	   
 	   -- set human's attacked state to 1
 		human_list[h_index].attacked = 1
@@ -335,6 +335,9 @@ function Zombie:update(dt, zi)
 	-- update zombie's movement
 	self.x = self.x + (dt * self.dirVector.x)
 	self.y = self.y + (dt * self.dirVector.y)												
+	-- update the center x and y values of the unit
+	self.cx = self.x + self.radius
+	self.cy = self.y + self.radius
 	
  end
  

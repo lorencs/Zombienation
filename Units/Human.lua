@@ -123,7 +123,7 @@ function Human:update(dt, zi)
 	self.y = self.y + (dt * self.dirVector.y)
 	-- update the center x and y values of the unit
 	self.cx = self.x + self.radius
-	self.cy = self.y - self.radius
+	self.cy = self.y + self.radius
 	-- update direction time ( after 5 seconds, the unit will randomly change direction )
 	self.directionTimer = self.directionTimer + dt			-- increasing directionTimer	
 
