@@ -48,7 +48,9 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	if not self.x then self.x = math.random(650) end
 	if not self.y then self.y = math.random(love.graphics.getHeight() - self.height) end
 	
-	self.speed = 20
+	print( math.tan(5))		-- prints (in degrees) 5/1 ( 5 degrees / 1 degree )
+		
+	self.speed = 30
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	self.x_direction = 0
 	self.y_direction = 0
@@ -192,7 +194,7 @@ function Zombie:update(dt, zi)
 			if val == true then										-- if human i is in the field of view of the zombie
 				self.fol_human = human_list[i].tag
 				self.state = "Chasing ".. self.fol_human			
-				human_list[i].blah = 1								-- turns human to red.. just for debug
+				--human_list[i].blah = 1								-- turns human to red.. just for debug
 			end
 		end
 		
@@ -244,25 +246,37 @@ function Zombie:update(dt, zi)
 		return								-- no need to follow the human unit anymore
 	end
 	
+	--local rada = math.rad(5)			--math.rad() (degrees as input) - degrees to radians
+	--local val = math.atan(rada) * 180/math.pi
+	--print( math.deg(math.atan(5/1)))		-- prints (in degrees) 5/1 ( 5 degrees / 1 degree )
+	
+	--print("zombie x:"..self.x..",y:"..self.y)
+	--print("human x:"..human_list[h_index].x..",y:"..human_list[h_index].y)
+	
 	local x_v, y_v = 0
 	if (self.x < human_list[h_index].x) and (self.y < human_list[h_index].y) then
 		x_v = human_list[h_index].x - self.x
 		y_v = human_list[h_index].y - self.y
-		y_v = - y_v
+		self.targetAngle = math.deg( math.atan(y_v / x_v) )
 	elseif (self.x > human_list[h_index].x) and (self.y < human_list[h_index].y) then
 		x_v = self.x - human_list[h_index].x
 		y_v = human_list[h_index].y - self.y
+		self.targetAngle = math.deg( math.atan(y_v / x_v) )
+		self.targetAngle = 180 - self.targetAngle
 	elseif (self.x > human_list[h_index].x) and (self.y > human_list[h_index].y) then
 		x_v = self.x - human_list[h_index].x
 		y_v = self.y - human_list[h_index].y
-		y_v = -y_v
+		self.targetAngle = math.deg( math.atan(y_v / x_v) )
+		self.targetAngle = 180 + self.targetAngle
 	elseif (self.x < human_list[h_index].x) and (self.y > human_list[h_index].y) then
 		x_v = human_list[h_index].x - self.x
 		y_v = self.y - human_list[h_index].y
+		self.targetAngle = math.deg( math.atan(y_v / x_v) )
+		self.targetAngle = 360 - self.targetAngle
 	end
 	
 	-- target angle is the human unit's angle !
-	self.targetAngle = self:getAngle(x_v, y_v)
+	--self.targetAngle = self:getAngle(x_v, y_v)
 	
 	-- get the angle direction ( positive or negative on axis )
 	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
