@@ -58,6 +58,24 @@ function Menu:setMainMenu()
 	unitManager:resetUnits()	-- restart game
 	end
 	
+	-- create buttons
+	buttonNewGame = loveframes.Create("imagebutton")
+	buttonNewGame:SetSize(self.width, bh)
+	buttonNewGame:SetPos(xn, yn + 35)
+	buttonNewGame:SetImage(love.graphics.newImage("gui/menunewgame.png"))
+	buttonNewGame.OnClick = function(object)
+	unitManager:pauseGame()	-- pause game
+	end
+	
+		-- create buttons
+	buttonNewGame = loveframes.Create("imagebutton")
+	buttonNewGame:SetSize(self.width, bh)
+	buttonNewGame:SetPos(xn, yn + 70)
+	buttonNewGame:SetImage(love.graphics.newImage("gui/menunewgame.png"))
+	buttonNewGame.OnClick = function(object)
+	unitManager:resumeGame()	-- resume game
+	end
+	
 	table.insert(self.mainMenu, buttonNewGame)
 end
 

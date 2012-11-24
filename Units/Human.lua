@@ -63,7 +63,7 @@ function Human:draw(i)
 	
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
-	if self.color == 1 then love.graphics.setColor(255,0,0) end
+	if self.color == 1 then love.graphics.setColor(255,255,23, 150) end
 	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, 8, 15)
 	
 	-- print tag to screen.. for debug !
@@ -71,8 +71,14 @@ function Human:draw(i)
 end
 
 -- Update function
-function Human:update(dt, zi)
+function Human:update(dt, zi, paused)
 
+	-- if game is paused, do not update any values
+	if paused == true then 
+		print("not updating humans") 
+		return 
+	end
+	
 	-- if the human is attacked, then he can't move (or could make him move very slow?)
 	if self.attacked == 1 then
 		return							

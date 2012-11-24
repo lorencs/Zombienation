@@ -20,7 +20,7 @@ UnitManager_mt = { __index = UnitManager }
 function UnitManager:new()
     -- define our parameters here
     local new_object = {
-
+	paused = false
     }
     setmetatable(new_object, UnitManager_mt )
     return new_object
@@ -76,23 +76,33 @@ function UnitManager:resetUnits()
 	--print("zombies".. #zombie_list)
 end
 
+function UnitManager:pauseGame()
+	self.paused = true
+end
+
+function UnitManager:resumeGame()
+	self.paused = false
+end
+
 -- Update function
 function UnitManager:update(dt, gravity)
     -- update the unit's position
 	
 	-- update zombies
 	for i = 1, number_of_zombies do
-		zombie_list[i]:update(dt, i)
+		zombie_list[i]:update(dt, i, self.paused)
 		--zombie_list[i].animation:update(dt)
 	end
 	-- update humans
 	for i = 1, number_of_humans do
-		human_list[i]:update(dt,i)
+		human_list[i]:update(dt,i, self.paused)
 	end
 	
 end
 
 function UnitManager:draw()
+	
+	--if self.paused == 1 then return end		-- game is paused
 	
 	-- draw zombies
 	for i = 1, number_of_zombies do
