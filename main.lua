@@ -50,6 +50,7 @@ function love.load()
 	drawTile = "R"
 	dragSelect = false
 	dragx, dragy = 0, 0
+	defaultFont = love.graphics.newFont(12)
 	
 	-- music
 	music = love.audio.newSource("/units/fellowship.mp3") 
@@ -140,7 +141,7 @@ function love.draw()
 		love.mouse.setPosition(viewWidth - (love.mouse.getX() - viewWidth), love.mouse.getY())
 	end	
 	-- gotta set font to default because loveframes imagebutton messes it up for some reason
-	--love.graphics.setFont(love.graphics.newFont(12))
+	love.graphics.setFont(defaultFont)
 	-- set camera
 	camera:set()					
 	
