@@ -10,19 +10,20 @@ function Human:new()
     x = 0,
     y = 0,
 	radius = 4,
+	angle = 30,
+	targetAngle = 0,
     width = 0,
     height = 0,
-    xSpeed = 0,
-    ySpeed = 0,
     state = "",
-    normalSpeed = 0,
+	speed = 0,
     runSpeed = 0,
-	timeTracker = 0,
+	directionTimer = 0,
 	initial_direction = 1,
 	x_direction = math.random(-1,1),
 	y_direction = math.random(-1,1),
 	attacked = 0,								-- if the unit is currently attacked, this var = 1
-    selected = false
+    selected = false,
+	blah = 0
 	}
 
 	setmetatable(new_object, Human_mt )			-- add the new_object to metatable of Human
@@ -39,11 +40,10 @@ function Human:setupUnit()							-- init vars for Human unit
 	self.width = 50
 	self.height = 50
 	self.state = "Going to the store ??"
-	self.xSpeed = 10
-	self.ySpeed = 10
-	self.normalSpeed = 5
+	self.speed = 20
 	self.runSpeed = 7
 	self.tag = human_tag
+	self.directionTimer = 0
 	human_tag = human_tag + 1
 	--print("Human is set !")
 	
@@ -51,6 +51,7 @@ end
 
 function Human:draw(i)
 	
+	-- if selected, draw circle around unit
 	if self.selected then
 		love.graphics.setColor(0,255,0, 150)
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 9, 15 )
@@ -59,8 +60,12 @@ function Human:draw(i)
 	
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
+	
+	-- if seen by zombie.. color it red
+	if (self.blah == 1) then love.graphics.setColor(255,0,0) end
 	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, 8, 15)
-	--love.graphics.rectangle("fill", self.x, self.y, 10, 10)
+	
+	-- print tag to screen.. for debug !
 	love.graphics.print(self.tag, self.x, self.y + 10)
 end
 
@@ -72,34 +77,49 @@ function Human:update(dt, zi)
 		return							
 	end
 	
-    -- update the unit's position		
-	--if self.x_direction == 2 then self.x_direction = -1 end		-- this is for the first time an update happens
-	--if self.y_direction == 2 then self.y_direction = -1 end
 	
-	if self.timeTracker > 5 then 								-- after 5 seconds, the Human should change x and y directions
+	-- after 5 seconds, the zombie should change his direction (x and y)
+	if self.directionTimer > 5 then 
+	
+		-- randomize a degree, 0 to 360
+		self.targetAngle = math.random(360)
 		
-		self.x_direction = math.random(-1,1)					-- -1 to 1.. 
-		self.y_direction = math.random(-1,1)
-
-		self.timeTracker = 0
+		-- get the angle direction ( positive or negative on axis )
+		self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+		
+		-- reset directionTimer
+		self.directionTimer = 0						
 	end
-	
-	self.timeTracker = self.timeTracker + dt			-- increasing timeTracker
-	
-	-- CHECK MAP BOUNDARIES HERE
-	--[[
-	print("map width is ".. map.width .. " and map height ".. map.height )
-	if (self.x < 26) or (self.x > 624) or (self.y < 26) or (self.y > 574) then
-		x_direction = 0
-		y_direction = 0
-		self.timeTracker = self.timeTracker + 5
+		
+		
+	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then
+		-- target has been reached, no need to change the direction vector; keep the same self.angle value !
+	else
+		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
+		if self.dirVec == 0 then			-- positive direction	( opposite of conventional as y increases downwards )
+			self.angle = self.angle + 0.2
+		elseif self.dirVec == 1 then		-- negative direction
+			self.angle = self.angle - 0.2
+		end
+		
+		-- reset angles if they go over 360 or if they go under 0
+		if self.angle > 360 then
+			self.angle = self.angle - 360
+		end
+		
+		if self.angle < 0 then
+			self.angle = 360 + self.angle
+		end
 	end
-	]]--
+		
+	-- get direction vector
+	self.dirVector = self:getDirection(self.angle, self.speed)
 	
-	--print("x direction is ".. x_direction)
-	--print("x direction is ".. y_direction)
-    self.x = self.x + (self.xSpeed * dt * self.x_direction) 	-- update zombie's movement
-    self.y = self.y + (self.ySpeed * dt * self.y_direction)
+	-- update zombie's movement
+	self.x = self.x + (dt * self.dirVector.x)
+	self.y = self.y + (dt * self.dirVector.y)
 	
+	-- update direction time ( after 5 seconds, the unit will randomly change direction )
+	self.directionTimer = self.directionTimer + dt			-- increasing directionTimer	
 
  end

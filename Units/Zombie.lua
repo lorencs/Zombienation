@@ -2,21 +2,16 @@ Zombie = {}
 Zombie_mt = { __index = Zombie }
 
 --[[ 
-		BUG TO BE FIXED: zombies eating humans at the same time.. gives error at line 169
-				ADD THE STATE OF EACH ZOMBIE ON SCREEEN AND SEE WHATS GOING ON ! AFTER EATING A HUMAN, THE ZOMBIE SHOULD GO BACK
-				TO HUNTING ! SOMETIMES IT IGNORES HUMANS AFTER IT EATS ONE
-				
-		BUG FIX : HAVE TO ADD A CHECK IF THE HUMAN IS STILL ALIVE (if 2 zombies chase her.. check if human is still alive before attempting to
-		remove human from human_list)
+		nothing here. move on.
 ]]
 
-see_human_dist = 50				-- at what distance will the zombie see the human ?
+-- see_human_dist = 50				-- at what distance will the zombie see the human ?
 
 -- Constructor
 function Zombie:new(x_new, y_new)
 
     local new_object = {							-- define our parameters here
-    tag = 0,
+    tag = 0,										
 	dirVector = 0,
 	x = x_new,
     y = y_new,
@@ -28,7 +23,6 @@ function Zombie:new(x_new, y_new)
     height = 0,
 	speed = 0,
     state = "",
-    normalSpeed = 0,
     runSpeed = 0,
 	directionTimer = 0,
 	time_kill = 0,
@@ -36,9 +30,10 @@ function Zombie:new(x_new, y_new)
 	x_direction = math.random(-1,1),
 	y_direction = math.random(-1,1),
 	fol_human = 0,									-- index of the human in human_list that this zombie will follow. if it's 0, then this zombie
-    animation = 0,
-	spriteImage = 0,
-	selected = false
+	selected = false,
+	v1 = Point:new(0,0),
+	v2 = Point:new(0,0),
+	v3 = Point:new(0,0)
 	}												-- is not following a human (yet !)
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
@@ -57,13 +52,9 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	self.x_direction = 0
 	self.y_direction = 0
-	--hey = 345.1235
-	--print(hey)
 	self.width = 50
 	self.height = 50
 	self.state = "Looking around"
-	self.xSpeed = 25
-	self.ySpeed = 25
 	self.normalSpeed = 5
 	self.runSpeed = 7
 	self.tag = zombie_tag
@@ -76,23 +67,26 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 end
 
 function Zombie:draw(i)
-	--self.animation:draw(self.x,self.y)
 	--love.graphics.draw(self.spriteImage, self.x, self.y)
 	love.graphics.setColor(211,211,211,150)
 	love.graphics.circle( "fill", self.x + self.radius, self.y + self.radius, 35, 15 )
 	
-	angleDir = self:getDirection(self.angle, self.speed)
-	print("x:".. angleDir.x.. ", y:".. angleDir.y)
 	love.graphics.setColor(216,216,216)
-	--love.graphics.triangle("fill", self.x + self.radius, self.y + self.radius, 
-	--						self.x + math.cos(self.angle * (math.pi/180) )*90 + self.radius, self.y + math.sin(self.angle * (math.pi/180) )*36 + self.radius - 15,
-	--						self.x + math.cos(self.angle * (math.pi/180) )*90 + self.radius,self.y + math.sin(self.angle * (math.pi/180) )*36 + self.radius + 15)
+	self.v1 = Point:new(self.x + self.radius, self.y + self.radius)
+	self.v2 = Point:new(self.x + math.cos( (self.angle - 40) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle - 40) * (math.pi/180) )*90 + self.radius)
+	self.v3 = Point:new(self.x + math.cos( (self.angle + 40 ) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle + 40) * (math.pi/180) )*90 + self.radius)
 	
-	love.graphics.triangle("fill", 
-		self.x + self.radius, self.y + self.radius,
-		self.x + math.cos( (self.angle - 50) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle - 50) * (math.pi/180) )*90 + self.radius,
-		self.x + math.cos( (self.angle + 50 ) * (math.pi/180) )*90 + self.radius,self.y + math.sin( (self.angle + 50) * (math.pi/180) )*90 + self.radius)
+	love.graphics.triangle( "fill", 
+		self.v1.x,self.v1.y,
+		self.v2.x,self.v2.y,
+		self.v3.x,self.v3.y
+		)
+	--love.graphics.arc( mode, x, y, radius, angle1, angle2, segments )
 	
+	--love.graphics.setColor(43,12,216)
+	--love.graphics.arc("fill", self.x + math.cos(self.targetAngle * (math.pi/180) )*30 + self.radius, self.y + math.sin(self.targetAngle * (math.pi/180))* 30 + self.radius,
+	--				10, self.angle, self.targetAngle,30)
+					
 	if self.selected then
 		love.graphics.setColor(0,255,0, 150)
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 9, 15 )
@@ -117,55 +111,38 @@ function Zombie:draw(i)
 	love.graphics.print(self.tag.. " ".. self.state, self.x, self.y + 10)
 end
 
-function Zombie:unitAction()
-    --print( " ZOMBIE ! The unit can do this action .." )
-	--print("x is "..x_rand.. " and y is ".. y_rand)
-end
-
 -- Update function
 function Zombie:update(dt, zi)
 
 	--self.animation:update(dt)
 	
-	--if self.fol_human ~= 0 then									-- if zombie is following a human
-		--self:follow_human(dt)									
-		--return
-	--else														-- else look around 
-		self:lookAround(zi)
-	--end
+	if self.fol_human ~= 0 then			-- if zombie is following a human				
+		self:follow_human(dt)			-- zombie is following a human
+		return							-- no need to update anything else here so return
+	else
+		self:lookAround(zi)				-- else look around 
+	end
 	
 	
 	-- after 5 seconds, the zombie should change his direction (x and y)
-	if self.directionTimer > 5 then 							
+	if self.directionTimer > 5 then
+	
+		-- randomize a degree, 0 to 360
 		self.targetAngle = math.random(360)
-		local newAngle = 180 + self.angle
 		
-		
-		if newAngle < 360 then
-			if (self.targetAngle < newAngle) and (self.targetAngle > self.angle) then
-				self.dirVec = 0
-			else
-				self.dirVec = 1
-			end
-		else
-			newAngle = newAngle - 360
-			if (self.targetAngle > newAngle) and (self.targetAngle < self.angle) then
-				self.dirVec = 1
-			else
-				self.dirVec = 0
-			end
-		end
-		
-		self.directionTimer = 0						-- reset directionTimer
-		--print("dir:".. self.dirVec)
+		-- get the angle direction ( positive or negative on axis )
+		self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+
+		-- reset directionTimer
+		self.directionTimer = 0						
 	end
 		
-	-- if it did not reach the targetAngle
-	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then
-		--print("target reached ")
-	else
+	
+	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then		-- target reached
+	else																						-- else.. 
+	
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
-		if self.dirVec == 0 then			-- positive direction
+		if self.dirVec == 0 then			-- positive direction	( opposite of conventional as y increases downwards )
 			self.angle = self.angle + 0.2
 		elseif self.dirVec == 1 then		-- negative direction
 			self.angle = self.angle - 0.2
@@ -181,10 +158,13 @@ function Zombie:update(dt, zi)
 		end
 	end
 		
-	--end
+	-- get direction vector
 	self.dirVector = self:getDirection(self.angle, self.speed)
+	
+	-- update zombie's movement
 	self.x = self.x + (dt * self.dirVector.x)
 	self.y = self.y + (dt * self.dirVector.y)
+	
 	-- update direction time ( after 5 seconds, the unit will randomly change direction )
 	self.directionTimer = self.directionTimer + dt			-- increasing directionTimer
 	
@@ -197,30 +177,27 @@ function Zombie:update(dt, zi)
 		self.directionTimer = self.directionTimer + 5
 	end]]
 	
-	-- update zombie's movement
-    --self.x = self.x + (self.xSpeed * dt * self.x_direction)
-    --self.y = self.y + (self.ySpeed * dt * self.y_direction)
-	--self.x = self.x + (dt * self.dirVector.x)
-	--self.y = self.y + (dt * self.dirVector.y)
 	--self.animation:update(dt)
  end
  
  -- look around; if there is a human at a dist of 'see_human_dist', then follow human
  function Zombie:lookAround(zi)
+ 
+	-- fol_human stores the tag of the human to be followed ( if any )
+	for i = 1, number_of_humans do
 	
-	-- fol_human is the index of the human object to follow and eat
-	for i = 1, number_of_humans do								-- that is within this zombie's rand
-		if ( (human_list[i].x > (self.x - see_human_dist)) and (human_list[i].x < self.x + see_human_dist) ) and 		-- IF human is within field of view
-		   ( (human_list[i].y > self.y - see_human_dist) and (human_list[i].y < self.y + see_human_dist) ) then
-		   
-			--self.fol_human = i
-			self.fol_human = human_list[i].tag
-			self.state = "Chasing ".. self.fol_human
+		if (self.v1.x ~= 0) then
+			local human_point = Point:new(human_list[i].x, human_list[i].y)
+			local val = self:pTriangle(human_point, self.v1, self.v2, self.v3)
+			if val == true then										-- if human i is in the field of view of the zombie
+				self.fol_human = human_list[i].tag
+				self.state = "Chasing ".. self.fol_human			
+				human_list[i].blah = 1								-- turns human to red.. just for debug
+			end
 		end
 		
-		-- if zombie saw a human close enough and it is following it, break out of loop
+		-- zombie found a human to chase; break out of loop
 		if self.fol_human ~= 0 then break end
-
 	end
 	
  end
@@ -244,13 +221,10 @@ function Zombie:update(dt, zi)
 	   -- set human's attacked state to 1
 		human_list[h_index].attacked = 1
 		
-		if (self.time_kill > 2) then								-- unit with index 'fol_human' should be dead by now !
+		if (self.time_kill > 2) then									-- unit with index 'fol_human' should be dead by now !
 			
-			--local dead_x_coord = human_list[h_index].x				-- save coords of dead unit
-			--local dead_y_coord = human_list[h_index].y
-			
-			table.remove(human_list, h_index)						-- remove human from human_list array
-			number_of_humans = number_of_humans - 1					-- decrease count of humans alive
+			table.remove(human_list, h_index)							-- remove human from human_list array
+			number_of_humans = number_of_humans - 1						-- decrease count of humans alive
 			
 			number_of_zombies = number_of_zombies + 1					-- increase count of zombies alive
 			zombie_list[number_of_zombies] = Zombie:new(self.x, self.y)	-- create new zombie at the location of this zombie
@@ -267,22 +241,73 @@ function Zombie:update(dt, zi)
 		end
 		
 		self.time_kill = self.time_kill + dt
+		return								-- no need to follow the human unit anymore
 	end
 	
+	local x_v, y_v = 0
+	if (self.x < human_list[h_index].x) and (self.y < human_list[h_index].y) then
+		x_v = human_list[h_index].x - self.x
+		y_v = human_list[h_index].y - self.y
+		y_v = - y_v
+	elseif (self.x > human_list[h_index].x) and (self.y < human_list[h_index].y) then
+		x_v = self.x - human_list[h_index].x
+		y_v = human_list[h_index].y - self.y
+	elseif (self.x > human_list[h_index].x) and (self.y > human_list[h_index].y) then
+		x_v = self.x - human_list[h_index].x
+		y_v = self.y - human_list[h_index].y
+		y_v = -y_v
+	elseif (self.x < human_list[h_index].x) and (self.y > human_list[h_index].y) then
+		x_v = human_list[h_index].x - self.x
+		y_v = self.y - human_list[h_index].y
+	end
+	
+	-- target angle is the human unit's angle !
+	self.targetAngle = self:getAngle(x_v, y_v)
+	
+	-- get the angle direction ( positive or negative on axis )
+	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+	
+	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then
+		-- target has been reached, no need to change the direction vector; keep the same self.angle value !
+	else
+		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
+		if self.dirVec == 0 then			-- positive direction	( opposite of conventional as y increases downwards )
+			self.angle = self.angle + 0.2
+		elseif self.dirVec == 1 then		-- negative direction
+			self.angle = self.angle - 0.2
+		end
+		
+		-- reset angles if they go over 360 or if they go under 0
+		if self.angle > 360 then
+			self.angle = self.angle - 360
+		end
+		
+		if self.angle < 0 then
+			self.angle = 360 + self.angle
+		end
+	end
+	
+	-- get direction vector
+	self.dirVector = self:getDirection(self.angle, self.speed)
+	
+	-- update zombie's movement
+	self.x = self.x + (dt * self.dirVector.x)
+	self.y = self.y + (dt * self.dirVector.y)
+	
+	--[[
 	-- code for following the human unit
 	-- if human.x = self.x (or y) , then self.x (or y) will stay the same so no need to add cond for it
 	if human_list[h_index].y > self.y then
-		self.y = self.y + (self.ySpeed * dt * 1)
+		self.y = self.y + (self.speed * dt * 1)
 	elseif human_list[h_index].y < self.y then
-		self.y = self.y + (self.ySpeed * dt * (-1))
+		self.y = self.y + (self.speed * dt * (-1))
 	end
 	
 	if human_list[h_index].x > self.x then
-		self.x = self.x + (self.xSpeed * dt * 1)
+		self.x = self.x + (self.speed * dt * 1)
 	elseif human_list[h_index].x < self.x then
-		self.x = self.x + (self.xSpeed * dt * (-1))
-	end															
-	
+		self.x = self.x + (self.speed * dt * (-1))
+	end		--]]													
 	
  end
  
