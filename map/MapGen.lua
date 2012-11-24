@@ -30,6 +30,14 @@ function MapGen:newMap(w, h)
 	self:addRoad(23, 6, 25, 6)
 	self:addRoad(21, 10, 23, 10)
 	
+	-- a couple random buildings
+	self:addBuilding(5, 5, 66)
+	self:addBuilding(27, 28, 43)
+	self:addBuilding(33, 48, 35)
+	self:addBuilding(55, 92, 33)
+	self:addBuilding(78, 12, 34)
+	self:addBuilding(12, 84, 64)
+	
 	-- save info on each tile's neighbor
 	for x=0,self.width-1 do
 		for y=0,self.height-1 do
@@ -129,6 +137,23 @@ function MapGen:addRoad(x1, y1, x2, y2)
 	elseif y1 == y2 then		
 		for x=x1,x2 do
 			m.tiles[x][y1]:setId("R")
+		end
+	end
+end
+
+-- add building from predefined types
+function MapGen:addBuilding(x, y, b_type)
+	m = self.map
+	
+	-- add building to list
+	local b = Building:new()
+	b:set(x, y, b_type)
+	table.insert(m.buildings, b)
+	
+	-- set tile ids
+	for xi=x,x+b.width-1 do
+		for yi=y,y+b.height-1 do
+			m.tiles[xi][yi]:setId("D")
 		end
 	end
 end

@@ -1,5 +1,6 @@
 require "map/Map"
 require "map/Tile"
+require "map/Building"
 require "map/MapGen"
 require "map/Minimap"
 require "gui/Menu"

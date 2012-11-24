@@ -46,6 +46,9 @@ function Tile:resetImg()
 	elseif self.id == "B" then
 		self.img = blocked
 		self.mm = blockedMM
+	elseif self.id == "D" then
+		--self.img = building
+		self.mm = roadMM
 	end
 end
 function Tile:getImg()

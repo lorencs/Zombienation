@@ -6,6 +6,7 @@ function Map:new()
 		height = 0,
 		tileSize = 0,
 		tiles = {},
+		buildings = {},
 		canvas = 0,
 		minimap = nil
 	}
@@ -49,11 +50,13 @@ function Map:loadMap(filename)
 			y = y + 1
 		end
 	end
+	
+	-- find map buildings
+	self:detectBuildings()
 end
 
 -- save map to file
 function Map:saveMap(filename)
-	-- check dupe??
 	io.output(filename)
 	for y=0,self.height-1 do
 		for x=0,self.width-1 do
@@ -74,12 +77,7 @@ function Map:drawMap()
 		for y=0,self.height-1 do
 			xb = x * self.tileSize
 			yb = y * self.tileSize
-						
-			--id = self.tiles[self:index(x,y)]
-			--tile = self:getTile(id)
-			
-			
-			--index = self:index(x,y)
+
 			tile = self.tiles[x][y]
 				
 			--love.graphics.drawq(tile:getImg(), tile.sprite, xb, yb)
@@ -171,6 +169,8 @@ function Map:getNeighborInfo(x,y)
 		self:selectRoadSprite(tile)
 	elseif (tile.id == "W") then
 		self:selectWaterSprite(tile)					
+	elseif (tile.id == "D") then	-- builDing tile
+		self:selectBuildingSprite(tile, x, y)
 	end
 	
 	--self.canvas:renderTo(function()
@@ -225,6 +225,65 @@ function Map:selectWaterSprite(tile)
 	tile.sprite = love.graphics.newQuad(0, (i-1)*w, w, w, w, tile:getImg():getHeight())
 end
 
+-- find the correct sprite within building
+function Map:selectBuildingSprite(tile, x, y)
+	local building = self:findBuilding(x, y) 
+	tile.img = building.img
+	tile.sprite = building:getSprite(x, y, self.tileSize)
+end
+
+-- return building containing [x,y]
+function Map:findBuilding(x, y)
+	for _,v in pairs(self.buildings) do
+		if x >= v.x and x <= v.xend and y >= v.y and y <= v.yend then
+			return v
+		end
+	end
+end
+
+-- detect building placement in a pre-loaded map
+function Map:detectBuildings()
+	-- defining corners
+	local topCorner = {}
+	local bottomCorner = {}
+	
+	-- iterate over all tiles, find the building-defining corners
+	for y=0,self.height-1 do
+		for x=0,self.width-1 do
+			-- is a building tile
+			local id = self.tiles[x][y]:getId()
+			if id == "D" then				
+				-- neighbor tiles
+				local N = (self.tiles[x][y-1]:getId() == id)
+				local S = (self.tiles[x][y+1]:getId() == id)
+				local W = (self.tiles[x-1][y]:getId() == id)
+				local E = (self.tiles[x+1][y]:getId() == id)
+				
+				-- test corners
+				if not(N) and not(W) and S and E then
+					table.insert(topCorner, Point:new(x, y))
+				elseif N and W and not(S) and not(E) then
+					table.insert(bottomCorner, Point:new(x, y))
+				end
+			end
+		end
+	end
+	
+	-- create buildings based on the corners
+	for i,v in pairs(topCorner) do
+		-- get type
+		local xd = bottomCorner[i].x - v.x + 1
+		local yd = bottomCorner[i].y - v.y + 1
+		
+		local b_type = (xd * 10) + yd
+	
+		-- create building
+		local building = Building:new()
+		building:set(v.x, v.y, b_type)		
+		table.insert(self.buildings, building)
+	end
+end
+
 function Map:findi(spritei)
 	for i,v in ipairs(spritei) do
 		if (v == 1) then return i end
@@ -232,20 +291,3 @@ function Map:findi(spritei)
 	print ("didn't find i")
 	return 1
 end
-
---[[
-function Map:getTile(id)
-	if (id == "R") then
-		return self.road
-	end
-	if (id == "W") then
-		return self.water
-	end
-	if (id == "G") then
-		return self.grass
-	end
-	if (id == "B") then
-		return self.blocked
-	end
-end
---]]
