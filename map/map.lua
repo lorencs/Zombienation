@@ -284,6 +284,21 @@ function Map:detectBuildings()
 	end
 end
 
+-- add building from here rather than MapGen
+function Map:newBuilding(x, y, b_type)
+	-- add building to list
+	local b = Building:new()
+	b:set(x, y, b_type)
+	table.insert(self.buildings, b)
+	
+	-- set tiles
+	for xi=x,x+b.width-1 do
+		for yi=y,y+b.height-1 do
+			self.tiles[xi][yi]:setId("D")
+		end
+	end
+end
+
 function Map:findi(spritei)
 	for i,v in ipairs(spritei) do
 		if (v == 1) then return i end

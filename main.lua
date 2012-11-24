@@ -18,6 +18,9 @@ require "Units/Point"
 		- viewpoint code, clean up this main file a bit
 		- moved all the menu type code to the menu type file
 		- map changes saved in "map/defaultMap.txt"
+		- building editing with debug menu 
+			- still buggy: allows overlapping buildings
+			- todo: snap the draw box to tiles
 	
 	mikus: 
 		- hid cursor, replaced with a zombie hand (just a random image i found for now)
@@ -86,8 +89,7 @@ function love.load()
 	
 	-- init menu
 	menu = Menu:new(viewWidth, menuWidth, height)
-	menu:setMainMenu()
-	menu:setDebugMenu()
+	menu:setup()
 	
 	-- restrict camera
 	camera:setBounds(0, 0, map.width * map.tileSize - viewWidth, 
@@ -110,15 +112,28 @@ function love.update(dt)
 	-- update unit positions
 	unitManager:update(dt)
 	
+	-- current mouse position
+	xpos = math.floor((love.mouse.getX() + view.x) / map.tileSize)
+	ypos = math.floor((love.mouse.getY() + view.y) / map.tileSize)
+	
 	-- map editing
-	if menu.debugMode then
+	if menu.buildingMode then
+		if love.mouse.isDown("l") and love.mouse.getX() < viewWidth then
+			if (xpos > -1) and (ypos > -1) and (xpos < map.width) and (ypos < map.height) then
+				map:newBuilding(xpos, ypos, menu.b_type)
+				local xd = math.floor(menu.b_type / 10)
+				local yd = menu.b_type % 10
+				
+				-- update all relevent tiles
+				for xi=xpos,xpos+xd-1 do
+					for yi=ypos,ypos+yd-1 do
+						map:updateTileInfo(xi, yi)
+					end
+				end				
+			end
+		end
+	elseif menu.debugMode then
 		if love.mouse.isDown("l") and (love.mouse.getX() < viewWidth)then
-			--xpos = love.mouse.getX() + vpx - vpxmin
-			xpos = love.mouse.getX() + view.x 
-			--ypos = love.mouse.getY() + vpy - vpymin
-			ypos = love.mouse.getY() + view.y
-			xpos = math.floor(xpos / map.tileSize)
-			ypos = math.floor(ypos / map.tileSize)
 			if (xpos > -1) and (ypos > -1) and (xpos < map.width) and (ypos < map.height) then
 				--map.tiles[map:index(xpos,ypos)]:setId(drawTile)
 				map.tiles[xpos][ypos]:setId(drawTile);
@@ -126,6 +141,7 @@ function love.update(dt)
 			end
 		end
 	end
+	
 	
 	-- center camera
 	--camera:setPosition(math.floor(vpx - (viewWidth / 2)), 
@@ -137,9 +153,12 @@ function love.update(dt)
 end
 
 function love.draw()
+	local mx = love.mouse.getX()
+	local my = love.mouse.getY()
+
 -- restrict drag select
-	if dragSelect and (love.mouse.getX() >= viewWidth) then
-		love.mouse.setPosition(viewWidth - (love.mouse.getX() - viewWidth), love.mouse.getY())
+	if dragSelect and (mx >= viewWidth) then
+		love.mouse.setPosition(viewWidth - (mx - viewWidth), my)
 	end	
 	-- gotta set font to default because loveframes imagebutton messes it up for some reason
 	love.graphics.setFont(defaultFont)
@@ -148,6 +167,17 @@ function love.draw()
 	
 	-- draw the map
 	map:draw() 		
+	
+	-- building placement
+	if menu.buildingMode and not(menu.b_type == nil) then
+		local xw = math.floor(menu.b_type / 10)
+		local yw = menu.b_type % 10
+		
+		love.graphics.setColor(0,255,255)
+		love.graphics.setLineWidth(1)
+		love.graphics.rectangle("line", mx + view.x, my + view.y, 
+			xw * map.tileSize, yw * map.tileSize)
+	end
 	
 	-- draw the units
 	unitManager:draw()
@@ -159,21 +189,21 @@ function love.draw()
 	menu:draw()
 	
 	-- draw minimap
-	minimap:draw(width - 150, height - 170)
+	minimap:draw(width - 150, height - 200)
 	
 	-- drag selection
-	if (not(menu.debugMode) and dragSelect) then 
+	if (not(menu.debugMode) and not(menu.buildingMode) and dragSelect) then 
 		love.graphics.setColor(50,50,50,50)
-		love.graphics.rectangle("fill", dragx, dragy, love.mouse.getX() - dragx, love.mouse.getY() - dragy)
+		love.graphics.rectangle("fill", dragx, dragy, mx - dragx, my - dragy)
 		love.graphics.setColor(50,50,50,150)
 		love.graphics.setLineWidth(1)
-		love.graphics.rectangle("line", dragx+0.5, dragy+0.5, math.floor(love.mouse.getX()) - dragx, math.floor(love.mouse.getY()) - dragy)
+		love.graphics.rectangle("line", dragx+0.5, dragy+0.5, math.floor(mx) - dragx, math.floor(my) - dragy)
 	end
 	
 	-- debug
 	love.graphics.setColor(255,255,255)
 	love.graphics.print("Camera Cood: ["..view.x..","..view.y.."]", 0, 0)
-	love.graphics.print("Mouse Cood: ["..love.mouse.getX()..","..love.mouse.getY().."]", 0, 15)
+	love.graphics.print("Mouse Cood: ["..mx..","..my.."]", 0, 15)
 	love.graphics.print("Zombies alive: " .. number_of_zombies, 0, 30)
 	love.graphics.print("Humans alive: " .. number_of_humans, 0, 45)
 	love.graphics.print("Framerate: " .. love.timer.getFPS(), 0, 60)

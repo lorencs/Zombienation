@@ -143,6 +143,7 @@ end
 
 -- add building from predefined types
 function MapGen:addBuilding(x, y, b_type)
+	--[[
 	m = self.map
 	
 	-- add building to list
@@ -156,4 +157,6 @@ function MapGen:addBuilding(x, y, b_type)
 			m.tiles[xi][yi]:setId("D")
 		end
 	end
+	--]]
+	self.map:newBuilding(x, y, b_type)
 end
