@@ -13,8 +13,8 @@ UnitManager_mt = { __index = UnitManager }
 	
   ]]
   
-  		selectedUnitsCount = 0
-		selected_units = {}
+  	selectedUnitsCount = 0
+	selected_units = {}
 		
 -- Constructor
 function UnitManager:new()
@@ -27,6 +27,9 @@ function UnitManager:new()
 end
 
 function UnitManager:initUnits()
+
+	number_of_zombies = orig_number_of_zombies			-- zombies are red
+	number_of_humans = orig_number_of_humans			-- humans are blue
 	-- generating units (Unit Manager coming soon, will make this much shorter )
 	
 	zombie_list = {}							-- array of zombie objects
@@ -47,6 +50,30 @@ function UnitManager:initUnits()
 		human_list[i]:setupUnit()
 		human_tag = human_tag + 1
 	end	
+end
+
+function UnitManager:resetUnits()
+
+	--print("ini humans".. #human_list)
+	--print("ini zombies".. #zombie_list)
+	
+	-- remove all units from tables
+	for k in pairs (zombie_list) do
+		zombie_list [k] = nil
+	end
+	for k in pairs (human_list) do
+		human_list [k] = nil
+	end
+	
+	-- reset counters
+	number_of_humans = 0
+	number_of_zombies = 0
+	
+	-- re init units
+	self:initUnits()
+	
+	--print("humans".. #human_list)
+	--print("zombies".. #zombie_list)
 end
 
 -- Update function

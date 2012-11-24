@@ -55,7 +55,7 @@ function Menu:setMainMenu()
 	buttonNewGame:SetPos(xn, yn)
 	buttonNewGame:SetImage(love.graphics.newImage("gui/menunewgame.png"))
 	buttonNewGame.OnClick = function(object)
-		-- restart game
+	unitManager:resetUnits()	-- restart game
 	end
 	
 	table.insert(self.mainMenu, buttonNewGame)
