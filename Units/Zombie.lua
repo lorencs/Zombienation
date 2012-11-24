@@ -15,6 +15,8 @@ function Zombie:new(x_new, y_new)
 	dirVector = 0,
 	x = x_new,
     y = y_new,
+	cx = 0,
+	cy = 0,
 	angle = 30,
 	targetAngle = 0,
 	dirVec = 0,										-- 0 for negative, 1 for positive
@@ -48,8 +50,10 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	if not self.x then self.x = math.random(650) end
 	if not self.y then self.y = math.random(love.graphics.getHeight() - self.height) end
 	
-	print( math.tan(5))		-- prints (in degrees) 5/1 ( 5 degrees / 1 degree )
-		
+	-- print( math.tan(5))		-- prints (in degrees) 5/1 ( 5 degrees / 1 degree )
+	self.cx = self.x + self.radius
+	self.cy = self.y - self.radius
+	
 	self.speed = 30
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	self.x_direction = 0
@@ -166,6 +170,9 @@ function Zombie:update(dt, zi)
 	-- update zombie's movement
 	self.x = self.x + (dt * self.dirVector.x)
 	self.y = self.y + (dt * self.dirVector.y)
+	-- update the center x and y values of the unit
+	self.cx = self.x + self.radius
+	self.cy = self.y - self.radius
 	
 	-- update direction time ( after 5 seconds, the unit will randomly change direction )
 	self.directionTimer = self.directionTimer + dt			-- increasing directionTimer
@@ -189,20 +196,42 @@ function Zombie:update(dt, zi)
 	for i = 1, number_of_humans do
 	
 		if (self.v1.x ~= 0) then
-			local human_point = Point:new(human_list[i].x, human_list[i].y)
+			local human_point = Point:new(human_list[i].cx, human_list[i].cy)
 			local val = self:pTriangle(human_point, self.v1, self.v2, self.v3)
 			if val == true then										-- if human i is in the field of view of the zombie
 				self.fol_human = human_list[i].tag
-				self.state = "Chasing ".. self.fol_human			
+				self.state = "Chasing ".. self.fol_human	
+				human_list[i].color = 1
 			end
 		end
 		
 		-- zombie found a human to chase; break out of loop
 		if self.fol_human ~= 0 then break end
 	end
-	
  end
 
+ function Zombie:distanceBetweenHZ(x1,y1,x2,y2)
+	local x_v1, y_v1 = 0
+	local dist = 999
+	if (x1 < x2) and (y1 < y2) then
+		x_v1 = x2 - x1
+		y_v1 = y2 - y1
+		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
+	elseif (x1 > x2) and (y1 < y2) then
+		x_v1 = x1 - x2
+		y_v1 = y2 - y1
+		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
+	elseif (x1 > x2) and (y1 > y2) then
+		x_v1 = x1 - x2
+		y_v1 = y1 - y2
+		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
+	elseif (x1 < x2) and (y1 > y2) then
+		x_v1 = x2 - x1
+		y_v1 = y1 - y2
+		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
+	end
+ end
+ 
  function Zombie:follow_human(dt)
 
 	-- find the index of the human followed in the 'human_list' array
@@ -215,9 +244,9 @@ function Zombie:update(dt, zi)
 	
 	-- if zombie is 'same_location' distance away from unit.. it is attacking the unit !
 	local same_location = 2
-	
-	if ( (human_list[h_index].x > (self.x - same_location)) and (human_list[h_index].x < self.x + same_location) ) and 
-	   ( (human_list[h_index].y > self.y - same_location) and (human_list[h_index].y < self.y + same_location) ) then
+
+	local dist = self:distanceBetweenHZ(self.x,self.y,human_list[h_index].x, human_list[h_index].y)
+	if dist < (self.radius * 2) then
 	   
 	   -- set human's attacked state to 1
 		human_list[h_index].attacked = 1
@@ -305,22 +334,7 @@ function Zombie:update(dt, zi)
 	
 	-- update zombie's movement
 	self.x = self.x + (dt * self.dirVector.x)
-	self.y = self.y + (dt * self.dirVector.y)
-	
-	--[[
-	-- code for following the human unit
-	-- if human.x = self.x (or y) , then self.x (or y) will stay the same so no need to add cond for it
-	if human_list[h_index].y > self.y then
-		self.y = self.y + (self.speed * dt * 1)
-	elseif human_list[h_index].y < self.y then
-		self.y = self.y + (self.speed * dt * (-1))
-	end
-	
-	if human_list[h_index].x > self.x then
-		self.x = self.x + (self.speed * dt * 1)
-	elseif human_list[h_index].x < self.x then
-		self.x = self.x + (self.speed * dt * (-1))
-	end		--]]													
+	self.y = self.y + (dt * self.dirVector.y)												
 	
  end
  

@@ -9,6 +9,8 @@ function Human:new()
 	--pos = Point:new(),
     x = 0,
     y = 0,
+	cx = 0,
+	cy = 0,
 	radius = 4,
 	angle = 30,
 	targetAngle = 0,
@@ -22,7 +24,8 @@ function Human:new()
 	x_direction = math.random(-1,1),
 	y_direction = math.random(-1,1),
 	attacked = 0,								-- if the unit is currently attacked, this var = 1
-    selected = false
+    selected = false,
+	color = 0
 	}
 
 	setmetatable(new_object, Human_mt )			-- add the new_object to metatable of Human
@@ -36,6 +39,8 @@ end
 function Human:setupUnit()							-- init vars for Human unit
 	self.x = math.random(300, 650) 						-- NOTE ! need to change this to (screenWidth - menuWidth) *change*
 	self.y = math.random(love.graphics.getHeight() - self.height)
+	self.cx = self.x + self.radius
+	self.cy = self.y - self.radius
 	self.width = 50
 	self.height = 50
 	self.state = "Going to the store ??"
@@ -57,9 +62,11 @@ function Human:draw(i)
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 10, 15 )
 	end
 	
+	
+	
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
-	
+	if self.color == 1 then love.graphics.setColor(255,0,0) end
 	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, 8, 15)
 	
 	-- print tag to screen.. for debug !
@@ -114,7 +121,9 @@ function Human:update(dt, zi)
 	-- update zombie's movement
 	self.x = self.x + (dt * self.dirVector.x)
 	self.y = self.y + (dt * self.dirVector.y)
-	
+	-- update the center x and y values of the unit
+	self.cx = self.x + self.radius
+	self.cy = self.y - self.radius
 	-- update direction time ( after 5 seconds, the unit will randomly change direction )
 	self.directionTimer = self.directionTimer + dt			-- increasing directionTimer	
 
