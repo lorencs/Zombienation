@@ -68,6 +68,9 @@ function Minimap:mousereleased()
 	self.moving = false
 end
 
+function Minimap:infected(x,y)
+end
+
 -- draw the minimap at x,y coord on the screen
 function Minimap:draw()
 	love.graphics.draw(self.canvas, self.x, self.y)
@@ -94,7 +97,7 @@ function Minimap:draw()
 	for i = 1, #human_list do
 		local hx = human_list[i].x / self.map.tileSize
 		local hy = human_list[i].y / self.map.tileSize
-		love.graphics.rectangle("fill", self.x + hx, self.y + hy,1,1)
+		love.graphics.rectangle("fill", self.x + hx, self.y + hy,2,2)
 		--human_list[i].x, human_list[i].y
 	end
 	
@@ -103,7 +106,7 @@ function Minimap:draw()
 	for i = 1, #zombie_list do
 		local zx = zombie_list[i].x / self.map.tileSize
 		local zy = zombie_list[i].y / self.map.tileSize
-		love.graphics.rectangle("fill", self.x + zx, self.y + zy,1,1)
+		love.graphics.rectangle("fill", self.x + zx, self.y + zy,2,2)
 		--human_list[i].x, human_list[i].y
 	end
 	
