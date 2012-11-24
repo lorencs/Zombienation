@@ -52,7 +52,7 @@ function Map:loadMap(filename)
 	end
 	
 	-- find map buildings
-	self:detectBuildings()
+	--self:detectBuildings()														** COMMENTED OUT
 end
 
 -- save map to file
@@ -170,7 +170,7 @@ function Map:getNeighborInfo(x,y)
 	elseif (tile.id == "W") then
 		self:selectWaterSprite(tile)					
 	elseif (tile.id == "D") then	-- builDing tile
-		self:selectBuildingSprite(tile, x, y)
+		--self:selectBuildingSprite(tile, x, y)												** COMMENTED OUT
 	end
 	
 	--self.canvas:renderTo(function()
