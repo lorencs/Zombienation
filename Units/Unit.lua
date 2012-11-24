@@ -42,6 +42,16 @@ function Unit:getDirection(angle, unitSpeed)				-- returns a point (x and y) giv
 	return dvector
 end
 
+function Unit:getDirectionOnly(angle)				-- returns a point (x and y) given an angle
+    
+	dvector = Point:new()
+	local angle_rad = self.angle * (math.pi/180)
+	dvector.x = math.cos(angle_rad)
+	dvector.y = math.sin(angle_rad)
+	--print( "x and y are ".. " "..math.cos(angle).. ", ".. dvector.y )
+	return dvector
+end
+
 function Unit:unitAction2()
     print( "Another action it can do .." )
 end

@@ -78,6 +78,20 @@ end
 function Zombie:draw(i)
 	--self.animation:draw(self.x,self.y)
 	--love.graphics.draw(self.spriteImage, self.x, self.y)
+	love.graphics.setColor(211,211,211,150)
+	love.graphics.circle( "fill", self.x + self.radius, self.y + self.radius, 35, 15 )
+	
+	angleDir = self:getDirection(self.angle, self.speed)
+	print("x:".. angleDir.x.. ", y:".. angleDir.y)
+	love.graphics.setColor(216,216,216)
+	--love.graphics.triangle("fill", self.x + self.radius, self.y + self.radius, 
+	--						self.x + math.cos(self.angle * (math.pi/180) )*90 + self.radius, self.y + math.sin(self.angle * (math.pi/180) )*36 + self.radius - 15,
+	--						self.x + math.cos(self.angle * (math.pi/180) )*90 + self.radius,self.y + math.sin(self.angle * (math.pi/180) )*36 + self.radius + 15)
+	
+	love.graphics.triangle("fill", 
+		self.x + self.radius, self.y + self.radius,
+		self.x + math.cos( (self.angle - 50) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle - 50) * (math.pi/180) )*90 + self.radius,
+		self.x + math.cos( (self.angle + 50 ) * (math.pi/180) )*90 + self.radius,self.y + math.sin( (self.angle + 50) * (math.pi/180) )*90 + self.radius)
 	
 	if self.selected then
 		love.graphics.setColor(0,255,0, 150)
@@ -110,61 +124,67 @@ end
 
 -- Update function
 function Zombie:update(dt, zi)
-	--print("map width tiles:".. map.width.. ", height tiles:".. map.height)
-	--print("map width:".. map.width*map.tileSize.. ", height:".. map.height*map.tileSize)
-	
+
 	--self.animation:update(dt)
-	--
-	--[[
-	if self.fol_human ~= 0 then									-- if zombie is following a human
-		self:follow_human(dt)									
-		return
-	else														-- else look around 
+	
+	--if self.fol_human ~= 0 then									-- if zombie is following a human
+		--self:follow_human(dt)									
+		--return
+	--else														-- else look around 
 		self:lookAround(zi)
-	end
-	]]
+	--end
+	
 	
 	-- after 5 seconds, the zombie should change his direction (x and y)
-	if self.directionTimer > 5 then 					
-		--self.x_direction = math.random(-1,1)		-- -1 to 1..
-		--self.y_direction = math.random(-1,1)				
+	if self.directionTimer > 5 then 							
 		self.targetAngle = math.random(360)
+		local newAngle = 180 + self.angle
 		
-		local diff = math.abs(self.targetAngle - self.angle)
 		
-		if diff <= 180 then
-			self.dirVec = 0								-- unit's angle will increase (positive) each update
-		elseif diff > 180 then
-			self.dirVec = 1								-- unit's angle will decrease (negative) each update
+		if newAngle < 360 then
+			if (self.targetAngle < newAngle) and (self.targetAngle > self.angle) then
+				self.dirVec = 0
+			else
+				self.dirVec = 1
+			end
+		else
+			newAngle = newAngle - 360
+			if (self.targetAngle > newAngle) and (self.targetAngle < self.angle) then
+				self.dirVec = 1
+			else
+				self.dirVec = 0
+			end
 		end
+		
 		self.directionTimer = 0						-- reset directionTimer
-		--print("diff is ".. diff.. " direction:".. self.dirVec)
-		--print("target angle is ".. self.targetAngle.. ", angle is ".. self.angle.." direction is ".. self.dirVec)
+		--print("dir:".. self.dirVec)
 	end
-	
-
 		
 	-- if it did not reach the targetAngle
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then
 		--print("target reached ")
 	else
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
-		if self.dirVec == 1 then
+		if self.dirVec == 0 then			-- positive direction
 			self.angle = self.angle + 0.2
-		elseif self.dirVec == 0 then
+		elseif self.dirVec == 1 then		-- negative direction
 			self.angle = self.angle - 0.2
 		end
 		
-		if self.angle < 0 then
-			self.angle = 360
-		elseif self.angle > 360 then
-			self.angle = 0
+		-- reset angles if they go over 360 or if they go under 0
+		if self.angle > 360 then
+			self.angle = self.angle - 360
 		end
 		
+		if self.angle < 0 then
+			self.angle = 360 + self.angle
+		end
 	end
-		self.dirVector = self:getDirection(self.angle, self.speed)
-		self.x = self.x + (dt * self.dirVector.x)
-		self.y = self.y + (dt * self.dirVector.y)
+		
+	--end
+	self.dirVector = self:getDirection(self.angle, self.speed)
+	self.x = self.x + (dt * self.dirVector.x)
+	self.y = self.y + (dt * self.dirVector.y)
 	-- update direction time ( after 5 seconds, the unit will randomly change direction )
 	self.directionTimer = self.directionTimer + dt			-- increasing directionTimer
 	
