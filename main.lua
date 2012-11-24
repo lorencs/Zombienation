@@ -85,7 +85,7 @@ function love.load()
 	view = View:new(viewWidth, map)
 	
 	-- minimap
-	minimap = Minimap:new(map, view, unitManager, width - 150, height - 200, width, height)
+	minimap = Minimap:new(map, view, unitManager, width - 150, height - map.height - 100, width, height)
 	minimap:init()
 	map:setMinimap(minimap)
 	

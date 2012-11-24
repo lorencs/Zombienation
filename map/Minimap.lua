@@ -33,6 +33,8 @@ function Minimap:init()
 	end
 	self.winWidth = self.winWidth/self.map.tileSize
 	self.winHeight = self.winHeight/self.map.tileSize
+	self.width = self.map.width
+	self.height = self.map.height
 end
 
 function Minimap:updateCanvas(i,j)
@@ -79,11 +81,11 @@ function Minimap:draw()
 	-- fix view window being out of bounds
 	local drawX = self.x+self.camX
 	local drawY = self.y+self.camY
-	if (self.camX > (100-self.winWidth)) then
-		drawX = self.x + 100-self.winWidth
+	if (self.camX > (self.width-self.winWidth)) then
+		drawX = self.x + self.width-self.winWidth
 	end
-	if (self.camY > (100-self.winHeight)) then
-		drawY = self.y + 100-self.winHeight
+	if (self.camY > (self.height-self.winHeight)) then
+		drawY = self.y + self.height-self.winHeight
 	end
 	if (self.camX < 0) then
 		drawX = self.x
