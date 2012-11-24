@@ -47,8 +47,8 @@ function Minimap:update(x,y)
 	self.camY = math.floor(y/self.map.tileSize)
 	
 	if self.moving then
-		local viewX = love.mouse.getX()  - self.x
-		local viewY = love.mouse.getY() - self.y
+		local viewX = love.mouse.getX() - self.x - (self.winWidth/2)
+		local viewY = love.mouse.getY() - self.y - (self.winHeight/2)
 		self.view.x = viewX*self.map.tileSize
 		self.view.y = viewY*self.map.tileSize
 	end
