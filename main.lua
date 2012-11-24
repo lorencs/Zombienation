@@ -71,21 +71,23 @@ function love.load()
 	generator = MapGen:new()
 	generator:defaultMap()
 	
-	-- get the map
+	-- get the map	
 	map = generator:getMap()
-	minimap = Minimap:new(map)
-	minimap:init()
-	map:setMinimap(minimap)
 	
-	-- graphics setup
+	
+	-- graphics setup	
 	width = love.graphics.getWidth()
 	height = love.graphics.getHeight()
-	
 	menuWidth = 200
 	viewWidth = width - menuWidth
 	
 	-- viewpoint
 	view = View:new(viewWidth, map)
+	
+	-- minimap
+	minimap = Minimap:new(map, view, width - 150, height - 200, width, height)
+	minimap:init()
+	map:setMinimap(minimap)
 	
 	-- init menu
 	menu = Menu:new(viewWidth, menuWidth, height)
@@ -147,7 +149,10 @@ function love.update(dt)
 	--camera:setPosition(math.floor(vpx - (viewWidth / 2)), 
 	--	math.floor(vpy - height / 2))
 	camera:setPosition(math.floor(view.x), math.floor(view.y))
-		
+	
+	-- update minimap
+	minimap:update(view.x,view.y)
+	
 	-- loveframes
 	loveframes.update(dt)
 end
@@ -189,7 +194,7 @@ function love.draw()
 	menu:draw()
 	
 	-- draw minimap
-	minimap:draw(width - 150, height - 200)
+	minimap:draw()
 	
 	-- drag selection
 	if (not(menu.debugMode) and not(menu.buildingMode) and dragSelect) then 
