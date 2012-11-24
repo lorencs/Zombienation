@@ -234,12 +234,15 @@ function love.mousepressed(x, y, button)
 		end
 	end
 	
+	minimap:mousepressed(x, y, button)
 	loveframes.mousepressed(x, y, button)
 end
 
 function love.mousereleased(x, y, button)
 	-- process loveframes callback first so that DEBUG can be set to false
 	loveframes.mousereleased(x, y, button)
+	
+	minimap:mousereleased()
 	
 	if (button == "l") and not menu.debugMode and (x < viewWidth) then
 		dragSelect = false
