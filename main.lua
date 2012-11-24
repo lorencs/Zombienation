@@ -140,7 +140,7 @@ function love.draw()
 		love.mouse.setPosition(viewWidth - (love.mouse.getX() - viewWidth), love.mouse.getY())
 	end	
 	-- gotta set font to default because loveframes imagebutton messes it up for some reason
-	love.graphics.setFont(love.graphics.newFont(12))
+	--love.graphics.setFont(love.graphics.newFont(12))
 	-- set camera
 	camera:set()					
 	
