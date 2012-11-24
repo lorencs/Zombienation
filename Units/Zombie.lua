@@ -194,7 +194,6 @@ function Zombie:update(dt, zi)
 			if val == true then										-- if human i is in the field of view of the zombie
 				self.fol_human = human_list[i].tag
 				self.state = "Chasing ".. self.fol_human			
-				--human_list[i].blah = 1								-- turns human to red.. just for debug
 			end
 		end
 		

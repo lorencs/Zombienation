@@ -22,8 +22,7 @@ function Human:new()
 	x_direction = math.random(-1,1),
 	y_direction = math.random(-1,1),
 	attacked = 0,								-- if the unit is currently attacked, this var = 1
-    selected = false,
-	blah = 0
+    selected = false
 	}
 
 	setmetatable(new_object, Human_mt )			-- add the new_object to metatable of Human
@@ -61,8 +60,6 @@ function Human:draw(i)
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
 	
-	-- if seen by zombie.. color it red
-	if (self.blah == 1) then love.graphics.setColor(255,0,0) end
 	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, 8, 15)
 	
 	-- print tag to screen.. for debug !
