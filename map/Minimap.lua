@@ -1,10 +1,11 @@
 Minimap = {}
 
 -- constructor
-function Minimap:new(_map, _view, _x, _y, ww, wh)
+function Minimap:new(_map, _view, um, _x, _y, ww, wh)
 	local object = {
 		map = _map,
 		view = _view,
+		unitManager = um,
 		x = _x,
 		y = _y,
 		width = 100,
@@ -70,7 +71,9 @@ end
 -- draw the minimap at x,y coord on the screen
 function Minimap:draw()
 	love.graphics.draw(self.canvas, self.x, self.y)
-	love.graphics.setColor(255,255,0)
+	
+	
+	-- fix view window being out of bounds
 	local drawX = self.x+self.camX
 	local drawY = self.y+self.camY
 	if (self.camX > (100-self.winWidth)) then
@@ -85,5 +88,26 @@ function Minimap:draw()
 	if (self.camY < 0) then
 		drawY = self.y
 	end
+	
+	-- draw humans
+	love.graphics.setColor(0,0,255)
+	for i = 1, #human_list do
+		local hx = human_list[i].x / self.map.tileSize
+		local hy = human_list[i].y / self.map.tileSize
+		love.graphics.rectangle("fill", self.x + hx, self.y + hy,1,1)
+		--human_list[i].x, human_list[i].y
+	end
+	
+	-- draw zombies
+	love.graphics.setColor(255,0,0)
+	for i = 1, #zombie_list do
+		local zx = zombie_list[i].x / self.map.tileSize
+		local zy = zombie_list[i].y / self.map.tileSize
+		love.graphics.rectangle("fill", self.x + zx, self.y + zy,1,1)
+		--human_list[i].x, human_list[i].y
+	end
+	
+	-- draw view window
+	love.graphics.setColor(255,255,0)
 	love.graphics.rectangle("line", drawX+0.5, drawY+0.5, self.winWidth-1, self.winHeight-1)
 end

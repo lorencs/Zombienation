@@ -305,7 +305,7 @@ function Menu:draw()
 		
 	-- outline
 	love.graphics.setColor(self.lineColor)
-	love.graphics.rectangle("line", self.xs, self.ys, self.xe, self.ye)
+	love.graphics.rectangle("line", self.xs+0.5, self.ys+0.5, self.xe-0.5, self.ye-0.5)
 	
 	--[[ draw the buttons
 	for _,v in pairs(self.buttons) do
