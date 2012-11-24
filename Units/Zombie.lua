@@ -122,10 +122,7 @@ function Zombie:update(dt, zi, paused)
 	--self.animation:update(dt)
 	
 	-- if game is paused, do not update any values
-	if paused == true then 
-		print("not updating zombie") 
-		return 
-	end
+	if paused == true then return end
 	
 	if self.fol_human ~= 0 then			-- if zombie is following a human				
 		self:follow_human(dt)			-- zombie is following a human

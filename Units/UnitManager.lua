@@ -77,11 +77,11 @@ function UnitManager:resetUnits()
 end
 
 function UnitManager:pauseGame()
-	self.paused = true
-end
-
-function UnitManager:resumeGame()
-	self.paused = false
+	if self.paused == true then
+		self.paused = false
+	else
+		self.paused = true
+	end
 end
 
 -- Update function

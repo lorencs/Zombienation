@@ -74,10 +74,7 @@ end
 function Human:update(dt, zi, paused)
 
 	-- if game is paused, do not update any values
-	if paused == true then 
-		print("not updating humans") 
-		return 
-	end
+	if paused == true then return end
 	
 	-- if the human is attacked, then he can't move (or could make him move very slow?)
 	if self.attacked == 1 then

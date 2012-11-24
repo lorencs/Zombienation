@@ -68,6 +68,10 @@ function Unit:getAngle(x,y)				-- returns a point (x and y) given an angle
 	return retAngle * (180 / math.pi)
 end
 
+function Unit:checkMapBoundaries()
+
+end
+
 function Unit:pointInTriangle(p, az, b, c)			-- arguments: Point p, Point a, Point b, Point c
 
     as_x = p.x-az.x
