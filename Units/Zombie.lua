@@ -11,11 +11,11 @@ Zombie_mt = { __index = Zombie }
 function Zombie:new(x_new, y_new)
 
     local new_object = {							-- define our parameters here
-    tag = 0,										
+    tag = 0,										-- tag of unit			
 	dirVector = 0,
-	x = x_new,
+	x = x_new,										-- x and y coordinates ( by default, left top )
     y = y_new,
-	cx = 0,
+	cx = 0,											-- centered x and y coordinates of the unit
 	cy = 0,
 	angle = 30,
 	targetAngle = 0,

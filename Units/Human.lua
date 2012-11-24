@@ -5,11 +5,10 @@ Human_mt = { __index = Human }
 function Human:new()
 
     local new_object = {							-- define our parameters here
-	tag = 0,
-	--pos = Point:new(),
-    x = 0,
+	tag = 0,										-- tag of unit
+    x = 0,											-- x and y coordinates ( by default, left top )
     y = 0,
-	cx = 0,
+	cx = 0,											-- centered x and y coordinates of the unit
 	cy = 0,
 	radius = 4,
 	angle = 30,
@@ -28,12 +27,10 @@ function Human:new()
 	color = 0
 	}
 
-	setmetatable(new_object, Human_mt )			-- add the new_object to metatable of Human
-	setmetatable(Human, { __index = Unit })        -- Human is a subclass of class Unit, so set inheritance..
+	setmetatable(new_object, Human_mt )				-- add the new_object to metatable of Human
+	setmetatable(Human, { __index = Unit })        -- Human is a subclass of class Unit, so set inheritance..				
 	
-	--self.setupUnit()								-- why doesnt this work ?? for now, just calling setupUnit in main..							
-	
-    return new_object								--
+    return new_object
 end
 
 function Human:setupUnit()							-- init vars for Human unit

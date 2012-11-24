@@ -106,8 +106,6 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 		if ( ( human_list[i].cx > min_x ) and ( human_list[i].cx < max_x )
 			and ( human_list[i].cy > min_y ) and ( human_list[i].cy < max_y ) ) then
 			
-			--	print("x:".. human_list[i].x.. ",y:"..human_list[i].y)
-	--print("cx:".. human_list[i].cx.. ",cy:"..human_list[i].cy)
 			human_list[i].selected = true	-- set the selected value to true
 			selected_units[i] = human_list[i].tag
 			selectedUnitsCount = selectedUnitsCount + 1
