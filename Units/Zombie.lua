@@ -257,6 +257,7 @@ function Zombie:update(dt, zi, paused)
 	local same_location = 2
 
 	local dist = self:distanceBetweenZH(self.cx,self.cy,human_list[h_index].cx, human_list[h_index].cy)
+	print("dist is : ".. dist)
 	if dist < (self.radius * 2 + 7) then
 	   
 	   -- set human's attacked state to 1

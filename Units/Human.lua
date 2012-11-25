@@ -18,7 +18,7 @@ function Human:new()
     state = "",
 	speed = 0,
 	normalSpeed = 20,
-	panicSpeed = 26,
+	panicSpeed = 35,
     runSpeed = 0,
 	directionTimer = 0,
 	initial_direction = 1,
@@ -139,7 +139,7 @@ end
 			if val == true then										-- if zombie i is in the field of view of this human
 				self.state = "Running from  ".. zombie_list[i].tag
 				self.panicMode = true
-				self.panicTimer = 6									-- panic for 6 seconds since last seeing a zombie !
+				self.panicTimer = 60									-- panic for 6 seconds since last seeing a zombie !
 				
 				self:runAwayFrom(zombie_list[i].x, zombie_list[i].y)
 				--[[
