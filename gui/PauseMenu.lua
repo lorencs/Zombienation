@@ -11,7 +11,7 @@ function PauseMenu:new(_x,_y)
 		x = _x,
 		y = _y,
 		visible = false,
-		background = love.graphics.newImage("gui/menubg.png")
+		background = love.graphics.newImage("gui/menubg2.png")
 	}	
 	
 	setmetatable(object, { __index = PauseMenu })
