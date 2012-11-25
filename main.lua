@@ -5,6 +5,7 @@ require "map/MapGen"
 require "map/Minimap"
 require "gui/Menu"
 require "gui/StartMenu"
+require "gui/PauseMenu"
 require "gui/View"
 require "camera"
 require "units/UnitManager"
@@ -52,11 +53,12 @@ orig_number_of_humans = 150			-- humans are blue
 									-- i wish it was too
 
 -- gamestate
-Gamestate = require "gamestate/gamestate"
-Timer = require "timer"
+Gamestate = require "utils/gamestate"
+Timer = require "utils/timer"
 startMenuSTATE = Gamestate.new()
 gameSTATE = Gamestate.new()
 endingSTATE = Gamestate.new()
+paused = false
 
 function love:load()	
 	-- debug menu bools
@@ -98,8 +100,7 @@ function love:load()
 	map:setMinimap(minimap)
 		
 	-- restrict camera
-	camera:setBounds(0, 0, map.width * map.tileSize - viewWidth, 
-		map.height * map.tileSize - height)
+	camera:setBounds(0, 0, map.width * map.tileSize - viewWidth, map.height * map.tileSize - height)
 		
 	-- cursor
 	love.mouse.setVisible(false)
@@ -159,12 +160,24 @@ function gameSTATE:enter()
 	-- init menu
 	menu = Menu:new(viewWidth, menuWidth, height)
 	menu:setup()
-	unitManager:resetUnits()	-- reset units
+	
+	-- pause menu
+	pauseMenu = PauseMenu:new(width/2 - 100, height/2 - 100)
+	pauseMenu:setup()
+	
+	-- reset units
+	unitManager:resetUnits()	
 end
 
 function gameSTATE:leave()
 	-- init menu
 	menu:delete()
+	pauseMenu:delete()
+end
+
+function gameSTATE:pauseResume()
+	unitManager:pauseGame()	-- pause and resume game
+	paused = not paused
 end
 
 function gameSTATE:update(dt)
@@ -270,6 +283,9 @@ function gameSTATE:draw()
 		love.graphics.rectangle("line", dragx+0.5, dragy+0.5, math.floor(mx) - dragx, math.floor(my) - dragy)
 	end
 	
+	-- pause menu
+	pauseMenu:draw()
+	
 	-- debug
 	love.graphics.setColor(255,255,255)
 	love.graphics.print("Camera Cood: ["..view.x..","..view.y.."]", 0, 0)
@@ -322,10 +338,14 @@ end
 
 
 function gameSTATE:keyreleased(key)
-	if key == "escape" then -- kill app
-		-- save map
-		map:saveMap("map/defaultMap.txt")
-		love.event.quit()
+	if key == "escape" then 
+		if not paused then -- show pause menu
+			pauseMenu:showHide()
+			gameSTATE:pauseResume()
+		else
+			pauseMenu:showHide()
+			gameSTATE:pauseResume()
+		end
 	elseif key == "p" then
 		love.audio.play(music)
 	elseif key == "s" then

@@ -51,8 +51,8 @@ function Menu:setMainMenu()
 
 	-- gold coins
 	
-	-- create buttons
-	buttonNewGame = loveframes.Create("imagebutton")
+	-- create buttons ----dont need these anymore, theyre in the esc (pause) menu
+	--[[buttonNewGame = loveframes.Create("imagebutton")
 	buttonNewGame:SetSize(self.width, bh)
 	buttonNewGame:SetPos(xn, yn)
 	buttonNewGame:SetImage(love.graphics.newImage("gui/restartgame.png"))
@@ -66,10 +66,10 @@ function Menu:setMainMenu()
 	buttonPause:SetPos(xn, yn + 35)
 	buttonPause:SetImage(love.graphics.newImage("gui/pausegame.png"))
 	buttonPause.OnClick = function(object)
-		unitManager:pauseGame()	-- pause and resume game
+		game:pauseResume()
 	end
 	
-	table.insert(self.mainMenu, buttonNewGame)
+	table.insert(self.mainMenu, buttonNewGame)]]--
 end
 
 

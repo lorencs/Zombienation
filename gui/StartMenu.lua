@@ -54,28 +54,6 @@ function StartMenu:update()
 	
 end
 
-
--- draw the menu
-function StartMenu:draw()
-	--[[ draw the buttons
-	for _,v in pairs(self.buttons) do
-		v:draw()
-	end
-	--]]
-	for _,v in pairs(self.mainMenu) do
-		v:SetVisible(not(self.debugMode))
-	end
-	for _,v in pairs(self.debugMenu) do
-		v:SetVisible(self.debugMode)
-	end
-	for _,v in pairs(self.buildingMenu) do
-		v:SetVisible(self.buildingMode)
-	end
-	
-	
-	love.graphics.reset()
-end
-
 function StartMenu: delete()
 	buttonStartGame:Remove()
 	buttonOptions:Remove()
