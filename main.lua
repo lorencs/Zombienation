@@ -74,9 +74,7 @@ function love:load()
 	randomizer = math.random(30,60)				
 	math.randomseed( os.time() + randomizer )
 	
-	-- initiate units
-	unitManager = UnitManager:new()
-	unitManager:initUnits()
+
 	
 	-- generate a map
 	generator = MapGen:new()
@@ -85,6 +83,9 @@ function love:load()
 	-- get the map	
 	map = generator:getMap()
 	
+		-- initiate units
+	unitManager = UnitManager:new()
+	unitManager:initUnits()
 	-- graphics setup	
 	width = love.graphics.getWidth()
 	height = love.graphics.getHeight()

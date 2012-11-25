@@ -73,13 +73,13 @@ function Unit:checkMapBoundaries(mx, my, unitRadius)
 	local map_w = map.width*map.tileSize
 	local map_h = map.height*map.tileSize
 	
-	if  (my < unitRadius) then							-- too close to the top of the screen
+	if  (my < unitRadius * 2) then							-- too close to the top of the screen
 		return math.random(5,175)
-	elseif (mx < unitRadius) then						-- too close to the left side of the screen
+	elseif (mx < unitRadius * 2) then						-- too close to the left side of the screen
 		return math.random(275,355)
-	elseif (my > (map_h - unitRadius)) then				-- too close to the bottom of the screen
+	elseif (my > (map_h - unitRadius * 2)) then				-- too close to the bottom of the screen
 		return math.random(185,355)
-	elseif (my > (map_w - unitRadius)) then				-- too close to the right side of the screen
+	elseif (mx > (map_w - unitRadius * 2)) then				-- too close to the right side of the screen
 		return math.random(95,265)
 	end
 	

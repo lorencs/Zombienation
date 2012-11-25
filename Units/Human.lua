@@ -40,17 +40,17 @@ end
 
 function Human:setupUnit()
 
-	--local map_wa = map.width*map.tileSize
-	--local map_ha = map.height*map.tileSize
+	local map_w = map.width*map.tileSize
+	local map_h = map.height*map.tileSize
 	
-	self.x = math.random(10, 2000) 							-- NOTE ! need to change this to (screenWidth - menuWidth) *change*
-	self.y = math.random(10, 2000)
+	self.x = math.random(10, map_w - self.radius * 2) 							-- NOTE ! need to change this to (screenWidth - menuWidth) *change*
+	self.y = math.random(10, map_h - self.radius * 2)
 	self.cx = self.x + self.radius
 	self.cy = self.y + self.radius
 	
 	self.width = 50
 	self.height = 50
-	self.state = "Going to the store ??"
+	self.state = "Chilling"
 	self.speed = self.normalSpeed
 	self.tag = human_tag
 	self.directionTimer = 0
@@ -85,8 +85,8 @@ function Human:draw(i)
 			
 		-- draw circle around selected unit
 		love.graphics.setColor(0,255,0, 150)
-		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 9, 15 )
-		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 10, 15 )
+		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 5, 15 )
+		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 6, 15 )
 		
 		-- draw state of unit
 		love.graphics.print(self.state, self.x, self.y + 15)
@@ -160,7 +160,7 @@ end
 	end
  end
  
--- Update function
+-- update function
 function Human:update(dt, zi, paused)
 
 	------------------------------- CHECK PAUSE AND ATTACKED
