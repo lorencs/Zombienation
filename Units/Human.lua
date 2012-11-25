@@ -139,7 +139,7 @@ end
 			if val == true then										-- if zombie i is in the field of view of this human
 				self.state = "Running from  ".. zombie_list[i].tag
 				self.panicMode = true
-				self.panicTimer = 60									-- panic for 6 seconds since last seeing a zombie !
+				--self.panicTimer = 60									-- panic for 6 seconds since last seeing a zombie !
 				
 				self:runAwayFrom(zombie_list[i].x, zombie_list[i].y)
 				--[[
@@ -203,22 +203,25 @@ function Human:update(dt, zi, paused)
 		-- while in panic mode, self.targetAngle should never change as the human is trying to run from the zombies
 		self.directionTimer = 0
 		
-		-- get the angle direction ( positive or negative on axis )
+		-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
 		self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
 		
 		-- stop panicking if panicTimer is < 0
+		--[[
 		if self.panicTimer < 0 then
 			self.speed = self.normalSpeed
 			self.state = "chilling !"
 			self.panicMode = false
-		end
+		end--]]
+	else
+		self.speed = self.normalSpeed
+		self.state = "chilling !"
 	end
 	
 	------------------------------- CHECK MAP BOUNDARIES
 	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
 	if val ~= 999 then			-- if it is too close to a boundary..
 		self.angle = val
-		--print(self.tag..", new target:".. self.targetAngle)
 	end
 	
 	------------------------------- UPDATE SELF.ANGLE

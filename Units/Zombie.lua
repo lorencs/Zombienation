@@ -88,6 +88,7 @@ function Zombie:draw(i)
 	
 		love.graphics.setColor(201,85,91,125)	
 		-- draw field of view
+		
 		love.graphics.triangle( "fill", 
 			self.v1.x,self.v1.y,
 			self.v2.x,self.v2.y,
@@ -107,6 +108,11 @@ function Zombie:draw(i)
 		love.graphics.setColor(0,255,0, 150)
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 9, 15 )
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 10, 15 )
+		
+		--love.graphics.circle( "fill", self.x + self.radius, self.y + self.radius, 70, 25 )
+
+		love.graphics.arc( "fill", self.x + self.radius, self.y + self.radius, 75, math.rad(self.angle + 45), math.rad(self.angle - 45) )
+		-- love.graphics.arc( mode, x, y, radius, angle1, angle2, segments )
 	end
 	
 	playerColor = {255,0,0}
@@ -149,7 +155,7 @@ function Zombie:update(dt, zi, paused)
 		-- randomize a degree, 0 to 360
 		self.targetAngle = math.random(360)
 		
-		-- get the angle direction ( positive or negative on axis )
+	-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
 		self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
 
 		-- reset directionTimer
@@ -245,7 +251,7 @@ function Zombie:update(dt, zi, paused)
  
  function Zombie:follow_human(dt)
 
-	-- find the index of the human followed in the 'human_list' array
+	-- find the index (in the 'human_list' array) of the human followed 
 	local h_index = 0
 	for i = 1, number_of_humans do
 		if human_list[i].tag == self.fol_human then
@@ -256,8 +262,10 @@ function Zombie:update(dt, zi, paused)
 	-- if zombie is 'same_location' distance away from unit.. it is attacking the unit !
 	local same_location = 2
 
+	------------------------------- CALCULATE DISTANCE BETWEEN ZOMBIE AND THE HUMAN IT IS FOLLOWING
 	local dist = self:distanceBetweenZH(self.cx,self.cy,human_list[h_index].cx, human_list[h_index].cy)
-	print("dist is : ".. dist)
+	
+	-- if its very close, zombie eats human
 	if dist < (self.radius * 2 + 7) then
 	   
 	   -- set human's attacked state to 1
@@ -285,6 +293,10 @@ function Zombie:update(dt, zi, paused)
 		
 		self.time_kill = self.time_kill + dt
 		return								-- no need to follow the human unit anymore
+	elseif	dist > 120 then					-- if zombie is too far, abandon the follow
+		self.fol_human = 0					-- unset follow
+		self.state = "Looking around"
+		human_list[h_index].panicMode = false		-- the human is not in panicMode anymore as it is not being followed anymore
 	end
 	
 	--local rada = math.rad(5)			--math.rad() (degrees as input) - degrees to radians
@@ -294,7 +306,7 @@ function Zombie:update(dt, zi, paused)
 	--print("zombie x:"..self.x..",y:"..self.y)
 	--print("human x:"..human_list[h_index].x..",y:"..human_list[h_index].y)
 	
-	-- following the human:          ( 4 cases; gets targetAngle )
+	------------------------------- FOLLOWING THE HUMAN
 	local x_v, y_v = 0
 	if (self.x < human_list[h_index].x) and (self.y < human_list[h_index].y) then
 		x_v = human_list[h_index].x - self.x
@@ -323,7 +335,7 @@ function Zombie:update(dt, zi, paused)
 		self.angle = val
 	end
 	
-	-- get the angle direction ( positive or negative on axis )
+	-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
 	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
 	
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then
