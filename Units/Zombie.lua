@@ -258,12 +258,13 @@ function Zombie:update(dt, zi, paused)
 		human_list[h_index].attacked = 1
 		
 		if (self.time_kill > 2) then									-- unit with index 'fol_human' should be dead by now !
-			
+			local deadx = human_list[h_index].x
+			local deady = human_list[h_index].y
 			table.remove(human_list, h_index)							-- remove human from human_list array
 			number_of_humans = number_of_humans - 1						-- decrease count of humans alive
 			
 			number_of_zombies = number_of_zombies + 1					-- increase count of zombies alive
-			zombie_list[number_of_zombies] = Zombie:new(self.x, self.y)	-- create new zombie at the location of this zombie
+			zombie_list[number_of_zombies] = Zombie:new(deadx, deady)	-- create new zombie at the location of this zombie
 			zombie_list[number_of_zombies]:setupUnit()					-- setup zombie
 			
 			-- tell all zombies that human with tag 'self.fol_human' is dead

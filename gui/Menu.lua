@@ -49,6 +49,8 @@ function Menu:setMainMenu()
 	local xn = self.xs
 	local yn = self.ys + bh
 
+	-- gold coins
+	
 	-- create buttons
 	buttonNewGame = loveframes.Create("imagebutton")
 	buttonNewGame:SetSize(self.width, bh)
