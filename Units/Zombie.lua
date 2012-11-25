@@ -33,7 +33,7 @@ function Zombie:new(x_new, y_new)
 	y_direction = math.random(-1,1),
 	fol_human = 0,									-- index of the human in human_list that this zombie will follow. if it's 0, then this zombie
 	selected = false,
-	v1 = Point:new(0,0),
+	v1 = Point:new(0,0),							-- vertices for the field of view triangle
 	v2 = Point:new(0,0),
 	v3 = Point:new(0,0)
 	}												-- is not following a human (yet !)
@@ -79,14 +79,18 @@ function Zombie:draw(i)
 	love.graphics.setColor(211,211,211,150)
 	--love.graphics.circle( "fill", self.x + self.radius, self.y + self.radius, 35, 15 )
 	
-	love.graphics.setColor(201,85,91,125)
+	
+	
+	-- field of view vertices
 	self.v1 = Point:new(self.x + self.radius, self.y + self.radius)
 	self.v2 = Point:new(self.x + math.cos( (self.angle - 40) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle - 40) * (math.pi/180) )*90 + self.radius)
 	self.v3 = Point:new(self.x + math.cos( (self.angle + 40 ) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle + 40) * (math.pi/180) )*90 + self.radius)
 	
 	
 	-- if the zombie unit is selected
-	if self.selected then							
+	if self.selected then	
+	
+		love.graphics.setColor(201,85,91,125)	
 		-- draw field of view
 		love.graphics.triangle( "fill", 
 			self.v1.x,self.v1.y,
@@ -203,7 +207,7 @@ function Zombie:update(dt, zi, paused)
 	-- fol_human stores the tag of the human to be followed ( if any )
 	for i = 1, number_of_humans do
 	
-		if (self.v1.x ~= 0) then
+		if (self.v1.x ~= 0) then									-- initially, v1.x is 0 as it has not been set so this is an exception case.
 			local human_point = Point:new(human_list[i].cx, human_list[i].cy)
 			local val = self:pTriangle(human_point, self.v1, self.v2, self.v3)
 			if val == true then										-- if human i is in the field of view of the zombie
@@ -293,6 +297,7 @@ function Zombie:update(dt, zi, paused)
 	--print("zombie x:"..self.x..",y:"..self.y)
 	--print("human x:"..human_list[h_index].x..",y:"..human_list[h_index].y)
 	
+	-- following the human:          ( 4 cases; gets targetAngle )
 	local x_v, y_v = 0
 	if (self.x < human_list[h_index].x) and (self.y < human_list[h_index].y) then
 		x_v = human_list[h_index].x - self.x
