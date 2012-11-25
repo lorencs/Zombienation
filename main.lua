@@ -49,7 +49,13 @@ orig_number_of_humans = 50			-- humans are blue
 									-- i thought this was a poem
 									-- i wish it was too
 
-function love.load()	
+-- gamestate
+Gamestate = require "gamestate/gamestate"
+startMenu = Gamestate.new()
+game = Gamestate.new()
+ending = Gamestate.new()
+
+function love:load()	
 	-- debug menu bools
 	drawTile = "R"
 	dragSelect = false
@@ -99,9 +105,17 @@ function love.load()
 	-- cursor
 	love.mouse.setVisible(false)
 	cursor = love.graphics.newImage("gui/cursor.png")
+	
+	Gamestate.switch(game)
 end
 
-function love.update(dt)
+-- this function is called everytime the game restart
+-- put any resetting code in here
+function game:enter()
+	unitManager:resetUnits()	-- reset units
+end
+
+function game:update(dt)
 	-- restrict drag select
 	if dragSelect and (love.mouse.getX() >= viewWidth) then
 		love.mouse.setPosition(viewWidth - (love.mouse.getX() - viewWidth), love.mouse.getY())
@@ -156,7 +170,7 @@ function love.update(dt)
 	loveframes.update(dt)
 end
 
-function love.draw()
+function game:draw()
 	local mx = love.mouse.getX()
 	local my = love.mouse.getY()
 
@@ -224,7 +238,7 @@ function love.draw()
 end
 
 -- callback functions needed by loveframes, we can use them too
-function love.mousepressed(x, y, button)
+function game:mousepressed(x, y, button)
 	if (x < viewWidth) and not menu.debugMode then
 		unitManager:deselectUnits()
 		if (button == "l") then		
@@ -237,7 +251,7 @@ function love.mousepressed(x, y, button)
 	loveframes.mousepressed(x, y, button)
 end
 
-function love.mousereleased(x, y, button)
+function game:mousereleased(x, y, button)
 	-- process loveframes callback first so that DEBUG can be set to false
 	loveframes.mousereleased(x, y, button)
 	
@@ -249,12 +263,12 @@ function love.mousereleased(x, y, button)
 	end	
 end
 
-function love.keypressed(key, unicode)
+function game.keypressed(key, unicode)
 	loveframes.keypressed(key, unicode)
 end
 
 
-function love.keyreleased(key)
+function game:keyreleased(key)
 	if key == "escape" then -- kill app
 		-- save map
 		map:saveMap("map/defaultMap.txt")
@@ -268,6 +282,32 @@ function love.keyreleased(key)
 	--loveframes
 	loveframes.keyreleased(key)
 end
+
+-- love callbacks redirected to gamestate
+function love.draw()
+    Gamestate.draw()
+end
+
+function love.update(dt)
+    Gamestate.update(dt) 
+end
+
+function love.keyreleased(key)
+    Gamestate.keypressed(key)
+end
+
+function love.keypressed(key)
+    Gamestate.keypressed(key)
+end
+
+function love.mousepressed(x, y, button)
+	Gamestate.mousepressed(x, y, button)
+end
+
+function love.mousereleased(x, y, button)
+	Gamestate.mousereleased(x, y, button)
+end
+-----------------------------------------------
 
 function math.clamp(x, min, max)
 	return x < min and min or (x > max and max or x)
