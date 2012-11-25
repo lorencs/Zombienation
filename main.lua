@@ -4,6 +4,7 @@ require "map/Building"
 require "map/MapGen"
 require "map/Minimap"
 require "gui/Menu"
+require "gui/StartMenu"
 require "gui/View"
 require "camera"
 require "units/UnitManager"
@@ -52,9 +53,10 @@ orig_number_of_humans = 150			-- humans are blue
 
 -- gamestate
 Gamestate = require "gamestate/gamestate"
-startMenu = Gamestate.new()
-game = Gamestate.new()
-ending = Gamestate.new()
+Timer = require "timer"
+startMenuSTATE = Gamestate.new()
+gameSTATE = Gamestate.new()
+endingSTATE = Gamestate.new()
 
 function love:load()	
 	-- debug menu bools
@@ -94,11 +96,7 @@ function love:load()
 	minimap = Minimap:new(map, view, unitManager, width - 150, height - map.height - 100, width, height)
 	minimap:init()
 	map:setMinimap(minimap)
-	
-	-- init menu
-	menu = Menu:new(viewWidth, menuWidth, height)
-	menu:setup()
-	
+		
 	-- restrict camera
 	camera:setBounds(0, 0, map.width * map.tileSize - viewWidth, 
 		map.height * map.tileSize - height)
@@ -107,16 +105,69 @@ function love:load()
 	love.mouse.setVisible(false)
 	cursor = love.graphics.newImage("gui/cursor.png")
 	
-	Gamestate.switch(game)
+	Gamestate.switch(startMenuSTATE)
 end
 
--- this function is called everytime the game restart
+------------------ START STATE CODE ----------------------------------------------
+
+function startMenuSTATE:init()
+	startMenu = StartMenu:new(width/2 - 100, height/2 + 100)
+	startMenu:setup()
+	titleScreen = love.graphics.newImage("gui/titleScreen.png")
+	alpha = 0
+	Timer.add(0.005, function(func) alpha = alpha+1 Timer.add(0.005, func) end)
+end
+
+function startMenuSTATE:update(dt)
+	Timer.update(dt)
+	if (alpha == 255) then Timer.clear() end
+	if love.keyboard.isDown(" ") then
+		Gamestate.switch(gameSTATE)
+	end
+	
+	loveframes.update(dt)
+end
+
+function startMenuSTATE:draw()
+	love.graphics.setColor(255,255,255,alpha)
+	love.graphics.draw(titleScreen, 0, 0)
+	
+	loveframes.draw()
+	
+	-- cursor
+	love.graphics.reset()	
+	love.graphics.draw(cursor, love.mouse.getX(), love.mouse.getY())		
+end
+
+function startMenuSTATE:mousepressed(x, y, button)
+	loveframes.mousepressed(x, y, button)
+end
+
+function startMenuSTATE:mousereleased(x, y, button)
+	loveframes.mousereleased(x, y, button)
+end
+
+function startMenuSTATE:leave()
+	startMenu:delete()
+end
+
+------------------ GAME STATE CODE ----------------------------------------------
+
+-- this function is called everytime the game restarts
 -- put any resetting code in here
-function game:enter()
+function gameSTATE:enter()
+	-- init menu
+	menu = Menu:new(viewWidth, menuWidth, height)
+	menu:setup()
 	unitManager:resetUnits()	-- reset units
 end
 
-function game:update(dt)
+function gameSTATE:leave()
+	-- init menu
+	menu:delete()
+end
+
+function gameSTATE:update(dt)
 	-- restrict drag select
 	if dragSelect and (love.mouse.getX() >= viewWidth) then
 		love.mouse.setPosition(viewWidth - (love.mouse.getX() - viewWidth), love.mouse.getY())
@@ -171,7 +222,7 @@ function game:update(dt)
 	loveframes.update(dt)
 end
 
-function game:draw()
+function gameSTATE:draw()
 	local mx = love.mouse.getX()
 	local my = love.mouse.getY()
 
@@ -240,7 +291,7 @@ function game:draw()
 end
 
 -- callback functions needed by loveframes, we can use them too
-function game:mousepressed(x, y, button)
+function gameSTATE:mousepressed(x, y, button)
 	if (x < viewWidth) and not menu.debugMode then
 		unitManager:deselectUnits()
 		if (button == "l") then		
@@ -253,7 +304,7 @@ function game:mousepressed(x, y, button)
 	loveframes.mousepressed(x, y, button)
 end
 
-function game:mousereleased(x, y, button)
+function gameSTATE:mousereleased(x, y, button)
 	-- process loveframes callback first so that DEBUG can be set to false
 	loveframes.mousereleased(x, y, button)
 	
@@ -265,12 +316,12 @@ function game:mousereleased(x, y, button)
 	end	
 end
 
-function game.keypressed(key, unicode)
+function gameSTATE:keypressed(key, unicode)
 	loveframes.keypressed(key, unicode)
 end
 
 
-function game:keyreleased(key)
+function gameSTATE:keyreleased(key)
 	if key == "escape" then -- kill app
 		-- save map
 		map:saveMap("map/defaultMap.txt")
@@ -291,11 +342,12 @@ function love.draw()
 end
 
 function love.update(dt)
+	loveframes.update(dt)
     Gamestate.update(dt) 
 end
 
 function love.keyreleased(key)
-    Gamestate.keypressed(key)
+    Gamestate.keyreleased(key)
 end
 
 function love.keypressed(key)

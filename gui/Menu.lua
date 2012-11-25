@@ -57,7 +57,7 @@ function Menu:setMainMenu()
 	buttonNewGame:SetPos(xn, yn)
 	buttonNewGame:SetImage(love.graphics.newImage("gui/restartgame.png"))
 	buttonNewGame.OnClick = function(object)
-		Gamestate.switch(game)
+		Gamestate.switch(gameSTATE)
 	end
 	
 	-- create buttons
@@ -335,4 +335,16 @@ function Menu:draw()
 	
 	
 	love.graphics.reset()
+end
+
+function Menu:delete()
+for _,v in pairs(self.mainMenu) do
+		v:Remove()
+	end
+	for _,v in pairs(self.debugMenu) do
+		v:Remove()
+	end
+	for _,v in pairs(self.buildingMenu) do
+		v:Remove()
+	end
 end
