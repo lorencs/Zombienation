@@ -11,7 +11,7 @@ function PauseMenu:new(_x,_y)
 		x = _x,
 		y = _y,
 		visible = false,
-		background = love.graphics.newImage("gui/menubg2.png")
+		background = love.graphics.newImage("gui/menubg.png")
 	}	
 	
 	setmetatable(object, { __index = PauseMenu })
@@ -66,9 +66,9 @@ end
 
 function PauseMenu:draw()
 	if self.visible then
-		love.graphics.setColor(20,20,20,100)
-		love.graphics.rectangle("fill", 0,0, width, height)
-		--love.graphics.draw(self.background,0,0)
+		--love.graphics.setColor(20,20,20,100)
+		--love.graphics.rectangle("fill", 0,0, width, height)
+		love.graphics.draw(self.background,0,0)
 	end
 end
 
