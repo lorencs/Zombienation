@@ -149,12 +149,23 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 		end
 	end
 	
+	for i = 1, number_of_zombies do
+		if ( ( zombie_list[i].cx > min_x ) and ( zombie_list[i].cx < max_x )
+			and ( zombie_list[i].cy > min_y ) and ( zombie_list[i].cy < max_y ) ) then
+			
+			zombie_list[i].selected = true	-- set the selected value to true
+		end
+	end
+	
 end
 
 function UnitManager:deselectUnits()
 print("deselect")
 	for i = 1, number_of_humans do
 		human_list[i].selected = false	-- deselect all zombies 
+	end
+	for i = 1, number_of_zombies do
+		zombie_list[i].selected = false	-- deselect all zombies 
 	end
 	selectedUnitsCount = 0
 	

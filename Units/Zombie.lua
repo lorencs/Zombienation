@@ -75,25 +75,33 @@ end
 function Zombie:draw(i)
 	--love.graphics.draw(self.spriteImage, self.x, self.y)
 	love.graphics.setColor(211,211,211,150)
-	love.graphics.circle( "fill", self.x + self.radius, self.y + self.radius, 35, 15 )
+	--love.graphics.circle( "fill", self.x + self.radius, self.y + self.radius, 35, 15 )
 	
-	love.graphics.setColor(216,216,216)
+	love.graphics.setColor(201,85,91,125)
 	self.v1 = Point:new(self.x + self.radius, self.y + self.radius)
 	self.v2 = Point:new(self.x + math.cos( (self.angle - 40) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle - 40) * (math.pi/180) )*90 + self.radius)
 	self.v3 = Point:new(self.x + math.cos( (self.angle + 40 ) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle + 40) * (math.pi/180) )*90 + self.radius)
 	
-	love.graphics.triangle( "fill", 
-		self.v1.x,self.v1.y,
-		self.v2.x,self.v2.y,
-		self.v3.x,self.v3.y
-		)
-	--love.graphics.arc( mode, x, y, radius, angle1, angle2, segments )
 	
-	--love.graphics.setColor(43,12,216)
-	--love.graphics.arc("fill", self.x + math.cos(self.targetAngle * (math.pi/180) )*30 + self.radius, self.y + math.sin(self.targetAngle * (math.pi/180))* 30 + self.radius,
-	--				10, self.angle, self.targetAngle,30)
-					
-	if self.selected then
+	-- if the zombie unit is selected
+	if self.selected then							
+		-- draw field of view
+		love.graphics.triangle( "fill", 
+			self.v1.x,self.v1.y,
+			self.v2.x,self.v2.y,
+			self.v3.x,self.v3.y
+			)
+		
+		-- draw line for angle and targetAngle
+		love.graphics.line(self.x + self.radius,self.y + self.radius, 
+							self.x + math.cos(self.angle * (math.pi/180) )*30 + self.radius , 
+							self.y + math.sin(self.angle * (math.pi/180))* 30 + self.radius)
+		love.graphics.setColor(0,255,0)
+		love.graphics.line(self.x + self.radius,self.y + self.radius, 
+							self.x + math.cos(self.targetAngle * (math.pi/180) )*30 + self.radius , 
+							self.y + math.sin(self.targetAngle * (math.pi/180))* 30 + self.radius)
+		
+		-- draw green circle around him
 		love.graphics.setColor(0,255,0, 150)
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 9, 15 )
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 10, 15 )
@@ -101,11 +109,11 @@ function Zombie:draw(i)
 	
 	playerColor = {255,0,0}
 	love.graphics.setColor(playerColor)
-	--love.graphics.rectangle("fill", self.x, self.y, 10, 10)
+	
+	-- circle zombie:
 	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, 8, 15)
-	love.graphics.line(self.x + self.radius,self.y + self.radius, self.x + math.cos(self.angle * (math.pi/180) )*30 + self.radius , self.y + math.sin(self.angle * (math.pi/180))* 30 + self.radius)
-	love.graphics.setColor(0,255,0)
-	love.graphics.line(self.x + self.radius,self.y + self.radius, self.x + math.cos(self.targetAngle * (math.pi/180) )*30 + self.radius , self.y + math.sin(self.targetAngle * (math.pi/180))* 30 + self.radius)
+	
+
 	-- for debugging:	FIELD OF VIEW OF ZOMBIE:
 	
 	--love.graphics.rectangle("line", self.x - see_human_dist, self.y, 10, 10)
@@ -144,9 +152,14 @@ function Zombie:update(dt, zi, paused)
 		-- reset directionTimer
 		self.directionTimer = 0						
 	end
-		
 	
-	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then		-- target reached
+	-- check map boundaries
+	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
+	if val ~= 999 then			-- if it is too close to a boundary..
+		self.angle = val
+	end
+	
+	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then		-- targetAngle reached
 	else																						-- else.. 
 	
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
@@ -165,7 +178,7 @@ function Zombie:update(dt, zi, paused)
 			self.angle = 360 + self.angle
 		end
 	end
-		
+	
 	-- get direction vector
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	
@@ -178,15 +191,6 @@ function Zombie:update(dt, zi, paused)
 	
 	-- update direction time ( after 5 seconds, the unit will randomly change direction )
 	self.directionTimer = self.directionTimer + dt			-- increasing directionTimer
-	
-	-- checking map boundaries
-	--[[local map_w = map.width*map.tileSize
-	local map_h = map.height*map.tileSize
-	if (self.x < 2) or (self.x > (map_w - 2)) or (self.y < 2) or (self.y > (map_h -2)) then
-		x_direction = 0
-		y_direction = 0
-		self.directionTimer = self.directionTimer + 5
-	end]]
 	
 	--self.animation:update(dt)
  end
@@ -305,8 +309,12 @@ function Zombie:update(dt, zi, paused)
 		self.targetAngle = 360 - self.targetAngle
 	end
 	
-	-- target angle is the human unit's angle !
-	--self.targetAngle = self:getAngle(x_v, y_v)
+	-- check map boundaries
+	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
+	if val ~= 999 then			-- if it is too close to a boundary..
+		self.angle = val
+		print(self.tag..", new target:".. self.targetAngle)
+	end
 	
 	-- get the angle direction ( positive or negative on axis )
 	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)

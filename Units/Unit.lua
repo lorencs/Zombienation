@@ -68,8 +68,22 @@ function Unit:getAngle(x,y)				-- returns a point (x and y) given an angle
 	return retAngle * (180 / math.pi)
 end
 
-function Unit:checkMapBoundaries()
-
+function Unit:checkMapBoundaries(mx, my, unitRadius)
+	-- checking map boundaries
+	local map_w = map.width*map.tileSize
+	local map_h = map.height*map.tileSize
+	
+	if  (my < unitRadius) then							-- too close to the top of the screen
+		return math.random(5,175)
+	elseif (mx < unitRadius) then						-- too close to the left side of the screen
+		return math.random(275,355)
+	elseif (my > (map_h - unitRadius)) then				-- too close to the bottom of the screen
+		return math.random(185,355)
+	elseif (my > (map_w - unitRadius)) then				-- too close to the right side of the screen
+		return math.random(95,265)
+	end
+	
+	return 999
 end
 
 function Unit:pointInTriangle(p, az, b, c)			-- arguments: Point p, Point a, Point b, Point c

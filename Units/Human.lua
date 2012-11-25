@@ -93,7 +93,13 @@ function Human:update(dt, zi, paused)
 		-- reset directionTimer
 		self.directionTimer = 0						
 	end
-		
+	
+	-- check map boundaries
+	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
+	if val ~= 999 then			-- if it is too close to a boundary..
+		self.angle = val
+		print(self.tag..", new target:".. self.targetAngle)
+	end
 		
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then
 		-- target has been reached, no need to change the direction vector; keep the same self.angle value !
@@ -114,7 +120,7 @@ function Human:update(dt, zi, paused)
 			self.angle = 360 + self.angle
 		end
 	end
-		
+	
 	-- get direction vector
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	
