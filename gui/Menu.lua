@@ -364,4 +364,7 @@ for _,v in pairs(self.mainMenu) do
 	for _,v in pairs(self.buildingMenu) do
 		v:Remove()
 	end
+	
+	textDebug:Remove()
+	checkDebug:Remove()
 end

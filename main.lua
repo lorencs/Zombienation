@@ -68,7 +68,7 @@ function love:load()
 	defaultFont = love.graphics.newFont(12)
 	
 	-- music
-	music = love.audio.newSource("/units/fellowship.mp3") 
+	--music = love.audio.newSource("/units/fellowship.mp3") 
 	
 	-- seeding randomizer
 	randomizer = math.random(30,60)				
@@ -168,6 +168,8 @@ function gameSTATE:enter()
 	
 	-- reset units
 	unitManager:resetUnits()	
+	
+	paused = false
 end
 
 function gameSTATE:leave()
@@ -311,7 +313,7 @@ end
 
 -- callback functions needed by loveframes, we can use them too
 function gameSTATE:mousepressed(x, y, button)
-	if (x < viewWidth) and not menu.debugMode then
+	if (x < viewWidth) and not menu.debugMode and not paused then
 		unitManager:deselectUnits()
 		if (button == "l") then		
 			dragSelect = true
@@ -329,7 +331,7 @@ function gameSTATE:mousereleased(x, y, button)
 	
 	minimap:mousereleased()
 	
-	if (button == "l") and not menu.debugMode and (x < viewWidth) then
+	if (button == "l") and not menu.debugMode and (x < viewWidth) and dragSelect then
 		dragSelect = false
 		unitManager:selectUnits(dragx+view.x, dragy+view.y, x+view.x, y+view.y)
 	end	
@@ -349,10 +351,12 @@ function gameSTATE:keyreleased(key)
 			pauseMenu:showHide()
 			gameSTATE:pauseResume()
 		end
-	elseif key == "p" then
-		love.audio.play(music)
-	elseif key == "s" then
-		love.audio.stop()
+	elseif key == "p" and not paused then
+		gameSTATE:pauseResume()
+		paused = not paused
+	elseif key == "r" then
+		if paused then gameSTATE:pauseResume() end
+		Gamestate.switch(gameSTATE)
 	end	
 	
 	--loveframes
