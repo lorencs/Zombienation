@@ -61,8 +61,8 @@ function Human:draw(i)
 	
 	------------------------------- UPDATE FIELD OF VIEW VERTICES
 	self.v1 = Point:new(self.x + self.radius, self.y + self.radius)
-	self.v2 = Point:new(self.x + math.cos( (self.angle - 70) * (math.pi/180) )*125 + self.radius, self.y + math.sin( (self.angle - 70) * (math.pi/180) )*125 + self.radius)
-	self.v3 = Point:new(self.x + math.cos( (self.angle + 70 ) * (math.pi/180) )*125 + self.radius, self.y + math.sin( (self.angle + 70) * (math.pi/180) )*125 + self.radius)
+	self.v2 = Point:new(self.x + math.cos( (self.angle - 70) * (math.pi/180) )*180 + self.radius, self.y + math.sin( (self.angle - 70) * (math.pi/180) )*180 + self.radius)
+	self.v3 = Point:new(self.x + math.cos( (self.angle + 70 ) * (math.pi/180) )*180 + self.radius, self.y + math.sin( (self.angle + 70) * (math.pi/180) )*180 + self.radius)
 	
 	------------------------------- IF UNIT IS SELECTED.. DRAW:
 	if self.selected then
@@ -96,7 +96,7 @@ function Human:draw(i)
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
 	if self.color == 1 then love.graphics.setColor(255,255,23, 150) end
-	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, 8, 15)
+	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
 	
 	-- print tag to screen.. for debug !
 	love.graphics.print(self.tag, self.x, self.y + 10)
