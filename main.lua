@@ -46,7 +46,7 @@ require "Units/Point"
 -- game settings
 gold = 0
 orig_number_of_zombies = 1			-- zombies are red
-orig_number_of_humans = 10			-- humans are blue
+orig_number_of_humans = 150			-- humans are blue
 									-- i thought this was a poem
 									-- i wish it was too
 

@@ -51,10 +51,9 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	if not self.y then self.y = math.random(love.graphics.getHeight() - self.height) end
 	
 	-- print( math.tan(5))		-- prints (in degrees) 5/1 ( 5 degrees / 1 degree )
+	
 	self.cx = self.x + self.radius
 	self.cy = self.y - self.radius
-	
-	--self.targetAngle = math.random(360)
 	
 	self.speed = 30
 	self.dirVector = self:getDirection(self.angle, self.speed)
@@ -75,19 +74,16 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 end
 
 function Zombie:draw(i)
-	--love.graphics.draw(self.spriteImage, self.x, self.y)
+
 	love.graphics.setColor(211,211,211,150)
-	--love.graphics.circle( "fill", self.x + self.radius, self.y + self.radius, 35, 15 )
 	
-	
-	
-	-- field of view vertices
+	------------------------------- UPDATE FIELD OF VIEW VERTICES
 	self.v1 = Point:new(self.x + self.radius, self.y + self.radius)
 	self.v2 = Point:new(self.x + math.cos( (self.angle - 40) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle - 40) * (math.pi/180) )*90 + self.radius)
 	self.v3 = Point:new(self.x + math.cos( (self.angle + 40 ) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle + 40) * (math.pi/180) )*90 + self.radius)
 	
 	
-	-- if the zombie unit is selected
+	------------------------------- IF UNIT IS SELECTED.. DRAW:
 	if self.selected then	
 	
 		love.graphics.setColor(201,85,91,125)	
@@ -116,25 +112,27 @@ function Zombie:draw(i)
 	playerColor = {255,0,0}
 	love.graphics.setColor(playerColor)
 	
-	-- circle zombie:
+	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
 	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, 8, 15)
+	love.graphics.print(self.tag.. " ".. self.state, self.x, self.y + 10)
 	
-
+	------------------------------- DEBUG CODE -------------------------------------
+	
 	-- for debugging:	FIELD OF VIEW OF ZOMBIE:
-	
 	--love.graphics.rectangle("line", self.x - see_human_dist, self.y, 10, 10)
 	--love.graphics.rectangle("line", self.x, self.y + see_human_dist, 10, 10)
 	--love.graphics.rectangle("line", self.x + see_human_dist, self.y, 10, 10)
 	--love.graphics.rectangle("line", self.x, self.y - see_human_dist, 10, 10)
 	-- end debugging
 	
-	love.graphics.print(self.tag.. " ".. self.state, self.x, self.y + 10)
+
 end
 
 -- Update function
 function Zombie:update(dt, zi, paused)
 	--self.animation:update(dt)
 	
+	------------------------------- CHECK PAUSE AND LOOK AROUND / FOLLOW HUMAN
 	-- if game is paused, do not update any values
 	if paused == true then return end
 	
@@ -145,8 +143,7 @@ function Zombie:update(dt, zi, paused)
 		self:lookAround(zi)				-- else look around 
 	end
 	
-	
-	-- after 5 seconds, the zombie should change his direction (x and y)
+	------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS
 	if self.directionTimer > 5 then
 	
 		-- randomize a degree, 0 to 360
@@ -159,12 +156,13 @@ function Zombie:update(dt, zi, paused)
 		self.directionTimer = 0						
 	end
 	
-	-- check map boundaries
+	------------------------------- CHECK MAP BOUNDARIES
 	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
 	if val ~= 999 then			-- if it is too close to a boundary..
 		self.angle = val
 	end
 	
+	------------------------------- UPDATE SELF.ANGLE
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then		-- targetAngle reached
 	else																						-- else.. 
 	
@@ -185,6 +183,7 @@ function Zombie:update(dt, zi, paused)
 		end
 	end
 	
+	------------------------------- UPDATE MOVEMENT
 	-- get direction vector
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	
@@ -201,7 +200,6 @@ function Zombie:update(dt, zi, paused)
 	--self.animation:update(dt)
  end
  
- -- look around; if there is a human at a dist of 'see_human_dist', then follow human
  function Zombie:lookAround(zi)
  
 	-- fol_human stores the tag of the human to be followed ( if any )
@@ -222,7 +220,8 @@ function Zombie:update(dt, zi, paused)
 	end
  end
 
- function Zombie:distanceBetweenHZ(x1,y1,x2,y2)
+ -- distance between a human and a zombie. zombie -> (x1,y1), human -> (x2,y2)
+ function Zombie:distanceBetweenZH(x1,y1,x2,y2)
 	local x_v1, y_v1 = 0
 	local dist = 999
 	if (x1 < x2) and (y1 < y2) then
@@ -254,13 +253,10 @@ function Zombie:update(dt, zi, paused)
 		end
 	end
 	
-	-- set panicMode on for the human at this point
-	--human_list[h_index].panicByZombie = self.tag
-	
 	-- if zombie is 'same_location' distance away from unit.. it is attacking the unit !
 	local same_location = 2
 
-	local dist = self:distanceBetweenHZ(self.cx,self.cy,human_list[h_index].cx, human_list[h_index].cy)
+	local dist = self:distanceBetweenZH(self.cx,self.cy,human_list[h_index].cx, human_list[h_index].cy)
 	if dist < (self.radius * 2 + 7) then
 	   
 	   -- set human's attacked state to 1

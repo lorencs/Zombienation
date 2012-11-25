@@ -40,9 +40,11 @@ end
 
 function Human:setupUnit()
 
-	-- init human unit
-	self.x = math.random(300, 650) 							-- NOTE ! need to change this to (screenWidth - menuWidth) *change*
-	self.y = math.random(love.graphics.getHeight() - self.height)
+	--local map_wa = map.width*map.tileSize
+	--local map_ha = map.height*map.tileSize
+	
+	self.x = math.random(10, 2000) 							-- NOTE ! need to change this to (screenWidth - menuWidth) *change*
+	self.y = math.random(10, 2000)
 	self.cx = self.x + self.radius
 	self.cy = self.y + self.radius
 	
@@ -57,14 +59,13 @@ end
 
 function Human:draw(i)
 	
-	-- field of view vertices
+	------------------------------- UPDATE FIELD OF VIEW VERTICES
 	self.v1 = Point:new(self.x + self.radius, self.y + self.radius)
 	self.v2 = Point:new(self.x + math.cos( (self.angle - 70) * (math.pi/180) )*125 + self.radius, self.y + math.sin( (self.angle - 70) * (math.pi/180) )*125 + self.radius)
 	self.v3 = Point:new(self.x + math.cos( (self.angle + 70 ) * (math.pi/180) )*125 + self.radius, self.y + math.sin( (self.angle + 70) * (math.pi/180) )*125 + self.radius)
 	
-	-- if selected, draw circle around unit
+	------------------------------- IF UNIT IS SELECTED.. DRAW:
 	if self.selected then
-	
 		love.graphics.setColor(0,0,255,125)
 		-- draw field of view
 		love.graphics.triangle( "fill", 
@@ -91,8 +92,7 @@ function Human:draw(i)
 		love.graphics.print(self.state, self.x, self.y + 15)
 	end
 	
-	
-	
+	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
 	if self.color == 1 then love.graphics.setColor(255,255,23, 150) end
@@ -163,6 +163,7 @@ end
 -- Update function
 function Human:update(dt, zi, paused)
 
+	------------------------------- CHECK PAUSE AND ATTACKED
 	-- if game is paused, do not update any values
 	if paused == true then return end
 	
@@ -214,15 +215,14 @@ function Human:update(dt, zi, paused)
 	end
 	
 	------------------------------- CHECK MAP BOUNDARIES
-	--[[local val = self:checkMapBoundaries(self.x,self.y, self.radius)
+	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
 	if val ~= 999 then			-- if it is too close to a boundary..
 		self.angle = val
 		--print(self.tag..", new target:".. self.targetAngle)
-	end]]
+	end
 	
 	------------------------------- UPDATE SELF.ANGLE
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then
-		print("hahahaha "..self.tag)
 		-- target has been reached, no need to change the direction vector; keep the same self.angle value !
 	else
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
@@ -250,7 +250,7 @@ function Human:update(dt, zi, paused)
 		end
 	end
 	
-	------------------------------- UPDATE MOVEMENT ( X AND Y )
+	------------------------------- UPDATE MOVEMENT
 	-- get direction vector
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	

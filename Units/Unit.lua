@@ -108,6 +108,7 @@ function Unit:sign(p1, p2, p3)
   return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y)
 end
 
+	-- checks if point 'pt' is in a triangle with vertices v1,v2,v3
 function Unit:pTriangle(pt, v1, v2, v3)
 
   if (self:sign(pt, v1, v2) < 0) then
@@ -129,17 +130,4 @@ function Unit:pTriangle(pt, v1, v2, v3)
   end
 
   return ((b1 == b2) and (b2 == b3))
-end
-
-function Unit:unitAction2()
-    print( "Another action it can do .." )
-end
-
--- Update function
-function Unit:update(dt, gravity)
-    -- update the unit's position
-    -- self.x = self.x + (self.xSpeed * dt)
-    -- self.y = self.y + (self.ySpeed * dt)
- 
-	
 end
