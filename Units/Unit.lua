@@ -98,7 +98,7 @@ function Unit:pointInTriangle(p, az, b, c)			-- arguments: Point p, Point a, Poi
 	end
 
     if((c.x-az.x)*as_y-(c.y-az.y)*as_x > 0 == s_ab) then return false end
-	print("x,y:"..az.x.. ","..az.y)
+	--print("x,y:"..az.x.. ","..az.y)
     if((c.x-b.x)*(p.y-b.y)-(c.y-b.y)*(p.x-b.x) > 0 ~= s_ab) then return false end
 	
     return true

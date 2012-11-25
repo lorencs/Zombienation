@@ -1,18 +1,18 @@
-Human = {}
-Human_mt = { __index = Human }
+Ranger = {}
+Ranger_mt = { __index = Ranger }
 
 -- Constructor
-function Human:new()
+function Ranger:new()
 
-    local new_object = {					-- define our parameters here
-	tag = 0,								-- tag of unit
-    x = 0,									-- x and y coordinates ( by default, left top )
+    local new_object = {							-- define our parameters here
+	tag = 0,										-- tag of unit
+    x = 0,											-- x and y coordinates ( by default, left top )
     y = 0,
-	cx = 0,									-- centered x and y coordinates of the unit
+	cx = 0,											-- centered x and y coordinates of the unit
 	cy = 0,
 	radius = 4,
-	angle = math.random(360),				-- randomize initial angles
-	targetAngle = math.random(360),
+	angle = 30,
+	targetAngle = 0,
     width = 0,
     height = 0,
     state = "",
@@ -20,37 +20,37 @@ function Human:new()
     runSpeed = 0,
 	directionTimer = 0,
 	initial_direction = 1,
-	attacked = 0,							-- if the unit is currently attacked, this var = 1
-    panicByZombie = 0,						-- if 0, the unit is not panicked
-											-- if panicByZombie is not 0, it contains the tag of the zombie following this human unit
-	selected = false,
+	x_direction = math.random(-1,1),
+	y_direction = math.random(-1,1),
+	attacked = 0,								-- if the unit is currently attacked, this var = 1
+    selected = false,
 	color = 0
 	}
 
-	setmetatable(new_object, Human_mt )				-- add the new_object to metatable of Human
-	setmetatable(Human, { __index = Unit })        -- Human is a subclass of class Unit, so set inheritance..				
+	setmetatable(new_object, Ranger_mt )				-- add the new_object to metatable of Human
+	setmetatable(Ranger, { __index = Unit })        -- Human is a subclass of class Unit, so set inheritance..				
 	
     return new_object
 end
 
-function Human:setupUnit()
-
-	-- init human unit
-	self.x = math.random(300, 650) 							-- NOTE ! need to change this to (screenWidth - menuWidth) *change*
+function Ranger:setupUnit()							-- init vars for Human unit
+	self.x = math.random(300, 650) 						-- NOTE ! need to change this to (screenWidth - menuWidth) *change*
 	self.y = math.random(love.graphics.getHeight() - self.height)
 	self.cx = self.x + self.radius
-	self.cy = self.y + self.radius
-	
+	self.cy = self.y - self.radius
 	self.width = 50
 	self.height = 50
 	self.state = "Going to the store ??"
 	self.speed = 20
-	self.tag = human_tag
+	self.runSpeed = 7
+	self.tag = ranger_tag
 	self.directionTimer = 0
-	human_tag = human_tag + 1
+	ranger_tag = ranger_tag + 1
+	--print("Ranger is set !")
+	
 end
 
-function Human:draw(i)
+function Ranger:draw(i)
 	
 	-- if selected, draw circle around unit
 	if self.selected then
@@ -71,7 +71,7 @@ function Human:draw(i)
 end
 
 -- Update function
-function Human:update(dt, zi, paused)
+function Ranger:update(dt, zi, paused)
 
 	-- if game is paused, do not update any values
 	if paused == true then return end
@@ -94,23 +94,14 @@ function Human:update(dt, zi, paused)
 		self.directionTimer = 0						
 	end
 	
-	-- if human unit is in panic mode
-	-- (if panicByZombie is not 0, it contains the tag of the zombie following this human unit)
-	--[[if self.panicByZombie ~= 0 then
-		-- increase speed of the unit
-		self.speed = 26
-		
-	end--]]
-	
 	-- check map boundaries
 	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
 	if val ~= 999 then			-- if it is too close to a boundary..
 		self.angle = val
-		--print(self.tag..", new target:".. self.targetAngle)
+		print(self.tag..", new target:".. self.targetAngle)
 	end
 		
-	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then
-		-- target has been reached, no need to change the direction vector; keep the same self.angle value !
+	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then		-- if target reached, do nothing
 	else
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
 		if self.dirVec == 0 then			-- positive direction	( opposite of conventional as y increases downwards )

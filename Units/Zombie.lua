@@ -17,8 +17,8 @@ function Zombie:new(x_new, y_new)
     y = y_new,
 	cx = 0,											-- centered x and y coordinates of the unit
 	cy = 0,
-	angle = 30,
-	targetAngle = 0,
+	angle = math.random(360),						-- randomize initial angles
+	targetAngle = math.random(360),
 	dirVec = 0,										-- 0 for negative, 1 for positive
 	radius = 4,
     width = 0,
@@ -53,6 +53,8 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	-- print( math.tan(5))		-- prints (in degrees) 5/1 ( 5 degrees / 1 degree )
 	self.cx = self.x + self.radius
 	self.cy = self.y - self.radius
+	
+	--self.targetAngle = math.random(360)
 	
 	self.speed = 30
 	self.dirVector = self:getDirection(self.angle, self.speed)
@@ -248,6 +250,9 @@ function Zombie:update(dt, zi, paused)
 		end
 	end
 	
+	-- set panicMode on for the human at this point
+	--human_list[h_index].panicByZombie = self.tag
+	
 	-- if zombie is 'same_location' distance away from unit.. it is attacking the unit !
 	local same_location = 2
 
@@ -314,7 +319,6 @@ function Zombie:update(dt, zi, paused)
 	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
 	if val ~= 999 then			-- if it is too close to a boundary..
 		self.angle = val
-		print(self.tag..", new target:".. self.targetAngle)
 	end
 	
 	-- get the angle direction ( positive or negative on axis )

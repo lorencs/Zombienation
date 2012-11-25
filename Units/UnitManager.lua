@@ -20,7 +20,8 @@ UnitManager_mt = { __index = UnitManager }
 function UnitManager:new()
     -- define our parameters here
     local new_object = {
-	paused = false
+	paused = false,
+	RangerCost = 10
     }
     setmetatable(new_object, UnitManager_mt )
     return new_object
@@ -102,13 +103,12 @@ end
 
 function UnitManager:draw()
 	
-	--if self.paused == 1 then return end		-- game is paused
-	
 	-- draw zombies
 	for i = 1, number_of_zombies do
 		zombie_list[i]:draw(i)
 		--zombie_list[i].animation:draw(zombie_list[i].x, zombie_list[i].y)
 	end
+	
 	-- draw humans
 	for i = 1, number_of_humans do
 		human_list[i]:draw(i)

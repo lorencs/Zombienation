@@ -44,6 +44,7 @@ require "Units/Point"
 ]]--
 
 -- game settings
+gold = 0
 orig_number_of_zombies = 1			-- zombies are red
 orig_number_of_humans = 50			-- humans are blue
 									-- i thought this was a poem
@@ -226,6 +227,7 @@ function game:draw()
 	love.graphics.print("Humans alive: " .. number_of_humans, 0, 45)
 	love.graphics.print("Framerate: " .. love.timer.getFPS(), 0, 60)
 	love.graphics.print("Press ( P / S ) for music", 0, 75)
+	love.graphics.print("Gold: ".. gold, 715, 0)
 	
 	-- loveframes
 	loveframes.draw()
