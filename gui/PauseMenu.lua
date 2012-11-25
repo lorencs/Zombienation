@@ -51,7 +51,7 @@ function PauseMenu:setup()
 	buttonQuit:SizeToImage() 
 	buttonQuit:SetVisible(false)
 	buttonQuit.OnClick = function(object)
-		map:saveMap("map/defaultMap.txt")
+		--map:saveMap("map/defaultMap.txt")
 		love.event.quit()
 	end
 end
@@ -66,7 +66,9 @@ end
 
 function PauseMenu:draw()
 	if self.visible then
-		love.graphics.draw(self.background,0,0)
+		love.graphics.setColor(20,20,20,100)
+		love.graphics.rectangle("fill", 0,0, width, height)
+		--love.graphics.draw(self.background,0,0)
 	end
 end
 

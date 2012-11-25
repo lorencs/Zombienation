@@ -28,7 +28,9 @@ function Menu:new(baseX, w, h)
 		
 		mainMenu = {},
 		debugMenu = {},
-		buildingMenu = {}
+		buildingMenu = {},
+		
+		visible = true
 	}	
 	
 	setmetatable(object, { __index = Menu })
@@ -76,7 +78,7 @@ end
 -- set up options for debug mode
 function Menu:setDebugMenu()
 	-- debug text
-	local textDebug = loveframes.Create("text")
+	textDebug = loveframes.Create("text")
 	textDebug:SetPos(width-115, height - 27)
 	textDebug:SetMaxWidth(100)
 	textDebug:SetText("Debug")
@@ -139,7 +141,7 @@ function Menu:setDebugMenu()
 	table.insert(self.debugMenu, checkBuilding)
 		
 	-- checkbox to enable Debug
-	local checkDebug = loveframes.Create("checkbox")
+	checkDebug = loveframes.Create("checkbox")
 	checkDebug:SetPos(width-140, height - 30)
 	checkDebug.OnChanged = function(object)
 		--[[DEBUG = not DEBUG
@@ -303,38 +305,53 @@ function Menu:setBuildingMenu()
 end
 
 -- update menu
-function Menu:update()
+function Menu:showHide()
+	self.visible = not self.visible
 	
+	for _,v in pairs(self.mainMenu) do
+		v:SetVisible(self.visible)
+	end
+	for _,v in pairs(self.debugMenu) do
+		v:SetVisible(self.visible)
+	end
+	for _,v in pairs(self.buildingMenu) do
+		v:SetVisible(self.visible)
+	end
+	
+	textDebug:SetVisible(self.visible)
+	checkDebug:SetVisible(self.visible)
 end
 
 
 -- draw the menu
 function Menu:draw()
-	-- background
-	love.graphics.setColor(self.backColor)
-	love.graphics.rectangle("fill", self.xs, self.ys, self.xe, self.ye)
-		
-	-- outline
-	love.graphics.setColor(self.lineColor)
-	love.graphics.rectangle("line", self.xs+0.5, self.ys+0.5, self.xe-0.5, self.ye-0.5)
-	
-	--[[ draw the buttons
-	for _,v in pairs(self.buttons) do
-		v:draw()
+	if self.visible then
+		-- background
+		love.graphics.setColor(self.backColor)
+		love.graphics.rectangle("fill", self.xs, self.ys, self.xe, self.ye)
+			
+		-- outline
+		love.graphics.setColor(self.lineColor)
+		love.graphics.rectangle("line", self.xs+0.5, self.ys+0.5, self.xe-0.5, self.ye-0.5)
+
+		--[[ draw the buttons
+		for _,v in pairs(self.buttons) do
+			v:draw()
+		end
+		--]]
+		for _,v in pairs(self.mainMenu) do
+			v:SetVisible(not(self.debugMode))
+		end
+		for _,v in pairs(self.debugMenu) do
+			v:SetVisible(self.debugMode)
+		end
+		for _,v in pairs(self.buildingMenu) do
+			v:SetVisible(self.buildingMode)
+		end
+
+
+		love.graphics.reset()
 	end
-	--]]
-	for _,v in pairs(self.mainMenu) do
-		v:SetVisible(not(self.debugMode))
-	end
-	for _,v in pairs(self.debugMenu) do
-		v:SetVisible(self.debugMode)
-	end
-	for _,v in pairs(self.buildingMenu) do
-		v:SetVisible(self.buildingMode)
-	end
-	
-	
-	love.graphics.reset()
 end
 
 function Menu:delete()

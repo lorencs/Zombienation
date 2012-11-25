@@ -179,6 +179,8 @@ end
 function gameSTATE:pauseResume()
 	unitManager:pauseGame()	-- pause and resume game
 	paused = not paused
+	menu:showHide()
+	minimap:showHide()
 end
 
 function gameSTATE:update(dt)

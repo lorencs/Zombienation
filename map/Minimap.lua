@@ -15,7 +15,8 @@ function Minimap:new(_map, _view, um, _x, _y, ww, wh)
 		camX = 0,
 		camY = 0,
 		canvas = 0,
-		moving = false
+		moving = false,
+		visible = true
 	}
 			
 	setmetatable(object, { __index = Minimap })
@@ -73,46 +74,52 @@ end
 function Minimap:infected(x,y)
 end
 
+function Minimap:showHide()
+	self.visible = not self.visible
+end
+
 -- draw the minimap at x,y coord on the screen
 function Minimap:draw()
-	love.graphics.draw(self.canvas, self.x, self.y)
-	
-	
-	-- fix view window being out of bounds
-	local drawX = self.x+self.camX
-	local drawY = self.y+self.camY
-	if (self.camX > (self.width-self.winWidth)) then
-		drawX = self.x + self.width-self.winWidth
+	if self.visible then
+		love.graphics.draw(self.canvas, self.x, self.y)
+
+
+		-- fix view window being out of bounds
+		local drawX = self.x+self.camX
+		local drawY = self.y+self.camY
+		if (self.camX > (self.width-self.winWidth)) then
+			drawX = self.x + self.width-self.winWidth
+		end
+		if (self.camY > (self.height-self.winHeight)) then
+			drawY = self.y + self.height-self.winHeight
+		end
+		if (self.camX < 0) then
+			drawX = self.x
+		end
+		if (self.camY < 0) then
+			drawY = self.y
+		end
+
+		-- draw humans
+		love.graphics.setColor(0,0,255)
+		for i = 1, #human_list do
+			local hx = human_list[i].x / self.map.tileSize
+			local hy = human_list[i].y / self.map.tileSize
+			love.graphics.rectangle("fill", self.x + hx, self.y + hy,2,2)
+			--human_list[i].x, human_list[i].y
+		end
+
+		-- draw zombies
+		love.graphics.setColor(255,0,0)
+		for i = 1, #zombie_list do
+			local zx = zombie_list[i].x / self.map.tileSize
+			local zy = zombie_list[i].y / self.map.tileSize
+			love.graphics.rectangle("fill", self.x + zx, self.y + zy,2,2)
+			--human_list[i].x, human_list[i].y
+		end
+
+		-- draw view window
+		love.graphics.setColor(255,255,0)
+		love.graphics.rectangle("line", drawX+0.5, drawY+0.5, self.winWidth-1, self.winHeight-1)
 	end
-	if (self.camY > (self.height-self.winHeight)) then
-		drawY = self.y + self.height-self.winHeight
-	end
-	if (self.camX < 0) then
-		drawX = self.x
-	end
-	if (self.camY < 0) then
-		drawY = self.y
-	end
-	
-	-- draw humans
-	love.graphics.setColor(0,0,255)
-	for i = 1, #human_list do
-		local hx = human_list[i].x / self.map.tileSize
-		local hy = human_list[i].y / self.map.tileSize
-		love.graphics.rectangle("fill", self.x + hx, self.y + hy,2,2)
-		--human_list[i].x, human_list[i].y
-	end
-	
-	-- draw zombies
-	love.graphics.setColor(255,0,0)
-	for i = 1, #zombie_list do
-		local zx = zombie_list[i].x / self.map.tileSize
-		local zy = zombie_list[i].y / self.map.tileSize
-		love.graphics.rectangle("fill", self.x + zx, self.y + zy,2,2)
-		--human_list[i].x, human_list[i].y
-	end
-	
-	-- draw view window
-	love.graphics.setColor(255,255,0)
-	love.graphics.rectangle("line", drawX+0.5, drawY+0.5, self.winWidth-1, self.winHeight-1)
 end
