@@ -318,6 +318,8 @@ function gameSTATE:mousepressed(x, y, button)
 		if (button == "l") then		
 			dragSelect = true
 			dragx, dragy = x, y
+		elseif (button == "r") then
+			unitManager:moveTo(x,y)
 		end
 	end
 	
