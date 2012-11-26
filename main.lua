@@ -74,8 +74,6 @@ function love:load()
 	randomizer = math.random(30,60)				
 	math.randomseed( os.time() + randomizer )
 	
-
-	
 	-- generate a map
 	generator = MapGen:new()
 	generator:defaultMap()

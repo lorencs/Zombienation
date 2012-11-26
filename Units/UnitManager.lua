@@ -33,6 +33,11 @@ end
 
 function UnitManager:initUnits()
 
+	--[[for i = 0, map.width - 1 do
+		for j = 0, map.height - 1 do
+			print(map.tiles[i][j].id.." ")
+		end
+	end--]]
 	number_of_zombies = orig_number_of_zombies			-- zombies are red
 	number_of_humans = orig_number_of_humans			-- humans are blue
 	-- generating units (Unit Manager coming soon, will make this much shorter )

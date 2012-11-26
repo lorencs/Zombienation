@@ -49,6 +49,12 @@ function Human:setupUnit()
 	
 	if not self.x then self.x = math.random(10, map_w - self.radius * 2) end
 	if not self.y then self.y = math.random(10, map_h - self.radius * 2) end
+	--print("Tile type:".. map.tiles[self.y][self.x])
+	--[[
+	while map.tiles[self.x][self.y] ~= "G" do
+		self.x = math.random(10, map_w - self.radius * 2)
+		self.y = math.random(10, map_h - self.radius * 2)
+	end]]
 	
 	self.cx = self.x + self.radius
 	self.cy = self.y + self.radius
@@ -224,6 +230,9 @@ function Human:update(dt, zi, paused)
 	if val ~= 999 then			-- if it is too close to a boundary..
 		self.angle = val
 	end
+	
+	-- check which tiles to go on in order to avoid buildings, water, etc
+	self:checkTiles()
 	
 	------------------------------- UPDATE SELF.ANGLE
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then

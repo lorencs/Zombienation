@@ -72,18 +72,27 @@ function Unit:checkMapBoundaries(mx, my, unitRadius)
 	-- checking map boundaries
 	local map_w = map.width*map.tileSize
 	local map_h = map.height*map.tileSize
+	local random_direction = math.random(1,2)
 	
 	if  (my < unitRadius * 2) then							-- too close to the top of the screen
-		return math.random(5,175)
+		if random_direction == 1 then return math.random(10,35)
+		else return math.random(155,170) end
 	elseif (mx < unitRadius * 2) then						-- too close to the left side of the screen
-		return math.random(275,355)
+		if random_direction == 1 then return math.random(65,80)
+		else return math.random(280,295) end
 	elseif (my > (map_h - unitRadius * 2)) then				-- too close to the bottom of the screen
-		return math.random(185,355)
+		if random_direction == 1 then return math.random(335,350)
+		else return math.random(190,215) end
 	elseif (mx > (map_w - unitRadius * 2)) then				-- too close to the right side of the screen
-		return math.random(95,265)
+		if random_direction == 1 then return math.random(190,205)
+		else return math.random(335,350) end
 	end
 	
 	return 999
+end
+
+function Unit:checkTiles()
+	
 end
 
  -- distance between 2 points
@@ -111,6 +120,7 @@ end
 	return 9999
  end
  
+ --[[
 function Unit:pointInTriangle(p, az, b, c)			-- arguments: Point p, Point a, Point b, Point c
 
     as_x = p.x-az.x
@@ -127,7 +137,7 @@ function Unit:pointInTriangle(p, az, b, c)			-- arguments: Point p, Point a, Poi
     if((c.x-b.x)*(p.y-b.y)-(c.y-b.y)*(p.x-b.x) > 0 ~= s_ab) then return false end
 	
     return true
-end
+end--]]
 
 function Unit:pointInArc(x1, y1, x2, y2, fovRadius, startAngle, endAngle)
 	if self:distanceBetweenPoints(x1,y1,x2,y2) < fovRadius then			-- if the point x2,y2 is < fovRadius, it is in the circle
