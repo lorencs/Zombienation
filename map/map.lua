@@ -172,7 +172,7 @@ function Map:getNeighborInfo(x,y)
 	elseif (tile.id == "G") then
 		self:selectGroundSprite(tile)
 	elseif (tile.id == "D") then	-- builDing tile
-		--self:selectBuildingSprite(tile, x, y)												** COMMENTED OUT
+		self:selectBuildingSprite(tile, x, y)
 	end
 	
 	--self.canvas:renderTo(function()
@@ -242,13 +242,15 @@ function Map:selectBuildingSprite(tile, x, y)
 	tile.sprite = building:getSprite(x, y, self.tileSize)
 end
 
--- return building containing [x,y]
+-- return building containing [x,y], else nil
 function Map:findBuilding(x, y)
 	for _,v in pairs(self.buildings) do
 		if x >= v.x and x <= v.xend and y >= v.y and y <= v.yend then
 			return v
 		end
 	end
+	-- not found
+	return nil
 end
 
 -- detect building placement in a pre-loaded map
@@ -295,10 +297,21 @@ function Map:detectBuildings()
 end
 
 -- add building from here rather than MapGen
+-- return success as boolean
 function Map:newBuilding(x, y, b_type)
 	-- add building to list
 	local b = Building:new()
 	b:set(x, y, b_type)
+	
+	-- already a building here
+	if not(self:findBuilding(b.x, b.y) == nil) or
+		not(self:findBuilding(b.x, b.yend) == nil) or
+		not(self:findBuilding(b.xend, b.y) == nil) or
+		not(self:findBuilding(b.xend, b.yend) == nil) then
+		
+		return false
+	end
+	
 	table.insert(self.buildings, b)
 	
 	-- set tiles
@@ -307,6 +320,9 @@ function Map:newBuilding(x, y, b_type)
 			self.tiles[xi][yi]:setId("D")
 		end
 	end
+	
+	-- success
+	return true
 end
 
 function Map:findi(spritei)

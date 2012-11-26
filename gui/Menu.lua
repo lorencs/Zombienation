@@ -354,6 +354,40 @@ function Menu:draw()
 	end
 end
 
+-- building mode placement rectangle
+function Menu:buildingPlacement(map, viewX, viewY)
+	if self.buildingMode and not(self.b_type == nil) then
+		local t = map.tileSize
+		
+		local xw = math.floor(self.b_type / 10)
+		local yw = (self.b_type % 10)
+		
+		local x = love.mouse.getX() + viewX
+		local xRect = x - (x % t)  		-- snap to tiles
+		local xMap = math.floor(x / t)
+		local xMapEnd = xMap + xw - 1
+		
+		local y = love.mouse.getY() + viewY
+		local yRect = y - (y % t)
+		local yMap = math.floor(y / t)
+		local yMapEnd = yMap + yw - 1
+		
+		-- check possible to set color
+		if (map:findBuilding(xMap, yMap) == nil) and
+			(map:findBuilding(xMap, yMapEnd) == nil) and
+			(map:findBuilding(xMapEnd, yMap) == nil) and
+			(map:findBuilding(xMapEnd, yMapEnd) == nil) then
+			
+			love.graphics.setColor(0, 200, 100)
+		else
+			love.graphics.setColor(255,0,0)
+		end
+		
+		love.graphics.setLineWidth(1)
+		love.graphics.rectangle("line", xRect, yRect, xw * t, yw * t)
+	end	
+end
+
 function Menu:delete()
 for _,v in pairs(self.mainMenu) do
 		v:Remove()

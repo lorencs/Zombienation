@@ -200,19 +200,25 @@ function gameSTATE:update(dt)
 	ypos = math.floor((love.mouse.getY() + view.y) / map.tileSize)
 	
 	-- map editing
+	
+	-- in building mode
 	if menu.buildingMode then
+		-- clicking, not on the side menu
 		if love.mouse.isDown("l") and love.mouse.getX() < viewWidth then
+			-- valid map position
 			if (xpos > -1) and (ypos > -1) and (xpos < map.width) and (ypos < map.height) then
-				map:newBuilding(xpos, ypos, menu.b_type)
-				local xd = math.floor(menu.b_type / 10)
-				local yd = menu.b_type % 10
-				
-				-- update all relevent tiles
-				for xi=xpos,xpos+xd-1 do
-					for yi=ypos,ypos+yd-1 do
-						map:updateTileInfo(xi, yi)
-					end
-				end				
+				-- can place building here
+				if map:newBuilding(xpos, ypos, menu.b_type) then
+					local xd = math.floor(menu.b_type / 10)
+					local yd = menu.b_type % 10
+					
+					-- update all relevent tiles
+					for xi=xpos,xpos+xd-1 do
+						for yi=ypos,ypos+yd-1 do
+							map:updateTileInfo(xi, yi)
+						end
+					end				
+				end
 			end
 		end
 	elseif menu.debugMode then
@@ -227,8 +233,6 @@ function gameSTATE:update(dt)
 	
 	
 	-- center camera
-	--camera:setPosition(math.floor(vpx - (viewWidth / 2)), 
-	--	math.floor(vpy - height / 2))
 	camera:setPosition(math.floor(view.x), math.floor(view.y))
 	
 	-- update minimap
@@ -254,16 +258,8 @@ function gameSTATE:draw()
 	-- draw the map
 	map:draw() 		
 	
-	-- building placement
-	if menu.buildingMode and not(menu.b_type == nil) then
-		local xw = math.floor(menu.b_type / 10)
-		local yw = menu.b_type % 10
-		
-		love.graphics.setColor(0,255,255)
-		love.graphics.setLineWidth(1)
-		love.graphics.rectangle("line", mx + view.x, my + view.y, 
-			xw * map.tileSize, yw * map.tileSize)
-	end
+	-- draw building placement rectangle
+	menu:buildingPlacement(map, view.x, view.y)
 	
 	-- draw the units
 	unitManager:draw()
