@@ -35,7 +35,7 @@ function Human:new(xnew,ynew)
 	color = 0,
 	controlled = false
 	}
-
+	
 	setmetatable(new_object, Human_mt )				-- add the new_object to metatable of Human
 	setmetatable(Human, { __index = Unit })        -- Human is a subclass of class Unit, so set inheritance..				
 	
@@ -62,7 +62,6 @@ function Human:setupUnit()
 	self.speed = self.normalSpeed
 	self.tag = human_tag
 	self.directionTimer = 0
-	human_tag = human_tag + 1
 end
 
 function Human:draw(i)

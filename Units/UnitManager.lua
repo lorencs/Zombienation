@@ -6,7 +6,11 @@ require "Units/SpriteAnimation"
 UnitManager = {}
 UnitManager_mt = { __index = UnitManager }
 
---[[ 
+	human_tag = 1								-- each unit has a unique tag
+	zombie_tag = 1
+	zombie_list = {}							-- array of zombie objects
+	human_list = {}								-- array of human objects
+	--[[ 
 
 	-> each unit has a unique tag. When zombies chase a unit, they chase them by the tag (eg. human_tag)
 	-> number_of_"unit_type" keeps track of all the alive units of that type. They are also the upper limit of the array "unit_type"_list
@@ -32,11 +36,7 @@ function UnitManager:initUnits()
 	number_of_zombies = orig_number_of_zombies			-- zombies are red
 	number_of_humans = orig_number_of_humans			-- humans are blue
 	-- generating units (Unit Manager coming soon, will make this much shorter )
-	
-	zombie_list = {}							-- array of zombie objects
-	zombie_tag = 1
-	human_list = {}								-- array of human objects
-	human_tag = 1								-- each unit has a unique tag
+
 	
 	-- set up zombies
 	for i = 1, number_of_zombies do
@@ -51,13 +51,12 @@ function UnitManager:initUnits()
 		human_list[i]:setupUnit()
 		human_tag = human_tag + 1
 	end	
+	
 end
 
 function UnitManager:resetUnits()
 
-	--print("ini humans".. #human_list)
-	--print("ini zombies".. #zombie_list)
-	
+	print("RESETTING UNITS !")
 	-- remove all units from tables
 	for k in pairs (zombie_list) do
 		zombie_list [k] = nil
