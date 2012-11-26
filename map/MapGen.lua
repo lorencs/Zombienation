@@ -56,14 +56,15 @@ function MapGen:randomMap(difficulty)
 	self.map = Map:new()
 	self.map:initMap(self.width, self.height)
 	
+	local freq = 12
 	-- roads
-	self:generateRoads(difficulty)
+	self:generateRoads(freq, difficulty)
 	
 	-- water
 	self:generateWater(difficulty)
 	
 	-- update roads
-	self:thinRoads(difficulty)	
+	self:thinRoads(freq, difficulty)	
 	
 	-- buildings
 	self:generateBuildings(difficulty)
@@ -81,9 +82,9 @@ function MapGen:randomMap(difficulty)
 end
 
 -- create a random road network
-function MapGen:generateRoads(difficulty)
+function MapGen:generateRoads(freq, difficulty)
 	local m = self.map
-	local freq = 12
+	--local freq = 12
 	local pin = 100 	-- start value
 	
 	-- random road grid
@@ -101,14 +102,16 @@ function MapGen:generateRoads(difficulty)
 end
 
 -- thin roads and remove ones that don't make sense
-function MapGen:thinRoads(difficulty)
+function MapGen:thinRoads(freq, difficulty)
 	-- remove less connected roads
 	self:removeRoads(2)
 	-- remove road islands
 	self:removeRoads(1)
 	
 	-- find connected components
-	-- remove cc if cc.size < freq
+	small = {}
+	roads = self:findConnectedComponents(small, 2*freq, "R")
+	self:removeComponents(small, "G")		
 end
 
 -- remove less connected roads
@@ -137,6 +140,92 @@ function MapGen:removeRoads(threshold)
 				end
 			end
 		end
+	end
+end
+
+function MapGen:findConnectedComponents(invalid, threshold, tileType)
+	nodes = {}
+	open = {}
+	closed = {}
+	components = {}
+	local m = self.map
+	
+	-- all roads
+	for x=0,m.width-1 do
+		for y=0,m.height-1 do
+			if m.tiles[x][y]:getId() == tileType then
+				table.insert(nodes, Point:new(x,y))
+			end
+		end
+	end
+	
+	-- find components
+	cur = table.remove(nodes)
+	while not(cur == nil) do
+		comp = {}
+		table.insert(comp, cur)
+		self:getNeighbors(cur, nodes, open)
+		
+		-- consider all neighbors
+		local size = 1
+		cur = table.remove(open)
+		while not(cur == nil) do
+			table.insert(comp, cur)
+			self:getNeighbors(cur, nodes, open)
+			cur = table.remove(open)
+			size = size + 1
+		end
+		
+		-- ignore small components
+		if size < threshold then
+			table.insert(invalid, comp)
+		else
+			table.insert(components, comp)
+		end
+		
+		cur = table.remove(nodes)
+	end
+	
+	return components
+end
+
+-- get neighbors of tile from nodes
+function MapGen:getNeighbors(p, nodes, neighbors)
+	local m = self.map
+	
+	if p.x > 0 then
+		consider(nodes, p.x-1, p.y, neighbors)
+	end
+	if p.x+1 < m.width then
+		consider(nodes, p.x+1, p.y, neighbors)
+	end
+	if p.y > 0 then
+		consider(nodes, p.x, p.y-1, neighbors)
+	end
+	if p.y+1 < m.height then
+		consider(nodes, p.x, p.y+1, neighbors)
+	end
+end
+
+-- find and remove tile[x,y] in nodes, add to neighbors
+function consider(nodes, x, y, neighbors)
+	for i,v in pairs(nodes) do
+		if v.x == x and v.y == y then
+			table.insert(neighbors, v)
+			table.remove(nodes, i)			
+			return
+		end
+	end
+end
+
+-- reset tiles belonging to components
+function MapGen:removeComponents(comps)
+	cur = table.remove(comps)
+	while not(cur == nil) do
+		for _,v in pairs(cur) do
+			self.map.tiles[v.x][v.y]:setId("G")
+		end
+		cur = table.remove(comps)
 	end
 end
 
