@@ -288,13 +288,6 @@ function Zombie:update(dt, zi, paused)
 		human_list[h_index].panicMode = false		-- the human is not in panicMode anymore as it is not being followed anymore
 	end
 	
-	--local rada = math.rad(5)			--math.rad() (degrees as input) - degrees to radians
-	--local val = math.atan(rada) * 180/math.pi
-	--print( math.deg(math.atan(5/1)))		-- prints (in degrees) 5/1 ( 5 degrees / 1 degree )
-	
-	--print("zombie x:"..self.x..",y:"..self.y)
-	--print("human x:"..human_list[h_index].x..",y:"..human_list[h_index].y)
-	
 	------------------------------- FOLLOWING THE HUMAN
 	
 	-- get angle from this zombie's position to the human's position

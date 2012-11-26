@@ -133,7 +133,6 @@ function Unit:pointInArc(x1, y1, x2, y2, fovRadius, startAngle, endAngle)
 	if self:distanceBetweenPoints(x1,y1,x2,y2) < fovRadius then			-- if the point x2,y2 is < fovRadius, it is in the circle
 
 		local angleToPoint = self:angleToXY(x1,y1,x2,y2)
-		--print("In circle ! startAngle:".. startAngle.. ", endAngle:"..endAngle.. ", angletoPoint:".. angleToPoint)
 		if  angleToPoint >= startAngle and angleToPoint <= endAngle then
 			return true
 		elseif endAngle > 360 then						-- EXCEPTIONS ! if endAngle is > 360 or startAngle < 0 .. then boundary check is diff
@@ -143,7 +142,6 @@ function Unit:pointInArc(x1, y1, x2, y2, fovRadius, startAngle, endAngle)
 			end
 		elseif startAngle < 0 then
 			startAngle = 360 + startAngle
-			print("4.In circle ! startAngle:".. startAngle.. ", endAngle:"..endAngle.. ", angletoPoint:".. angleToPoint)
 			if angleToPoint >= startAngle and angleToPoint < 360 then
 				return true
 			end

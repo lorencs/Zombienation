@@ -172,7 +172,7 @@ end
 -- update function
 function Human:update(dt, zi, paused)
 
-	------------------------------- CHECK PAUSE AND ATTACKED
+	------------------------------- CHECK PAUSE AND ATTACKED; LOOK AROUND FOR ZOMBIES
 	-- if game is paused, do not update any values
 	if paused == true then return end
 	
@@ -181,8 +181,8 @@ function Human:update(dt, zi, paused)
 		return
 	end
 	
-	--if (self.controlled == false) then
-		------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS.. unless it's controlled by penguins !
+	if self.panicMode == false then
+	------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS.. unless it's controlled by penguins !
 		-- after 5 seconds, the zombie should change his direction (x and y)
 		if self.directionTimer > 5 then 
 		
@@ -195,44 +195,31 @@ function Human:update(dt, zi, paused)
 			-- reset directionTimer
 			self.directionTimer = 0						
 		end
-	--else
-	--	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
-	--end
-	
-	--if (self.controlled == false) then
+	end
+
 	------------------------------- PANIC MODE
 	-- look around for zombies
-		--self:lookAround()
+	self:lookAround()
+	
 		-- if panicZombieAngle is true.. increase speed and change targetAngle to run away from the zombie !
 		if self.panicMode == true then
 		
 			-- change speed to panicSpeed
 			self.speed = self.panicSpeed
 			
-			--print(self.tag.." is runnign with angle: ".. self.targetAngle.. ", z angle:".. self.panicZombieAngle)
-			
 			-- decrease the panicTimer
 			self.panicTimer = self.panicTimer - dt
 			
 			-- while in panic mode, self.targetAngle should never change as the human is trying to run from the zombies
-			self.directionTimer = 0
+			--self.directionTimer = 0
 			
 			-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
 			self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
-			
-			-- stop panicking if panicTimer is < 0
-			--[[
-			if self.panicTimer < 0 then
-				self.speed = self.normalSpeed
-				self.state = "chilling !"
-				self.panicMode = false
-			end--]]
 		else
 			self.speed = self.normalSpeed
 			self.state = "chilling !"
 		end
-	
-	--end
+		
 	------------------------------- CHECK MAP BOUNDARIES
 	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
 	if val ~= 999 then			-- if it is too close to a boundary..
