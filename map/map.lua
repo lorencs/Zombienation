@@ -303,6 +303,11 @@ function Map:newBuilding(x, y, b_type)
 	local b = Building:new()
 	b:set(x, y, b_type)
 	
+	-- building out of bounds
+	if (b.xend >= self.width) or (b.yend >= self.height) then
+		return false
+	end
+	
 	-- already a building here
 	if not(self:findBuilding(b.x, b.y) == nil) or
 		not(self:findBuilding(b.x, b.yend) == nil) or
@@ -315,8 +320,8 @@ function Map:newBuilding(x, y, b_type)
 	table.insert(self.buildings, b)
 	
 	-- set tiles
-	for xi=x,x+b.width-1 do
-		for yi=y,y+b.height-1 do
+	for xi=x,b.xend do
+		for yi=y,b.yend do
 			self.tiles[xi][yi]:setId("D")
 		end
 	end

@@ -372,15 +372,16 @@ function Menu:buildingPlacement(map, viewX, viewY)
 		local yMap = math.floor(y / t)
 		local yMapEnd = yMap + yw - 1
 		
-		-- check possible to set color
-		if (map:findBuilding(xMap, yMap) == nil) and
-			(map:findBuilding(xMap, yMapEnd) == nil) and
-			(map:findBuilding(xMapEnd, yMap) == nil) and
-			(map:findBuilding(xMapEnd, yMapEnd) == nil) then
+		-- check possible placement to set color
+		if (xMapEnd >= map.width) or (yMapEnd >= map.height) or
+			not(map:findBuilding(xMap, yMap) == nil) or
+			not(map:findBuilding(xMap, yMapEnd) == nil) or
+			not(map:findBuilding(xMapEnd, yMap) == nil) or
+			not(map:findBuilding(xMapEnd, yMapEnd) == nil) then
 			
-			love.graphics.setColor(0, 200, 100)
+			love.graphics.setColor(255, 0, 0)
 		else
-			love.graphics.setColor(255,0,0)
+			love.graphics.setColor(0,200,100)
 		end
 		
 		love.graphics.setLineWidth(1)
