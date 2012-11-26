@@ -79,6 +79,7 @@ function love:load()
 	difficulty = 1
 	--generator:randomMap(difficulty)
 	generator:newMap(100,100)
+
 	-- get the map	
 	map = generator:getMap()
 	
@@ -299,7 +300,7 @@ end
 
 -- callback functions needed by loveframes, we can use them too
 function gameSTATE:mousepressed(x, y, button)
-	if (x < viewWidth) and not menu.debugMode and not paused then
+	if (x < viewWidth) and not menu.debugMode then
 		--unitManager:deselectUnits()
 		if (button == "l") then		
 			dragSelect = true
