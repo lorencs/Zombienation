@@ -305,8 +305,8 @@ function Menu:setBuildingMenu()
 end
 
 -- update menu
-function Menu:showHide()
-	self.visible = not self.visible
+function Menu:showHide(bool)
+	if bool then self.visible = not self.visible end
 	
 	for _,v in pairs(self.mainMenu) do
 		v:SetVisible(self.visible)

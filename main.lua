@@ -178,11 +178,11 @@ function gameSTATE:leave()
 	pauseMenu:delete()
 end
 
-function gameSTATE:pauseResume()
+function gameSTATE:pauseResume(menubool, mmbool)
 	unitManager:pauseGame()	-- pause and resume game
 	paused = not paused
-	menu:showHide()
-	minimap:showHide()
+	menu:showHide(menubool)
+	minimap:showHide(mmbool)
 end
 
 function gameSTATE:update(dt)
@@ -332,18 +332,13 @@ end
 
 function gameSTATE:keyreleased(key)
 	if key == "escape" then 
-		if not paused then -- show pause menu
-			pauseMenu:showHide()
-			gameSTATE:pauseResume()
-		else
-			pauseMenu:showHide()
-			gameSTATE:pauseResume()
-		end
-	elseif key == "p" and not paused then
-		gameSTATE:pauseResume()
-		paused = not paused
-	elseif key == "r" and not paused then
-		if paused then gameSTATE:pauseResume() end
+		pauseMenu:showHide()
+		gameSTATE:pauseResume(true, true)
+	elseif key == "p" then
+		gameSTATE:pauseResume(true, false)
+		--paused = not paused
+	elseif key == "r" and (not paused) then
+		--if paused then gameSTATE:pauseResume() end
 		Gamestate.switch(gameSTATE)
 	end	
 	

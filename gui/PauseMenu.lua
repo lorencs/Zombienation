@@ -30,7 +30,7 @@ function PauseMenu:setup()
 	buttonResumeGame:SizeToImage() 
 	buttonResumeGame:SetVisible(false)
 	buttonResumeGame.OnClick = function(object)
-		gameSTATE:pauseResume()
+		gameSTATE:pauseResume(true, true)
 		pauseMenu:showHide()
 	end
 	

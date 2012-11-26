@@ -74,13 +74,14 @@ end
 function Minimap:infected(x,y)
 end
 
-function Minimap:showHide()
-	self.visible = not self.visible
+function Minimap:showHide(bool)
+	if bool then self.visible = not self.visible end
 end
 
 -- draw the minimap at x,y coord on the screen
 function Minimap:draw()
 	if self.visible then
+		love.graphics.reset()
 		love.graphics.draw(self.canvas, self.x, self.y)
 
 
