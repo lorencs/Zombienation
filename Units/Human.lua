@@ -53,21 +53,23 @@ function Human:setupUnit()
 	if not self.x then self.x = math.random(self.radius * 3, map_w - self.radius * 3) end
 	if not self.y then self.y = math.random(self.radius * 3, map_h - self.radius * 3) end
 	
+	--------------------------               TILE CHECKS
 	--print("Tile type:".. map.tiles[self.y][self.x].id)
-	
 	-- the unit must be randomized on a GROUND tile
 	self.onCurrentTile = self:xyToTileType(self.x, self.y)
-	while self.onCurrentTile ~= "G" do
+	
+	while not (self.onCurrentTile == "R" or self.onCurrentTile == "G") do
 		self.x = math.random(self.radius * 3, map_w - self.radius * 3)
 		self.y = math.random(self.radius * 3, map_h - self.radius * 3)
 		self.onCurrentTile = self:xyToTileType(self.x, self.y)
 	end
 	
-	if self.y < 2 then
-		print("y is ".. self.y.. ", tag:"..self.tag)
-	end
+	--if self.y < 2 then
+	--	print("y is ".. self.y.. ", tag:"..self.tag)
+	--end
 	-- get neighbour tile types
 	--self:updateNeighbours(self)
+	--------------------------		  TILE CHECKS
 	
 	self.cx = self.x + self.radius
 	self.cy = self.y + self.radius
@@ -215,39 +217,36 @@ function Human:update(dt, zi, paused)
 		end
 	end
 	
-	--print("BLAH !")
-	if self.y < 0.5 then
-		self.state = "STUCK"
-		print("tag:".. self.tag.. ",state:"..self.state..", dir vector:".. self.dirVector.x..",y:"..self.y..",prev:"..self.prevY)
-		return
-	end
 	------------------------------- PANIC MODE
 	-- look around for zombies
 	self:lookAround()
 	
-		-- if panicZombieAngle is true.. increase speed and change targetAngle to run away from the zombie !
-		if self.panicMode == true then
+	-- if panicZombieAngle is true.. increase speed and change targetAngle to run away from the zombie !
+	if self.panicMode == true then
 		
-			-- change speed to panicSpeed
-			self.speed = self.panicSpeed
+		-- change speed to panicSpeed
+		self.speed = self.panicSpeed
 			
-			-- decrease the panicTimer
-			self.panicTimer = self.panicTimer - dt
+		-- decrease the panicTimer
+		self.panicTimer = self.panicTimer - dt
 			
-			-- while in panic mode, self.targetAngle should never change as the human is trying to run from the zombies
-			--self.directionTimer = 0
+		-- while in panic mode, self.targetAngle should never change as the human is trying to run from the zombies
+		--self.directionTimer = 0
 			
-			-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
-			self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
-		else
-			self.speed = self.normalSpeed
-			self.state = "chilling !"
-		end
+		-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
+		self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+	else
+		self.speed = self.normalSpeed
+		self.state = "chilling !"
+		
+		
+	end
 		
 	------------------------------- CHECK MAP BOUNDARIES
 	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
 	if val ~= 999 then			-- if it is too close to a boundary..
 		self.angle = val
+		self.targetAngle = val
 		--return
 	end
 	

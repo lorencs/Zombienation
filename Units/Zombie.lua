@@ -63,13 +63,13 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	if not self.x then self.x = math.random(self.radius * 3, map_w - self.radius * 3) end
 	if not self.y then self.y = math.random(self.radius * 3, map_h - self.radius * 3) end
 	
-	-- the unit must be randomized on a GROUND tile
-	--[[self.onCurrentTile = self:xyToTileType(self.x, self.y)
-	while self.onCurrentTile ~= "G" do
+	self.onCurrentTile = self:xyToTileType(self.x, self.y)
+	
+	while not (self.onCurrentTile == "R" or self.onCurrentTile == "G") do
 		self.x = math.random(self.radius * 3, map_w - self.radius * 3)
 		self.y = math.random(self.radius * 3, map_h - self.radius * 3)
 		self.onCurrentTile = self:xyToTileType(self.x, self.y)
-	end]]
+	end
 	
 	-- get neighbour tile types
 	--self:updateNeighbours(self)
