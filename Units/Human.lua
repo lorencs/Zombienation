@@ -49,20 +49,21 @@ function Human:setupUnit()
 	local map_w = map.width*map.tileSize
 	local map_h = map.height*map.tileSize
 	
-	if not self.x then self.x = math.random(10, map_w - self.radius * 2) end
-	if not self.y then self.y = math.random(10, map_h - self.radius * 2) end
-	--print("Tile type:".. map.tiles[self.y][self.x])
+	if not self.x then self.x = math.random(self.radius * 3, map_w - self.radius * 3) end
+	if not self.y then self.y = math.random(self.radius * 3, map_h - self.radius * 3) end
+	
+	--print("Tile type:".. map.tiles[self.y][self.x].id)
 	
 	-- the unit must be randomized on a GROUND tile
 	self.onCurrentTile = self:xyToTileType(self.x, self.y)
-	while self.onCurrentTile ~= "G" do
-		self.x = math.random(10, map_w - self.radius * 2)
-		self.y = math.random(10, map_h - self.radius * 2)
+	--[[while self.onCurrentTile ~= "G" do
+		self.x = math.random(self.radius * 3, map_w - self.radius * 3)
+		self.y = math.random(self.radius * 3, map_h - self.radius * 3)
 		self.onCurrentTile = self:xyToTileType(self.x, self.y)
-	end
+	end]]
 	
 	-- get neighbour tile types
-	self:updateNeighbours(self)
+	--self:updateNeighbours(self)
 	
 	self.cx = self.x + self.radius
 	self.cy = self.y + self.radius
@@ -274,6 +275,16 @@ function Human:update(dt, zi, paused)
 	------------------------------- UPDATE MOVEMENT
 	-- get direction vector
 	self.dirVector = self:getDirection(self.angle, self.speed)
+	
+	local next_x = self.x + (dt * self.dirVector.x)
+	local next_y = self.y + (dt * self.dirVector.y)
+	
+	-- check next tile
+	if self:xyToTileType(next_x,next_y) ~= "G" then
+		self.directionTimer = self.directionTimer + dt
+		self.state = "STUCK !"
+		return
+	end
 	
 	-- update zombie's movement
 	self.x = self.x + (dt * self.dirVector.x)

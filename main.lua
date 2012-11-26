@@ -85,6 +85,7 @@ function love:load()
 		-- initiate units
 	unitManager = UnitManager:new()
 	--unitManager:initUnits()
+	
 	-- graphics setup	
 	width = love.graphics.getWidth()
 	height = love.graphics.getHeight()

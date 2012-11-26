@@ -57,22 +57,25 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	local map_w = map.width*map.tileSize
 	local map_h = map.height*map.tileSize
 	
-	if not self.x then self.x = math.random(650) end
-	if not self.y then self.y = math.random(love.graphics.getHeight() - self.height) end
+	--print("map size W:"..map_w..", H:".. map_h)
+	--print("spawning boundaries: x:".. (self.radius * 3) .. ", ".. (map_w - self.radius * 3) )
+	--print("spawning boundaries: y:".. (self.radius * 3) .. ", ".. (map_h - self.radius * 3) )
+	if not self.x then self.x = math.random(self.radius * 3, map_w - self.radius * 3) end
+	if not self.y then self.y = math.random(self.radius * 3, map_h - self.radius * 3) end
 	
 	-- the unit must be randomized on a GROUND tile
-	self.onCurrentTile = self:xyToTileType(self.x, self.y)
+	--[[self.onCurrentTile = self:xyToTileType(self.x, self.y)
 	while self.onCurrentTile ~= "G" do
-		self.x = math.random(10, map_w - self.radius * 2)
-		self.y = math.random(10, map_h - self.radius * 2)
+		self.x = math.random(self.radius * 3, map_w - self.radius * 3)
+		self.y = math.random(self.radius * 3, map_h - self.radius * 3)
 		self.onCurrentTile = self:xyToTileType(self.x, self.y)
-	end
+	end]]
 	
 	-- get neighbour tile types
-	self:updateNeighbours(self)
+	--self:updateNeighbours(self)
 
-	local val = math.random(1,5)
-	print("val:"..val)
+	--local val = math.random(1,5)
+	--print("val:"..val)
 	
 	-- print( math.tan(5))		-- prints (in degrees) 5/1 ( 5 degrees / 1 degree )
 	

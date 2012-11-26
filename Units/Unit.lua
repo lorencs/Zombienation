@@ -92,18 +92,28 @@ function Unit:checkMapBoundaries(mx, my, unitRadius)
 end
 
 function Unit:updateNeighbours(unitObject)
-	print("HAA:"..unitObject.x)
+	--print("HAA:"..unitObject.x)
 	local currentTileW = unitObject.x / map.tileSize
 	local currentTileH = unitObject.y / map.tileSize
 	--print("REal:"..map.tiles[currentTileW][currentTileH].id)
-	print("second:"..self:xyToTileType(unitObject.x, unitObject.y))
+	--print("second:"..self:xyToTileType(unitObject.x, unitObject.y))
 	--unitObject.neighbourTiles[1] = map.tiles[currentTileW][currentTileH].id
 end
 
 function Unit:xyToTileType(x11,y11)
 	w = math.floor( x11 / map.tileSize )
 	h = math.floor( y11 / map.tileSize )
+	--print("x:"..x11..",y:"..y11)
+	--print("w:"..w..",h:"..h)
 	return map.tiles[w][h].id
+end
+
+function Unit:checkNextTile(unitObject)
+	local tileType = self:xyToTileType(unitObject.x, unitObject.y)
+	if tileType ~= "G" then
+		return false
+	end
+	return true
 end
 
  -- distance between 2 points
