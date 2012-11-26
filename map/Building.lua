@@ -1,11 +1,11 @@
 Building = {}
 													  -- b_type	
-b6x6 = love.graphics.newImage("map/buildings/b1.png") -- 66
-b4x3 = love.graphics.newImage("map/buildings/b2.png") -- 43
-b3x5 = love.graphics.newImage("map/buildings/b3.png") -- 35
-b3x3 = love.graphics.newImage("map/buildings/b4.png") -- 33
-b3x4 = love.graphics.newImage("map/buildings/b5.png") -- 34
-b6x4 = love.graphics.newImage("map/buildings/b6.png") -- 64
+b6x6 = love.graphics.newImage("map/buildings/b1.png") -- 66	- hall
+b4x3 = love.graphics.newImage("map/buildings/b2.png") -- 43 - arena
+b3x5 = love.graphics.newImage("map/buildings/b3.png") -- 35 - scraper
+b3x3 = love.graphics.newImage("map/buildings/b4.png") -- 33 - house
+b3x4 = love.graphics.newImage("map/buildings/b5.png") -- 34 - barn
+b6x4 = love.graphics.newImage("map/buildings/b6.png") -- 64 - garage
 -- need minimap images
 
 function Building:new()

@@ -50,6 +50,7 @@ end
 
 -- create random map based on difficulty
 function MapGen:randomMap(difficulty)
+	print("generating random map")
 	-- init new map
 	self.width = 100 -- / random number
 	self.height = 100 -- / rand
@@ -58,17 +59,22 @@ function MapGen:randomMap(difficulty)
 	
 	local freq = 12
 	-- roads
-	self:generateRoads(freq, difficulty)
-	
+	print("--placing roads")
+	self:generateRoads(freq, difficulty)	
 	-- water
-	self:generateWater(difficulty)
-	
+	print("--filling depth map")
+	self:generateWater(difficulty)	
 	-- update roads
-	self:thinRoads(freq, difficulty)	
-	
+	print("--pruning roadways")
+	self:thinRoads(freq, difficulty, true)		
 	-- buildings
+	print("--placing buildings")
 	self:generateBuildings(difficulty)
+	-- update roads
+	print("--pruning roadways")
+	self:thinRoads(math.floor(freq / 2), difficulty, true)
 	
+	print("--updating tile info")
 	-- update tiles
 	local m = self.map
 	for x=0,m.width-1 do
@@ -78,7 +84,9 @@ function MapGen:randomMap(difficulty)
 	end
 	
 	-- draw the map
+	print("--drawing canvas")
 	self.map:drawMap()
+	print("-complete")
 end
 
 -- create a random road network
@@ -102,16 +110,17 @@ function MapGen:generateRoads(freq, difficulty)
 end
 
 -- thin roads and remove ones that don't make sense
-function MapGen:thinRoads(freq, difficulty)
+function MapGen:thinRoads(freq, difficulty, veryThin)
 	-- remove less connected roads
-	self:removeRoads(2)
+	if veryThin then
+		self:removeRoads(2)
+	end
 	-- remove road islands
 	self:removeRoads(1)
 	
-	-- find connected components
-	small = {}
-	roads = self:findConnectedComponents(small, 2*freq, "R")
-	self:removeComponents(small, "G")		
+	-- find and remove connected components
+	smallRoads = self:findConnectedComponents(0, 2*freq, "R")
+	self:removeComponents(smallRoads, "G")		
 end
 
 -- remove less connected roads
@@ -143,14 +152,14 @@ function MapGen:removeRoads(threshold)
 	end
 end
 
-function MapGen:findConnectedComponents(invalid, threshold, tileType)
+function MapGen:findConnectedComponents(minSize, maxSize, tileType)
 	nodes = {}
 	open = {}
 	closed = {}
 	components = {}
 	local m = self.map
 	
-	-- all roads
+	-- all tiles of type tileType
 	for x=0,m.width-1 do
 		for y=0,m.height-1 do
 			if m.tiles[x][y]:getId() == tileType then
@@ -176,10 +185,8 @@ function MapGen:findConnectedComponents(invalid, threshold, tileType)
 			size = size + 1
 		end
 		
-		-- ignore small components
-		if size < threshold then
-			table.insert(invalid, comp)
-		else
+		-- ignore small/big components
+		if size > minSize and size < maxSize then
 			table.insert(components, comp)
 		end
 		
@@ -219,11 +226,11 @@ function consider(nodes, x, y, neighbors)
 end
 
 -- reset tiles belonging to components
-function MapGen:removeComponents(comps)
+function MapGen:removeComponents(comps, tileType)
 	cur = table.remove(comps)
 	while not(cur == nil) do
 		for _,v in pairs(cur) do
-			self.map.tiles[v.x][v.y]:setId("G")
+			self.map.tiles[v.x][v.y]:setId(tileType)
 		end
 		cur = table.remove(comps)
 	end
@@ -265,7 +272,48 @@ end
 
 -- place random buildings
 function MapGen:generateBuildings(difficulty)
-	-- nothing thus far
+	-- place halls
+	print("---halls")
+	self:placeBuildings(1000, 2000, 66)
+	-- place arenas
+	print("---arenas")
+	self:placeBuildings(200, 600, 43)
+	-- place barns
+	print("---barns")
+	self:placeBuildings(100, 300, 34)
+	-- place garages
+	print("---garages")
+	self:placeBuildings(40, 90, 64)
+	-- place scrapers
+	print("---scrapers")
+	self:placeBuildings(10, 35, 35)
+	-- place houses
+	print("---houses")
+	self:placeBuildings(0, 10, 33)
+end
+
+function MapGen:placeBuildings(minSize, maxSize, b_type)
+	build = self:findConnectedComponents(minSize, maxSize, "G")
+	for i,v in pairs(build) do
+		pos = self:findMiddle(v)
+		if self.map:newBuilding(pos.x, pos.y, b_type) then
+			print("----"..i)
+		end
+	end
+end
+
+-- find a midpoint in a connected component
+function MapGen:findMiddle(component)
+	local x,y,c = 0,0,0
+	for i,v in pairs(component) do
+		x = x + v.x
+		y = y + v.y
+		c = c + 1
+	end
+	local xn = math.floor(x / c)
+	local yn = math.floor(y / c)
+	
+	return Point:new(xn, yn)
 end
 
 -- load default map
