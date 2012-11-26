@@ -354,7 +354,7 @@ function gameSTATE:keyreleased(key)
 	elseif key == "p" and not paused then
 		gameSTATE:pauseResume()
 		paused = not paused
-	elseif key == "r" then
+	elseif key == "r" and not paused then
 		if paused then gameSTATE:pauseResume() end
 		Gamestate.switch(gameSTATE)
 	end	
