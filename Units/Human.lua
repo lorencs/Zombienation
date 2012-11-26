@@ -2,12 +2,12 @@ Human = {}
 Human_mt = { __index = Human }
 
 -- Constructor
-function Human:new()
+function Human:new(xnew,ynew)
 
     local new_object = {					-- define our parameters here
 	tag = 0,								-- tag of unit
-    x = 0,									-- x and y coordinates ( by default, left top )
-    y = 0,
+    x = xnew,									-- x and y coordinates ( by default, left top )
+    y = ynew,
 	cx = 0,									-- centered x and y coordinates of the unit
 	cy = 0,
 	radius = 4,
@@ -17,8 +17,8 @@ function Human:new()
     height = 0,
     state = "",
 	speed = 0,
-	normalSpeed = 20,
-	panicSpeed = 35,
+	normalSpeed = 50,
+	panicSpeed = 25,
     runSpeed = 0,
 	directionTimer = 0,
 	initial_direction = 1,
@@ -29,7 +29,8 @@ function Human:new()
 	v2 = Point:new(0,0),
 	v3 = Point:new(0,0),
 	selected = false,
-	color = 0
+	color = 0,
+	controlled = false
 	}
 
 	setmetatable(new_object, Human_mt )				-- add the new_object to metatable of Human
@@ -43,8 +44,9 @@ function Human:setupUnit()
 	local map_w = map.width*map.tileSize
 	local map_h = map.height*map.tileSize
 	
-	self.x = math.random(10, map_w - self.radius * 2) 							-- NOTE ! need to change this to (screenWidth - menuWidth) *change*
-	self.y = math.random(10, map_h - self.radius * 2)
+	if not self.x then self.x = math.random(10, map_w - self.radius * 2) end
+	if not self.y then self.y = math.random(10, map_h - self.radius * 2) end
+	
 	self.cx = self.x + self.radius
 	self.cy = self.y + self.radius
 	
@@ -169,55 +171,61 @@ function Human:update(dt, zi, paused)
 	
 	-- if the human is attacked, then he can't move (or could make him move very slow?)
 	if self.attacked == 1 then
-		return							
+		return
 	end
 	
-	------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS
-	-- after 5 seconds, the zombie should change his direction (x and y)
-	if self.directionTimer > 5 then 
-	
-		-- randomize a degree, 0 to 360
-		self.targetAngle = math.random(360)
+	--if (self.controlled == false) then
+		------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS.. unless it's controlled by penguins !
+		-- after 5 seconds, the zombie should change his direction (x and y)
+		if self.directionTimer > 5 then 
 		
-		-- get the angle direction ( positive or negative on axis )
-		self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
-		
-		-- reset directionTimer
-		self.directionTimer = 0						
-	end
+			-- randomize a degree, 0 to 360
+			self.targetAngle = math.random(360)
+			
+			-- get the angle direction ( positive or negative on axis )
+			self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+			
+			-- reset directionTimer
+			self.directionTimer = 0						
+		end
+	--else
+	--	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+	--end
 	
+	--if (self.controlled == false) then
 	------------------------------- PANIC MODE
 	-- look around for zombies
-	self:lookAround()
-	-- if panicZombieAngle is true.. increase speed and change targetAngle to run away from the zombie !
-	if self.panicMode == true then
-	
-		-- change speed to panicSpeed
-		self.speed = self.panicSpeed
+		self:lookAround()
+		-- if panicZombieAngle is true.. increase speed and change targetAngle to run away from the zombie !
+		if self.panicMode == true then
 		
-		--print(self.tag.." is runnign with angle: ".. self.targetAngle.. ", z angle:".. self.panicZombieAngle)
-		
-		-- decrease the panicTimer
-		self.panicTimer = self.panicTimer - dt
-		
-		-- while in panic mode, self.targetAngle should never change as the human is trying to run from the zombies
-		self.directionTimer = 0
-		
-		-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
-		self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
-		
-		-- stop panicking if panicTimer is < 0
-		--[[
-		if self.panicTimer < 0 then
+			-- change speed to panicSpeed
+			self.speed = self.panicSpeed
+			
+			--print(self.tag.." is runnign with angle: ".. self.targetAngle.. ", z angle:".. self.panicZombieAngle)
+			
+			-- decrease the panicTimer
+			self.panicTimer = self.panicTimer - dt
+			
+			-- while in panic mode, self.targetAngle should never change as the human is trying to run from the zombies
+			self.directionTimer = 0
+			
+			-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
+			self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+			
+			-- stop panicking if panicTimer is < 0
+			--[[
+			if self.panicTimer < 0 then
+				self.speed = self.normalSpeed
+				self.state = "chilling !"
+				self.panicMode = false
+			end--]]
+		else
 			self.speed = self.normalSpeed
 			self.state = "chilling !"
-			self.panicMode = false
-		end--]]
-	else
-		self.speed = self.normalSpeed
-		self.state = "chilling !"
-	end
+		end
 	
+	--end
 	------------------------------- CHECK MAP BOUNDARIES
 	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
 	if val ~= 999 then			-- if it is too close to a boundary..
@@ -229,14 +237,14 @@ function Human:update(dt, zi, paused)
 		-- target has been reached, no need to change the direction vector; keep the same self.angle value !
 	else
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
-		if self.dirVec == 0 then			-- positive direction	( opposite of conventional as y increases downwards )
-			if self.panicMode == true then		-- if the human is panicking, he is able to turn much faster
+		if self.dirVec == 0 then				-- positive direction	( opposite of conventional as y increases downwards )
+			if self.panicMode == true or self.controlled == true then		-- if the human is panicking, he is able to turn much faster
 				self.angle = self.angle + 1
 			else
 				self.angle = self.angle + 0.2
 			end
-		elseif self.dirVec == 1 then		-- negative direction
-			if self.panicMode == true then		-- if the human is panicking, he is able to turn much faster
+		elseif self.dirVec == 1 then			-- negative direction
+			if self.panicMode == true or self.controlled == true then		-- if the human is panicking, he is able to turn much faster
 				self.angle = self.angle - 1
 			else
 				self.angle = self.angle - 0.2

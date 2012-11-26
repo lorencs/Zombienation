@@ -31,11 +31,15 @@ function Zombie:new(x_new, y_new)
 	initial_direction = 1,
 	x_direction = math.random(-1,1),
 	y_direction = math.random(-1,1),
+	fov_radius = 75,
+	fovStartAngle = 0,
+	fovEndAngle = 0,
 	fol_human = 0,									-- index of the human in human_list that this zombie will follow. if it's 0, then this zombie
 	selected = false,
 	v1 = Point:new(0,0),							-- vertices for the field of view triangle
 	v2 = Point:new(0,0),
-	v3 = Point:new(0,0)
+	v3 = Point:new(0,0),
+	controlled = false
 	}												-- is not following a human (yet !)
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
@@ -78,10 +82,13 @@ function Zombie:draw(i)
 	love.graphics.setColor(211,211,211,150)
 	
 	------------------------------- UPDATE FIELD OF VIEW VERTICES
+	-- for triangle:
 	self.v1 = Point:new(self.x + self.radius, self.y + self.radius)
 	self.v2 = Point:new(self.x + math.cos( (self.angle - 40) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle - 40) * (math.pi/180) )*90 + self.radius)
 	self.v3 = Point:new(self.x + math.cos( (self.angle + 40 ) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle + 40) * (math.pi/180) )*90 + self.radius)
-	
+	-- for arc:
+	self.fovStartAngle = self.angle - 45
+	self.fovEndAngle = self.angle + 45
 	
 	------------------------------- IF UNIT IS SELECTED.. DRAW:
 	if self.selected then	
@@ -89,11 +96,13 @@ function Zombie:draw(i)
 		love.graphics.setColor(201,85,91,125)	
 		-- draw field of view
 		
-		love.graphics.triangle( "fill", 
+		love.graphics.arc( "fill", self.x + self.radius, self.y + self.radius, self.fov_radius, math.rad(self.angle + 45), math.rad(self.angle - 45) )
+		-- love.graphics.arc( mode, x, y, radius, angle1, angle2, segments )
+		--[[love.graphics.triangle( "fill", 
 			self.v1.x,self.v1.y,
 			self.v2.x,self.v2.y,
 			self.v3.x,self.v3.y
-			)
+			)--]]
 		
 		-- draw line for angle and targetAngle
 		love.graphics.line(self.x + self.radius,self.y + self.radius, 
@@ -110,9 +119,6 @@ function Zombie:draw(i)
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 10, 15 )
 		
 		--love.graphics.circle( "fill", self.x + self.radius, self.y + self.radius, 70, 25 )
-
-		love.graphics.arc( "fill", self.x + self.radius, self.y + self.radius, 75, math.rad(self.angle + 45), math.rad(self.angle - 45) )
-		-- love.graphics.arc( mode, x, y, radius, angle1, angle2, segments )
 	end
 	
 	playerColor = {255,0,0}
@@ -212,8 +218,12 @@ function Zombie:update(dt, zi, paused)
 	for i = 1, number_of_humans do
 	
 		if (self.v1.x ~= 0) then									-- initially, v1.x is 0 as it has not been set so this is an exception case.
+			
 			local human_point = Point:new(human_list[i].cx, human_list[i].cy)
-			local val = self:pTriangle(human_point, self.v1, self.v2, self.v3)
+			--local val = self:pTriangle(human_point, self.v1, self.v2, self.v3)						-- detect humans in a triangle
+			--print("self angle:".. self.angle)
+			local val = self:pointInArc(self.x, self.y, human_point.x, human_point.y, 
+										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
 			if val == true then										-- if human i is in the field of view of the zombie
 				self.fol_human = human_list[i].tag
 				self.state = "Chasing ".. self.fol_human	
@@ -223,29 +233,6 @@ function Zombie:update(dt, zi, paused)
 		
 		-- zombie found a human to chase; break out of loop
 		if self.fol_human ~= 0 then break end
-	end
- end
-
- -- distance between a human and a zombie. zombie -> (x1,y1), human -> (x2,y2)
- function Zombie:distanceBetweenZH(x1,y1,x2,y2)
-	local x_v1, y_v1 = 0
-	local dist = 999
-	if (x1 < x2) and (y1 < y2) then
-		x_v1 = x2 - x1
-		y_v1 = y2 - y1
-		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
-	elseif (x1 > x2) and (y1 < y2) then
-		x_v1 = x1 - x2
-		y_v1 = y2 - y1
-		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
-	elseif (x1 > x2) and (y1 > y2) then
-		x_v1 = x1 - x2
-		y_v1 = y1 - y2
-		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
-	elseif (x1 < x2) and (y1 > y2) then
-		x_v1 = x2 - x1
-		y_v1 = y1 - y2
-		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
 	end
  end
  
@@ -263,7 +250,7 @@ function Zombie:update(dt, zi, paused)
 	local same_location = 2
 
 	------------------------------- CALCULATE DISTANCE BETWEEN ZOMBIE AND THE HUMAN IT IS FOLLOWING
-	local dist = self:distanceBetweenZH(self.cx,self.cy,human_list[h_index].cx, human_list[h_index].cy)
+	local dist = self:distanceBetweenPoints(self.cx,self.cy,human_list[h_index].cx, human_list[h_index].cy)
 	
 	-- if its very close, zombie eats human
 	if dist < (self.radius * 2 + 7) then
@@ -307,27 +294,9 @@ function Zombie:update(dt, zi, paused)
 	--print("human x:"..human_list[h_index].x..",y:"..human_list[h_index].y)
 	
 	------------------------------- FOLLOWING THE HUMAN
-	local x_v, y_v = 0
-	if (self.x < human_list[h_index].x) and (self.y < human_list[h_index].y) then
-		x_v = human_list[h_index].x - self.x
-		y_v = human_list[h_index].y - self.y
-		self.targetAngle = math.deg( math.atan(y_v / x_v) )
-	elseif (self.x > human_list[h_index].x) and (self.y < human_list[h_index].y) then
-		x_v = self.x - human_list[h_index].x
-		y_v = human_list[h_index].y - self.y
-		self.targetAngle = math.deg( math.atan(y_v / x_v) )
-		self.targetAngle = 180 - self.targetAngle
-	elseif (self.x > human_list[h_index].x) and (self.y > human_list[h_index].y) then
-		x_v = self.x - human_list[h_index].x
-		y_v = self.y - human_list[h_index].y
-		self.targetAngle = math.deg( math.atan(y_v / x_v) )
-		self.targetAngle = 180 + self.targetAngle
-	elseif (self.x < human_list[h_index].x) and (self.y > human_list[h_index].y) then
-		x_v = human_list[h_index].x - self.x
-		y_v = self.y - human_list[h_index].y
-		self.targetAngle = math.deg( math.atan(y_v / x_v) )
-		self.targetAngle = 360 - self.targetAngle
-	end
+	
+	-- get angle from this zombie's position to the human's position
+	self.targetAngle = self:angleToXY(self.x,self.y,human_list[h_index].x,human_list[h_index].y)
 	
 	-- check map boundaries
 	local val = self:checkMapBoundaries(self.x,self.y, self.radius)

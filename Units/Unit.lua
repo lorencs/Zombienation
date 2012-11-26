@@ -86,6 +86,31 @@ function Unit:checkMapBoundaries(mx, my, unitRadius)
 	return 999
 end
 
+ -- distance between 2 points
+ function Unit:distanceBetweenPoints(x1,y1,x2,y2)
+ 
+	local x_v1, y_v1 = 0
+	
+	if (x1 < x2) and (y1 < y2) then
+		x_v1 = x2 - x1
+		y_v1 = y2 - y1
+		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
+	elseif (x1 > x2) and (y1 < y2) then
+		x_v1 = x1 - x2
+		y_v1 = y2 - y1
+		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
+	elseif (x1 > x2) and (y1 > y2) then
+		x_v1 = x1 - x2
+		y_v1 = y1 - y2
+		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
+	elseif (x1 < x2) and (y1 > y2) then
+		x_v1 = x2 - x1
+		y_v1 = y1 - y2
+		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
+	end
+	return 9999
+ end
+ 
 function Unit:pointInTriangle(p, az, b, c)			-- arguments: Point p, Point a, Point b, Point c
 
     as_x = p.x-az.x
@@ -102,6 +127,59 @@ function Unit:pointInTriangle(p, az, b, c)			-- arguments: Point p, Point a, Poi
     if((c.x-b.x)*(p.y-b.y)-(c.y-b.y)*(p.x-b.x) > 0 ~= s_ab) then return false end
 	
     return true
+end
+
+function Unit:pointInArc(x1, y1, x2, y2, fovRadius, startAngle, endAngle)
+	if self:distanceBetweenPoints(x1,y1,x2,y2) < fovRadius then			-- if the point x2,y2 is < fovRadius, it is in the circle
+
+		local angleToPoint = self:angleToXY(x1,y1,x2,y2)
+		--print("In circle ! startAngle:".. startAngle.. ", endAngle:"..endAngle.. ", angletoPoint:".. angleToPoint)
+		if  angleToPoint >= startAngle and angleToPoint <= endAngle then
+			return true
+		elseif endAngle > 360 then						-- EXCEPTIONS ! if endAngle is > 360 or startAngle < 0 .. then boundary check is diff
+			print("1.In circle ! startAngle:".. startAngle.. ", endAngle:"..endAngle.. ", angletoPoint:".. angleToPoint)
+			endAngle = endAngle - 360
+			print("2.In circle ! startAngle:".. startAngle.. ", endAngle:"..endAngle.. ", angletoPoint:".. angleToPoint)
+			if angleToPoint >= 0 and angleToPoint < endAngle then
+			print("3.In circle ! startAngle:".. startAngle.. ", endAngle:"..endAngle.. ", angletoPoint:".. angleToPoint)
+				return true
+			end
+		elseif startAngle < 0 then
+			startAngle = 360 + startAngle
+			print("4.In circle ! startAngle:".. startAngle.. ", endAngle:"..endAngle.. ", angletoPoint:".. angleToPoint)
+			if angleToPoint >= startAngle and angleToPoint < 0 then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+-- gets the angle from x1,y1 through to point x2,y2
+function Unit: angleToXY(x1,y1,x2,y2)
+	local x_v, y_v = 0
+	local angleRet = 0
+	if (x1 < x2) and (y1 < y2) then
+		x_v = x2 - x1
+		y_v = y2 - y1
+		angleRet = math.deg( math.atan(y_v / x_v) )
+	elseif (x1 > x2) and (y1 < y2) then
+		x_v = x1 - x2
+		y_v = y2 - y1
+		angleRet = math.deg( math.atan(y_v / x_v) )
+		angleRet = 180 - angleRet
+	elseif (x1 > x2) and (y1 > y2) then
+		x_v = x1 - x2
+		y_v = y1 - y2
+		angleRet = math.deg( math.atan(y_v / x_v) )
+		angleRet = 180 + angleRet
+	elseif (x1 < x2) and (y1 > y2) then
+		x_v = x2 - x1
+		y_v = y1 - y2
+		angleRet = math.deg( math.atan(y_v / x_v) )
+		angleRet = 360 - angleRet
+	end
+	return angleRet
 end
 
 function Unit:sign(p1, p2, p3)

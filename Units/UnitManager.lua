@@ -119,6 +119,7 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 	-- get the max y and x coords
 	--if not x1
 	print("select")
+	self:deselectUnits()
 	local max_x = 0
 	local min_x = 0
 	if x1 < x2 then
@@ -160,7 +161,7 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 end
 
 function UnitManager:deselectUnits()
-print("deselect")
+	print("deselect")
 	for i = 1, number_of_humans do
 		human_list[i].selected = false	-- deselect all zombies 
 	end
@@ -170,3 +171,33 @@ print("deselect")
 	selectedUnitsCount = 0
 	
 end
+
+function UnitManager:moveTo(xo,yo)
+	print("hi")
+	
+	--number_of_zombies = number_of_zombies + 1					-- increase count of zombies alive
+	--zombie_list[number_of_zombies] = Zombie:new(xo, yo)	-- create new zombie at the location of this zombie
+	--zombie_list[number_of_zombies]:setupUnit()					-- setup zombie
+	number_of_humans = number_of_humans + 1					-- increase count of zombies alive
+	human_list[number_of_humans] = Human:new(xo, yo)	-- create new zombie at the location of this zombie
+	human_list[number_of_humans]:setupUnit()					-- setup zombie
+	
+	--[[
+	for i = 1, number_of_humans do
+		if human_list[i].selected == true then
+			local angle = Unit:angleToXY(human_list[i].x,human_list[i].y, xo,yo)
+			human_list[i].targetAngle = angle
+			human_list[i].controlled = true
+		end
+	end
+	
+	for i = 1, number_of_zombies do
+		if zombie_list[i].selected == true then
+			local angle = Unit:angleToXY(zombie_list[i].x,zombie_list[i].y, xo,yo)
+			--zombie_list[i].targetAngle = angle
+			--zombie_list[i].controlled = true
+		end
+	end
+	--]]
+end
+
