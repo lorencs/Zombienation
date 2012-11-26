@@ -5,11 +5,6 @@ require "Units/SpriteAnimation"
 
 UnitManager = {}
 UnitManager_mt = { __index = UnitManager }
-
-	human_tag = 1								-- each unit has a unique tag
-	zombie_tag = 1
-	zombie_list = {}							-- array of zombie objects
-	human_list = {}								-- array of human objects
 	--[[ 
 
 	-> each unit has a unique tag. When zombies chase a unit, they chase them by the tag (eg. human_tag)
@@ -45,10 +40,11 @@ function UnitManager:initUnits()
 	print(map.tiles[10][16].id)
 	print(map.tiles[10][17].id)
 	print(map.tiles[10][18].id)]]
-
+	human_tag = 1								-- each unit has a unique tag
+	zombie_tag = 1
+	zombie_list = {}							-- array of zombie objects
+	human_list = {}								-- array of human objects
 	
-	
-			
 	number_of_zombies = orig_number_of_zombies			-- zombies are red
 	number_of_humans = orig_number_of_humans			-- humans are blue
 	-- generating units (Unit Manager coming soon, will make this much shorter )
@@ -81,10 +77,11 @@ function UnitManager:resetUnits()
 		human_list [k] = nil
 	end
 	
-	-- reset counters
-	number_of_humans = 0
-	number_of_zombies = 0
-	
+	-- reset counters and tags
+	number_of_humans = 1
+	number_of_zombies = 1
+	zombie_tag = 1
+	human_tag = 1
 	-- re init units
 	self:initUnits()
 	

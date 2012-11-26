@@ -35,7 +35,8 @@ function Human:new(xnew,ynew)
 	color = 0,
 	controlled = false,
 	onCurrentTile = 0,
-	neighbourTiles = {}
+	neighbourTiles = {},
+	prevY = 0
 	}
 	
 	setmetatable(new_object, Human_mt )				-- add the new_object to metatable of Human
@@ -56,12 +57,15 @@ function Human:setupUnit()
 	
 	-- the unit must be randomized on a GROUND tile
 	self.onCurrentTile = self:xyToTileType(self.x, self.y)
-	--[[while self.onCurrentTile ~= "G" do
+	while self.onCurrentTile ~= "G" do
 		self.x = math.random(self.radius * 3, map_w - self.radius * 3)
 		self.y = math.random(self.radius * 3, map_h - self.radius * 3)
 		self.onCurrentTile = self:xyToTileType(self.x, self.y)
-	end]]
+	end
 	
+	if self.y < 2 then
+		print("y is ".. self.y.. ", tag:"..self.tag)
+	end
 	-- get neighbour tile types
 	--self:updateNeighbours(self)
 	
@@ -185,7 +189,7 @@ end
  
 -- update function
 function Human:update(dt, zi, paused)
-
+	
 	------------------------------- CHECK PAUSE AND ATTACKED; LOOK AROUND FOR ZOMBIES
 	-- if game is paused, do not update any values
 	if paused == true then return end
@@ -210,7 +214,13 @@ function Human:update(dt, zi, paused)
 			self.directionTimer = 0						
 		end
 	end
-
+	
+	--print("BLAH !")
+	if self.y < 0.5 then
+		self.state = "STUCK"
+		print("tag:".. self.tag.. ",state:"..self.state..", dir vector:".. self.dirVector.x..",y:"..self.y..",prev:"..self.prevY)
+		return
+	end
 	------------------------------- PANIC MODE
 	-- look around for zombies
 	self:lookAround()
@@ -238,6 +248,7 @@ function Human:update(dt, zi, paused)
 	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
 	if val ~= 999 then			-- if it is too close to a boundary..
 		self.angle = val
+		--return
 	end
 	
 	-- check which tiles to go on in order to avoid buildings, water, etc
@@ -279,13 +290,15 @@ function Human:update(dt, zi, paused)
 	local next_x = self.x + (dt * self.dirVector.x)
 	local next_y = self.y + (dt * self.dirVector.y)
 	
+	--[[
 	-- check next tile
 	if self:xyToTileType(next_x,next_y) ~= "G" then
 		self.directionTimer = self.directionTimer + dt
 		self.state = "STUCK !"
 		return
-	end
+	end]]
 	
+	self.prevY = self.y
 	-- update zombie's movement
 	self.x = self.x + (dt * self.dirVector.x)
 	self.y = self.y + (dt * self.dirVector.y)

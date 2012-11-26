@@ -67,7 +67,7 @@ function love:load()
 	defaultFont = love.graphics.newFont(12)
 	
 	-- music
-	--music = love.audio.newSource("/units/fellowship.mp3") 
+	-- music = love.audio.newSource("/units/fellowship.mp3") 
 	
 	-- seeding randomizer
 	randomizer = math.random(30,60)				
@@ -84,7 +84,7 @@ function love:load()
 	
 		-- initiate units
 	unitManager = UnitManager:new()
-	--unitManager:initUnits()
+	unitManager:initUnits()
 	
 	-- graphics setup	
 	width = love.graphics.getWidth()
@@ -305,7 +305,7 @@ function gameSTATE:mousepressed(x, y, button)
 			dragSelect = true
 			dragx, dragy = x, y
 		elseif (button == "r") then
-			unitManager:moveTo(x,y)
+			--unitManager:moveTo(x,y)
 		end
 	end
 	
