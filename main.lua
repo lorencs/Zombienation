@@ -314,7 +314,7 @@ end
 -- callback functions needed by loveframes, we can use them too
 function gameSTATE:mousepressed(x, y, button)
 	if (x < viewWidth) and not menu.debugMode and not paused then
-		unitManager:deselectUnits()
+		--unitManager:deselectUnits()
 		if (button == "l") then		
 			dragSelect = true
 			dragx, dragy = x, y

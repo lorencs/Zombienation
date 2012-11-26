@@ -137,17 +137,14 @@ function Unit:pointInArc(x1, y1, x2, y2, fovRadius, startAngle, endAngle)
 		if  angleToPoint >= startAngle and angleToPoint <= endAngle then
 			return true
 		elseif endAngle > 360 then						-- EXCEPTIONS ! if endAngle is > 360 or startAngle < 0 .. then boundary check is diff
-			print("1.In circle ! startAngle:".. startAngle.. ", endAngle:"..endAngle.. ", angletoPoint:".. angleToPoint)
 			endAngle = endAngle - 360
-			print("2.In circle ! startAngle:".. startAngle.. ", endAngle:"..endAngle.. ", angletoPoint:".. angleToPoint)
 			if angleToPoint >= 0 and angleToPoint < endAngle then
-			print("3.In circle ! startAngle:".. startAngle.. ", endAngle:"..endAngle.. ", angletoPoint:".. angleToPoint)
 				return true
 			end
 		elseif startAngle < 0 then
 			startAngle = 360 + startAngle
 			print("4.In circle ! startAngle:".. startAngle.. ", endAngle:"..endAngle.. ", angletoPoint:".. angleToPoint)
-			if angleToPoint >= startAngle and angleToPoint < 0 then
+			if angleToPoint >= startAngle and angleToPoint < 360 then
 				return true
 			end
 		end

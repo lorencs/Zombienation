@@ -71,6 +71,7 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	self.tag = zombie_tag
 	zombie_tag = zombie_tag + 1
 	
+	------------------------------- ANIMATION
 	--self.spriteImage = love.graphics.newImage("Units/images/pika.png")
 	--delay = 120
 	--self.animation = SpriteAnimation:new("Units/images/robosprites.png", 32, 32, 4, 4)
@@ -94,11 +95,13 @@ function Zombie:draw(i)
 	if self.selected then	
 	
 		love.graphics.setColor(201,85,91,125)	
-		-- draw field of view
 		
+		-- draw the arc field of view
 		love.graphics.arc( "fill", self.x + self.radius, self.y + self.radius, self.fov_radius, math.rad(self.angle + 45), math.rad(self.angle - 45) )
 		-- love.graphics.arc( mode, x, y, radius, angle1, angle2, segments )
-		--[[love.graphics.triangle( "fill", 
+		
+		-- draw the triangle fov
+		--[[love.graphics.triangle( "fill",
 			self.v1.x,self.v1.y,
 			self.v2.x,self.v2.y,
 			self.v3.x,self.v3.y
@@ -221,7 +224,6 @@ function Zombie:update(dt, zi, paused)
 			
 			local human_point = Point:new(human_list[i].cx, human_list[i].cy)
 			--local val = self:pTriangle(human_point, self.v1, self.v2, self.v3)						-- detect humans in a triangle
-			--print("self angle:".. self.angle)
 			local val = self:pointInArc(self.x, self.y, human_point.x, human_point.y, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
 			if val == true then										-- if human i is in the field of view of the zombie

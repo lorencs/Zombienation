@@ -17,11 +17,14 @@ function Human:new(xnew,ynew)
     height = 0,
     state = "",
 	speed = 0,
-	normalSpeed = 50,
+	normalSpeed = 20,
 	panicSpeed = 25,
     runSpeed = 0,
 	directionTimer = 0,
 	initial_direction = 1,
+	fov_radius = 90,
+	fovStartAngle = 0,
+	fovEndAngle = 0,
 	attacked = 0,								-- if the unit is currently attacked, this var = 1
     panicMode = false,							-- panic mode is on if this is true..
 	panicTimer = 0,									-- a unit that has spotted a zombie will be in panic mode for 6-7 seconds ( after spotting last zombie )
@@ -50,6 +53,9 @@ function Human:setupUnit()
 	self.cx = self.x + self.radius
 	self.cy = self.y + self.radius
 	
+	self.fovStartAngle = self.angle - 45
+	self.fovEndAngle = self.angle + 45
+	
 	self.width = 50
 	self.height = 50
 	self.state = "Chilling"
@@ -62,19 +68,25 @@ end
 function Human:draw(i)
 	
 	------------------------------- UPDATE FIELD OF VIEW VERTICES
-	self.v1 = Point:new(self.x + self.radius, self.y + self.radius)
-	self.v2 = Point:new(self.x + math.cos( (self.angle - 70) * (math.pi/180) )*180 + self.radius, self.y + math.sin( (self.angle - 70) * (math.pi/180) )*180 + self.radius)
-	self.v3 = Point:new(self.x + math.cos( (self.angle + 70 ) * (math.pi/180) )*180 + self.radius, self.y + math.sin( (self.angle + 70) * (math.pi/180) )*180 + self.radius)
-	
+	-- for triangle:
+	--self.v1 = Point:new(self.x + self.radius, self.y + self.radius)
+	--self.v2 = Point:new(self.x + math.cos( (self.angle - 70) * (math.pi/180) )*180 + self.radius, self.y + math.sin( (self.angle - 70) * (math.pi/180) )*180 + self.radius)
+	--self.v3 = Point:new(self.x + math.cos( (self.angle + 70 ) * (math.pi/180) )*180 + self.radius, self.y + math.sin( (self.angle + 70) * (math.pi/180) )*180 + self.radius)
+	-- for arc:
+	self.fovStartAngle = self.angle - 45
+	self.fovEndAngle = self.angle + 45
 	------------------------------- IF UNIT IS SELECTED.. DRAW:
 	if self.selected then
 		love.graphics.setColor(0,0,255,125)
-		-- draw field of view
-		love.graphics.triangle( "fill", 
+		-- draw triangle field of view
+		--[[love.graphics.triangle( "fill", 
 			self.v1.x,self.v1.y,
 			self.v2.x,self.v2.y,
 			self.v3.x,self.v3.y
-		)
+		)]]
+		
+		-- draw the arc field of view
+		love.graphics.arc( "fill", self.x + self.radius, self.y + self.radius, self.fov_radius, math.rad(self.angle + 70), math.rad(self.angle - 70) )
 		
 		-- draw line for angle and targetAngle
 		love.graphics.line(self.x + self.radius,self.y + self.radius, 
@@ -135,19 +147,15 @@ end
 	-- for each zombie
 	for i = 1, number_of_zombies do
 	
-		if (self.v1.x ~= 0) then					-- initially, v1.x is 0 as it has not been set so this is an exception case.
 			local zombie_point = Point:new(zombie_list[i].cx, zombie_list[i].cy)
-			local val = self:pTriangle(zombie_point, self.v1, self.v2, self.v3)
+			--local val = self:pTriangle(zombie_point, self.v1, self.v2, self.v3)						-- detect zombies in a triangle
+			local val = self:pointInArc(self.x, self.y, zombie_point.x, zombie_point.y, 
+										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
 			if val == true then										-- if zombie i is in the field of view of this human
 				self.state = "Running from  ".. zombie_list[i].tag
 				self.panicMode = true
-				--self.panicTimer = 60									-- panic for 6 seconds since last seeing a zombie !
-				
 				self:runAwayFrom(zombie_list[i].x, zombie_list[i].y)
-				--[[
-				-- run away from the zombie !
-				self.targetAngle = zombie_list[i].angle + 180
-				]]
+
 				-- reset angles if they go over 360 or if they go under 0
 				if self.targetAngle > 360 then
 					self.targetAngle = self.targetAngle - 360
@@ -158,7 +166,6 @@ end
 				end
 				
 			end
-		end
 	end
  end
  
@@ -195,7 +202,7 @@ function Human:update(dt, zi, paused)
 	--if (self.controlled == false) then
 	------------------------------- PANIC MODE
 	-- look around for zombies
-		self:lookAround()
+		--self:lookAround()
 		-- if panicZombieAngle is true.. increase speed and change targetAngle to run away from the zombie !
 		if self.panicMode == true then
 		
