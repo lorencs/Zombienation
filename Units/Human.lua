@@ -33,7 +33,9 @@ function Human:new(xnew,ynew)
 	v3 = Point:new(0,0),
 	selected = false,
 	color = 0,
-	controlled = false
+	controlled = false,
+	onCurrentTile = 0,
+	neighbourTiles = {}
 	}
 	
 	setmetatable(new_object, Human_mt )				-- add the new_object to metatable of Human
@@ -50,11 +52,17 @@ function Human:setupUnit()
 	if not self.x then self.x = math.random(10, map_w - self.radius * 2) end
 	if not self.y then self.y = math.random(10, map_h - self.radius * 2) end
 	--print("Tile type:".. map.tiles[self.y][self.x])
-	--[[
-	while map.tiles[self.x][self.y] ~= "G" do
+	
+	-- the unit must be randomized on a GROUND tile
+	self.onCurrentTile = self:xyToTileType(self.x, self.y)
+	while self.onCurrentTile ~= "G" do
 		self.x = math.random(10, map_w - self.radius * 2)
 		self.y = math.random(10, map_h - self.radius * 2)
-	end]]
+		self.onCurrentTile = self:xyToTileType(self.x, self.y)
+	end
+	
+	-- get neighbour tile types
+	self:updateNeighbours(self)
 	
 	self.cx = self.x + self.radius
 	self.cy = self.y + self.radius
@@ -232,7 +240,7 @@ function Human:update(dt, zi, paused)
 	end
 	
 	-- check which tiles to go on in order to avoid buildings, water, etc
-	self:checkTiles()
+	--self:checkTiles()
 	
 	------------------------------- UPDATE SELF.ANGLE
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then

@@ -91,8 +91,19 @@ function Unit:checkMapBoundaries(mx, my, unitRadius)
 	return 999
 end
 
-function Unit:checkTiles()
-	
+function Unit:updateNeighbours(unitObject)
+	print("HAA:"..unitObject.x)
+	local currentTileW = unitObject.x / map.tileSize
+	local currentTileH = unitObject.y / map.tileSize
+	--print("REal:"..map.tiles[currentTileW][currentTileH].id)
+	print("second:"..self:xyToTileType(unitObject.x, unitObject.y))
+	--unitObject.neighbourTiles[1] = map.tiles[currentTileW][currentTileH].id
+end
+
+function Unit:xyToTileType(x11,y11)
+	w = math.floor( x11 / map.tileSize )
+	h = math.floor( y11 / map.tileSize )
+	return map.tiles[w][h].id
 end
 
  -- distance between 2 points

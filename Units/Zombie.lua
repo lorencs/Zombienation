@@ -39,7 +39,9 @@ function Zombie:new(x_new, y_new)
 	v1 = Point:new(0,0),							-- vertices for the field of view triangle
 	v2 = Point:new(0,0),
 	v3 = Point:new(0,0),
-	controlled = false
+	controlled = false,
+	onCurrentTile = 0,
+	neighbourTiles = {}
 	}												-- is not following a human (yet !)
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
@@ -51,10 +53,30 @@ function Zombie:new(x_new, y_new)
 end
 
 function Zombie:setupUnit()							-- init vars for Zombie unit
+
+	local map_w = map.width*map.tileSize
+	local map_h = map.height*map.tileSize
+	
 	if not self.x then self.x = math.random(650) end
 	if not self.y then self.y = math.random(love.graphics.getHeight() - self.height) end
 	
+	-- the unit must be randomized on a GROUND tile
+	self.onCurrentTile = self:xyToTileType(self.x, self.y)
+	while self.onCurrentTile ~= "G" do
+		self.x = math.random(10, map_w - self.radius * 2)
+		self.y = math.random(10, map_h - self.radius * 2)
+		self.onCurrentTile = self:xyToTileType(self.x, self.y)
+	end
+	
+	-- get neighbour tile types
+	self:updateNeighbours(self)
+
+	local val = math.random(1,5)
+	print("val:"..val)
+	
 	-- print( math.tan(5))		-- prints (in degrees) 5/1 ( 5 degrees / 1 degree )
+	
+	--print(self:xyToTileType(250,350))				-- FIRST WATER
 	
 	self.cx = self.x + self.radius
 	self.cy = self.y - self.radius
@@ -287,6 +309,7 @@ function Zombie:update(dt, zi, paused)
 		self.state = "Looking around"
 		human_list[h_index].panicMode = false		-- the human is not in panicMode anymore as it is not being followed anymore
 	end
+
 	
 	------------------------------- FOLLOWING THE HUMAN
 	
