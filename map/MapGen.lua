@@ -62,9 +62,19 @@ function MapGen:randomMap(difficulty)
 	-- water
 	self:generateWater(difficulty)
 	
+	-- update roads
+	self:thinRoads(difficulty)	
+	
 	-- buildings
 	self:generateBuildings(difficulty)
 	
+	-- update tiles
+	local m = self.map
+	for x=0,m.width-1 do
+		for y=0,m.height-1 do
+			m:updateTileInfo(x,y)
+		end
+	end
 	
 	-- draw the map
 	self.map:drawMap()
@@ -81,24 +91,24 @@ function MapGen:generateRoads(difficulty)
 		for y=0,m.height-1 do
 			if x % freq > pin then
 				m.tiles[x][y]:setId("R")
-				m:updateTileInfo(x,y)
 			end
 			if y % freq > pin then
 				m.tiles[x][y]:setId("R")
-				m:updateTileInfo(x,y)
 			end
 			pin = math.floor(math.random() * freq * 1.1)
 		end
 	end
-		
-	-- thin road grid
+end
+
+-- thin roads and remove ones that don't make sense
+function MapGen:thinRoads(difficulty)
+	-- remove less connected roads
 	self:removeRoads(2)
 	-- remove road islands
 	self:removeRoads(1)
 	
-	-- remove small road pockets
-	-- create connected components
-	-- remove cc st. cc.size < freq
+	-- find connected components
+	-- remove cc if cc.size < freq
 end
 
 -- remove less connected roads
@@ -124,7 +134,6 @@ function MapGen:removeRoads(threshold)
 				
 				if count < threshold then
 					m.tiles[x][y]:setId("G")
-					m:updateTileInfo(x,y)
 				end
 			end
 		end
@@ -160,7 +169,6 @@ function MapGen:generateWater(difficulty)
 		for y=0,self.map.height-1 do
 			if depth[x][y] < -waterLevel or depth[x][y] > range*waterLevel then
 				self:addCircleLake(x,y,1)
-				self.map:updateTileInfo(x,y)
 			end
 		end
 	end
