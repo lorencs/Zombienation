@@ -46,13 +46,134 @@ function MapGen:newMap(w, h)
 	end
 	
 	self.map:drawMap()
+end
 
+-- create random map based on difficulty
+function MapGen:randomMap(difficulty)
+	-- init new map
+	self.width = 100 -- / random number
+	self.height = 100 -- / rand
+	self.map = Map:new()
+	self.map:initMap(self.width, self.height)
+	
+	-- roads
+	self:generateRoads(difficulty)
+	
+	-- water
+	self:generateWater(difficulty)
+	
+	-- buildings
+	self:generateBuildings(difficulty)
+	
+	
+	-- draw the map
+	self.map:drawMap()
+end
+
+-- create a random road network
+function MapGen:generateRoads(difficulty)
+	local m = self.map
+	local freq = 12
+	local pin = 100 	-- start value
+	
+	-- random road grid
+	for x=0,m.width-1 do
+		for y=0,m.height-1 do
+			if x % freq > pin then
+				m.tiles[x][y]:setId("R")
+				m:updateTileInfo(x,y)
+			end
+			if y % freq > pin then
+				m.tiles[x][y]:setId("R")
+				m:updateTileInfo(x,y)
+			end
+			pin = math.floor(math.random() * freq * 1.1)
+		end
+	end
+		
+	-- thin road grid
+	self:removeRoads(2)
+	-- remove road islands
+	self:removeRoads(1)
+	
+	-- remove small road pockets
+	-- create connected components
+	-- remove cc st. cc.size < freq
+end
+
+-- remove less connected roads
+function MapGen:removeRoads(threshold)
+	local m = self.map 
+	
+	for x=0,m.width-1 do
+		for y=0,m.height-1 do
+			if m.tiles[x][y]:getId() == "R" then
+				local count = 0
+				if x-1 > -1 and m.tiles[x-1][y]:getId() == "R" then
+					count = count + 1
+				end
+				if x+1 < m.width and m.tiles[x+1][y]:getId() == "R" then
+					count = count + 1
+				end
+				if y-1 > -1 and m.tiles[x][y-1]:getId() == "R" then
+					count = count + 1
+				end
+				if y+1 < m.height and m.tiles[x][y+1]:getId() == "R" then
+					count = count + 1
+				end
+				
+				if count < threshold then
+					m.tiles[x][y]:setId("G")
+					m:updateTileInfo(x,y)
+				end
+			end
+		end
+	end
+end
+
+-- create water bodies using a depth map
+function MapGen:generateWater(difficulty)
+	local waterLevel = 3
+	local range = 15
+	
+	-- not too much water
+	local area = self.map.width * self.map.height
+	local max = math.floor(area * 0.25)
+	local min = math.floor(area * 0.05)
+	local count = self.map.width * self.map.height
+	
+	-- generate a depth map
+	while count > max or count < min  do
+		count = 0
+		depth = create(self.width, self.height, f)
+		for x=0,self.map.width-1 do
+			for y=0,self.height-1 do
+				if depth[x][y] < -waterLevel then
+					count = count + 1
+				end
+			end
+		end
+	end
+	
+	-- set map tiles
+	for x=0,self.map.width-1 do
+		for y=0,self.map.height-1 do
+			if depth[x][y] < -waterLevel or depth[x][y] > range*waterLevel then
+				self:addCircleLake(x,y,1)
+				self.map:updateTileInfo(x,y)
+			end
+		end
+	end
+end
+
+-- place random buildings
+function MapGen:generateBuildings(difficulty)
+	-- nothing thus far
 end
 
 -- load default map
 function MapGen:defaultMap()
-	--defaultMap = ("map/defaultMap.txt")
-	
+	-- load default map if it exists
 	if io.open("map/defaultMap.txt", "r") then
 		self.map = Map:new()
 		self.map:initMap(100, 100)
@@ -66,8 +187,10 @@ function MapGen:defaultMap()
 		end
 		
 		self.map:drawMap()
+	-- generate a random map
 	else
-		self:newMap(100,100)
+		--self:newMap(100,100)
+		self:randomMap(100, 100, 0)
 	end
 end
 
@@ -106,7 +229,11 @@ function MapGen:addLake(x, y, width, height)
 	for xi=0,width-1 do
 		for yi=0,height-1 do
 			--index = m:index(x+xi, y+yi)
-			m.tiles[x+xi][y+yi]:setId("W")
+			local xn = x + xi
+			local yn = y + yi
+			if (xn > -1) and (xn < m.width) and (yn > -1) and (yn < m.height) then
+				m.tiles[x+xi][y+yi]:setId("W")
+			end
 		end
 	end
 end
@@ -143,20 +270,5 @@ end
 
 -- add building from predefined types
 function MapGen:addBuilding(x, y, b_type)
-	--[[
-	m = self.map
-	
-	-- add building to list
-	local b = Building:new()
-	b:set(x, y, b_type)
-	table.insert(m.buildings, b)
-	
-	-- set tile ids
-	for xi=x,x+b.width-1 do
-		for yi=y,y+b.height-1 do
-			m.tiles[xi][yi]:setId("D")
-		end
-	end
-	--]]
 	self.map:newBuilding(x, y, b_type)
 end

@@ -3,6 +3,7 @@ require "map/Tile"
 require "map/Building"
 require "map/MapGen"
 require "map/Minimap"
+require "map/heightmap"
 require "gui/Menu"
 require "gui/StartMenu"
 require "gui/PauseMenu"
@@ -21,8 +22,6 @@ require "Units/Point"
 		- moved all the menu type code to the menu type file
 		- map changes saved in "map/defaultMap.txt"
 		- building editing with debug menu 
-			- still buggy: allows overlapping buildings
-			- todo: snap the draw box to tiles
 	
 	mikus: 
 		- hid cursor, replaced with a zombie hand (just a random image i found for now)
@@ -76,7 +75,9 @@ function love:load()
 	
 	-- generate a map
 	generator = MapGen:new()
-	generator:defaultMap()
+	--generator:defaultMap()
+	difficulty = 1
+	generator:randomMap(difficulty)
 	
 	-- get the map	
 	map = generator:getMap()
@@ -208,17 +209,7 @@ function gameSTATE:update(dt)
 			-- valid map position
 			if (xpos > -1) and (ypos > -1) and (xpos < map.width) and (ypos < map.height) then
 				-- can place building here
-				if map:newBuilding(xpos, ypos, menu.b_type) then
-					local xd = math.floor(menu.b_type / 10)
-					local yd = menu.b_type % 10
-					
-					-- update all relevent tiles
-					for xi=xpos,xpos+xd-1 do
-						for yi=ypos,ypos+yd-1 do
-							map:updateTileInfo(xi, yi)
-						end
-					end				
-				end
+				map:newBuilding(xpos, ypos, menu.b_type)
 			end
 		end
 	elseif menu.debugMode then

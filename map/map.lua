@@ -27,6 +27,7 @@ function Map:initMap(w,h)
 		self.tiles[i] = {}
 		for j=0, h-1 do
 			self.tiles[i][j] = Tile:new()
+			self.tiles[i][j]:setId("G")
 		end
 	end
 end
@@ -317,12 +318,14 @@ function Map:newBuilding(x, y, b_type)
 		return false
 	end
 	
+	-- keep this building
 	table.insert(self.buildings, b)
 	
-	-- set tiles
+	-- set and update tiles
 	for xi=x,b.xend do
 		for yi=y,b.yend do
 			self.tiles[xi][yi]:setId("D")
+			self:updateTileInfo(xi, yi)
 		end
 	end
 	
