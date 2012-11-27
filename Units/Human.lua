@@ -55,16 +55,16 @@ function Human:setupUnit()
 	--------------------------               TILE CHECKS
 	--print("Tile type:".. map.tiles[self.y][self.x].id)
 	-- the unit must be randomized on a GROUND tile
-	--[[self.onCurrentTile = self:xyToTileType(self.x, self.y)
+	self.onCurrentTile = self:xyToTileType(self.x, self.y)
 	
 	while not (self.onCurrentTile == "R" or self.onCurrentTile == "G") do
 		self.x = math.random(self.radius * 3, map_w - self.radius * 3)
 		self.y = math.random(self.radius * 3, map_h - self.radius * 3)
 		self.onCurrentTile = self:xyToTileType(self.x, self.y)
-	end]]
-	
+	end
+	--print("W:"..map.tiles[-1][-1].id)
 	-- get neighbour tile types
-	--self:updateNeighbours(self)
+	self:updateNeighbours(self)
 	--------------------------		  TILE CHECKS
 	
 	self.cx = self.x + self.radius
@@ -197,6 +197,7 @@ function Human:update(dt, zi, paused)
 		return
 	end
 	
+	--updating neighbours
 	self:updateNeighbours(self)
 	
 	if self.panicMode == false then
@@ -280,31 +281,32 @@ function Human:update(dt, zi, paused)
 		end
 	end
 	
+		--if self.x < 0 or self.x > map.tileSize*map.width or self.y < 0 or self.y > map.tileSize*map.height then
+	--	--print("tag:"..self.tag..", prevdt:"..self.prevDt..",prevdy:"..self.prevdy..",prevdx:"..self.prevdx)
+	--	print("out of boundaries:"..self.tag)
+	--end
+	
 	------------------------------------------------------------------------------ UPDATE MOVEMENT
 	-- get direction vector
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	
-	
 	-- checking the tile that the unit is or will be on
 	local next_x = self.x + (dt * self.dirVector.x)
 	local next_y = self.y + (dt * self.dirVector.y)
-	if self.x < 0 or self.x > map.tileSize*map.width or self.y < 0 or self.y > map.tileSize*map.height then
-		--print("tag:"..self.tag..", prevdt:"..self.prevDt..",prevdy:"..self.prevdy..",prevdx:"..self.prevdx)
-		--print("out of boundaries:"..self.tag)
-	else
-		--[[local nextTileType = self:xyToTileType(next_x,next_y)
-		-- check next tile (not in panic mode)
-		if  not (nextTileType == "G" or nextTileType == "R") then
-			self.directionTimer = self.directionTimer + 5
-			self.state = "STUCK !"
-			return
-		end]]
+	
+	local nextTileType = self:xyToTileType(next_x,next_y)
+	-- check next tile (not in panic mode)
+	if  not (nextTileType == "G" or nextTileType == "R") then
+		self.directionTimer = self.directionTimer + 5
+		self.state = "STUCK !"
+		self:avoidTile(self)
+		return
 	end
 	
 	------------------------------- CHECK MAP BOUNDARIES 						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE
 	if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
 		self.state = "WTF"
-		--print("TAG:".. self.tag.." with dt:"..dt)
+		self.directionTimer = self.directionTimer + dt
 		return
 	end																															-- ** IN THE OTHER DIRECTION !
 	local val = self:checkMapBoundaries(next_x,next_y, self.radius)											
@@ -315,7 +317,7 @@ function Human:update(dt, zi, paused)
 	end
 	------------------------------- END OF BOUNDARY CHECK
 	
-	-- update zombie's movement
+	-- update human's movement
 	self.x = self.x + (dt * self.dirVector.x)
 	self.y = self.y + (dt * self.dirVector.y)
 	

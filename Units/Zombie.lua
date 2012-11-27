@@ -196,12 +196,6 @@ function Zombie:update(dt, zi, paused)
 		self.directionTimer = 0						
 	end
 	
-	------------------------------- CHECK MAP BOUNDARIES
-	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
-	if val ~= 999 then			-- if it is too close to a boundary..
-		self.angle = val
-	end
-	
 	------------------------------- UPDATE SELF.ANGLE
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then		-- targetAngle reached
 	else																						-- else.. 
@@ -226,6 +220,34 @@ function Zombie:update(dt, zi, paused)
 	------------------------------- UPDATE MOVEMENT
 	-- get direction vector
 	self.dirVector = self:getDirection(self.angle, self.speed)
+	
+	-- checking the tile that the unit is or will be on
+	local next_x = self.x + (dt * self.dirVector.x)
+	local next_y = self.y + (dt * self.dirVector.y)
+	
+	local nextTileType = self:xyToTileType(next_x,next_y)
+	-- check next tile (not in panic mode)
+	if  not (nextTileType == "G" or nextTileType == "R") then
+		self.directionTimer = self.directionTimer + 5
+		self.state = "STUCK !"
+		self:avoidTile(self)
+		return
+	end
+	
+	------------------------------- CHECK MAP BOUNDARIES 						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE
+	-- next move would be out of bounds so cancel it and return !
+	if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
+		self.state = "WTF"
+		self.directionTimer = self.directionTimer + dt
+		return
+	end																															-- ** IN THE OTHER DIRECTION !
+	local val = self:checkMapBoundaries(next_x,next_y, self.radius)											
+	if val ~= 999 then			-- if it is too close to a boundary..
+		self.angle = val
+		self.targetAngle = val
+		--return
+	end
+	------------------------------- END OF BOUNDARY CHECK
 	
 	-- update zombie's movement
 	self.x = self.x + (dt * self.dirVector.x)

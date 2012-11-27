@@ -95,10 +95,24 @@ function Unit:checkMapBoundaries(mx, my, unitRadius)
 	return 999
 end
 
-function Unit:updateNeighbours(unitObject)
-	local currentTileW = unitObject.x / map.tileSize
-	local currentTileH = unitObject.y / map.tileSize
+function Unit:avoidTile(unitObject)
+	if unitObject.neighbourTiles[2] == "G" or unitObject.neighbourTiles[2] == "R" then
+		unitObject.angle = math.random(180,360)
+	elseif unitObject.neighbourTiles[4] == "G" or unitObject.neighbourTiles[4] == "R" then
+		unitObject.angle = math.random(90,270)
+	elseif unitObject.neighbourTiles[6] == "G" or unitObject.neighbourTiles[6] == "R" then
+		local r = math.random(1,2)
+		if r == 1 then unitObject.angle = math.random(270,360) else
+		unitObject.angle = math.random(0,90) end
+	elseif unitObject.neighbourTiles[8] == "G" or unitObject.neighbourTiles[8] == "R" then
+		unitObject.angle = math.random(0,180)
+	end
+end
 
+function Unit:updateNeighbours(unitObject)
+	local currentTileW = math.floor(unitObject.x / map.tileSize)
+	local currentTileH = math.floor(unitObject.y / map.tileSize)
+	--print("W:"..currentTileW..",H"..currentTileH)
 	unitObject.neighbourTiles[1] = map.tiles[currentTileW-1][currentTileH-1].id
 	unitObject.neighbourTiles[2] = map.tiles[currentTileW-1][currentTileH].id
 	unitObject.neighbourTiles[3] = map.tiles[currentTileW-1][currentTileH+1].id
