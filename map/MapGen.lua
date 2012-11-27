@@ -57,7 +57,7 @@ function MapGen:randomMap(difficulty)
 	self.map = Map:new()
 	self.map:initMap(self.width, self.height)
 	
-	local freq = 12
+	local freq = 4
 	-- roads
 	print("--placing roads")
 	self:generateRoads(freq, difficulty)	
@@ -65,14 +65,15 @@ function MapGen:randomMap(difficulty)
 	print("--filling depth map")
 	self:generateWater(difficulty)	
 	-- update roads
-	print("--pruning roadways")
-	self:thinRoads(freq, difficulty, true)		
+	--print("--pruning roadways1")
+	--self:thinRoads(freq, difficulty, false)		
 	-- buildings
 	print("--placing buildings")
 	self:generateBuildings(difficulty)
 	-- update roads
-	print("--pruning roadways")
-	self:thinRoads(math.floor(freq / 2), difficulty, true)
+	print("--pruning roadways2")
+	self:removeRoads(1)
+	--self:thinRoads(math.floor(freq / 2), difficulty, true)
 	
 	print("--updating tile info")
 	-- update tiles
@@ -94,32 +95,38 @@ function MapGen:generateRoads(freq, difficulty)
 	local m = self.map
 	--local freq = 12
 	local pin = 100 	-- start value
+	local chance = 0.075
 	
 	-- random road grid
 	for x=0,m.width-1 do
 		for y=0,m.height-1 do
-			if x % freq > pin then
+			--if x % freq > pin then
+			if x % freq == 1 and math.random() > chance then
 				m.tiles[x][y]:setId("R")
 			end
-			if y % freq > pin then
+			--if y % freq > pin then
+			if y % freq == 1 and math.random() > chance then 
 				m.tiles[x][y]:setId("R")
 			end
-			pin = math.floor(math.random() * freq * 1.1)
+			pin = math.floor(math.random() * freq)
 		end
 	end
 end
 
 -- thin roads and remove ones that don't make sense
 function MapGen:thinRoads(freq, difficulty, veryThin)
-	-- remove less connected roads
+	
 	if veryThin then
-		self:removeRoads(2)
+		-- remove less connected roads
+		--self:removeRoads(2)
+		-- remove road islands
+		self:removeRoads(1)
 	end
-	-- remove road islands
-	self:removeRoads(1)
+	
 	
 	-- find and remove connected components
-	smallRoads = self:findConnectedComponents(0, 2*freq, "R")
+	local scale = 3
+	smallRoads = self:findConnectedComponents(0, scale*freq, "R")
 	self:removeComponents(smallRoads, "G")		
 end
 
@@ -274,30 +281,38 @@ end
 function MapGen:generateBuildings(difficulty)
 	-- place halls
 	print("---halls")
-	self:placeBuildings(1000, 2000, 66)
+	self:placeBuildings(500, 1000, 66, true)
 	-- place arenas
 	print("---arenas")
-	self:placeBuildings(200, 600, 43)
+	self:placeBuildings(200, 500, 43, true)
 	-- place barns
 	print("---barns")
-	self:placeBuildings(100, 300, 34)
+	self:placeBuildings(100, 250, 34, true)
 	-- place garages
 	print("---garages")
-	self:placeBuildings(40, 90, 64)
+	self:placeBuildings(50, 100, 64, false)
 	-- place scrapers
 	print("---scrapers")
-	self:placeBuildings(10, 35, 35)
+	self:placeBuildings(30, 60, 35, true)
 	-- place houses
 	print("---houses")
-	self:placeBuildings(0, 10, 33)
+	self:placeBuildings(0, 20, 33, true)
 end
 
-function MapGen:placeBuildings(minSize, maxSize, b_type)
+function MapGen:placeBuildings(minSize, maxSize, b_type, middle)
+	local chance = 0.05
 	build = self:findConnectedComponents(minSize, maxSize, "G")
 	for i,v in pairs(build) do
-		pos = self:findMiddle(v)
-		if self.map:newBuilding(pos.x, pos.y, b_type) then
-			print("----"..i)
+		if middle then
+			pos = self:findMiddle(v)
+		else
+			pos = table.remove(v)
+		end
+				
+		if math.random() > chance then
+			if self.map:newBuilding(pos.x, pos.y, b_type) then
+				print("----"..i)
+			end
 		end
 	end
 end
