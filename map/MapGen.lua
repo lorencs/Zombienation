@@ -341,6 +341,7 @@ end
 
 -- return map reference
 function MapGen:getMap()
+	self.map:addBoundary()
 	return self.map
 end
 

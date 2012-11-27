@@ -11,9 +11,9 @@ waterMM = love.graphics.newImage("map/waterMM.png")
 blockedMM = love.graphics.newImage("map/blockedMM.png")
 
 -- constructor
-function Tile:new()
+function Tile:new(_id)
 	local object = {
-		id = "G", 	-- default grass tile
+		id = _id,
 		img = blocked,
 		mm = grassMM,
 		sprite = love.graphics.newQuad(0, 0, 25, 25, 400, 25)

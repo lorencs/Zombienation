@@ -23,6 +23,8 @@ function Map:initMap(w,h)
 	--[[for i=0, (w * h - 1) do
 		self.tiles[i] = Tile:new()
 	end]]--
+	self.tiles[-1] = {}
+	self.tiles[w] = {}
 	for i=0, w-1 do
 		self.tiles[i] = {}
 		for j=0, h-1 do
@@ -331,6 +333,19 @@ function Map:newBuilding(x, y, b_type)
 	
 	-- success
 	return true
+end
+
+function Map:addBoundary()
+	local boundTile = Tile:new("X")
+	for i = -1, self.height do
+		self.tiles[-1][i] = boundTile
+		self.tiles[self.width][i] = boundTile
+	end
+	
+	for i = -1, self.width do
+		self.tiles[i][-1] = boundTile
+		self.tiles[i][self.width] = boundTile
+	end
 end
 
 function Map:findi(spritei)
