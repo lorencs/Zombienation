@@ -197,6 +197,8 @@ function Human:update(dt, zi, paused)
 		return
 	end
 	
+	self:updateNeighbours(self)
+	
 	if self.panicMode == false then
 	------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS.. unless it's controlled by penguins !
 		-- after 5 seconds, the zombie should change his direction (x and y)

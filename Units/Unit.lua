@@ -74,19 +74,19 @@ function Unit:checkMapBoundaries(mx, my, unitRadius)
 	local map_h = map.height*map.tileSize
 	local random_direction = math.random(1,2)
 	
-	if  (my < unitRadius * 3) then							-- too close to the top of the screen
+	if  (my < unitRadius * 2) then							-- too close to the top of the screen
 		--print("top")
 		if random_direction == 1 then return math.random(10,25)
 		else return math.random(155,170) end
-	elseif (mx < unitRadius * 3) then						-- too close to the left side of the screen
+	elseif (mx < unitRadius * 2) then						-- too close to the left side of the screen
 		--print("left")
 		if random_direction == 1 then return math.random(65,80)
 		else return math.random(280,295) end
-	elseif (my > (map_h - unitRadius * 3)) then				-- too close to the bottom of the screen
+	elseif (my > (map_h - unitRadius * 2)) then				-- too close to the bottom of the screen
 		--print("bottom")
 		if random_direction == 1 then return math.random(190,205)
 		else return math.random(335,350) end
-	elseif (mx > (map_w - unitRadius * 3)) then				-- too close to the right side of the screen
+	elseif (mx > (map_w - unitRadius * 2)) then				-- too close to the right side of the screen
 		--print("right")
 		if random_direction == 1 then return math.random(245,260)
 		else return math.random(100,115) end
@@ -98,6 +98,7 @@ end
 function Unit:updateNeighbours(unitObject)
 	local currentTileW = unitObject.x / map.tileSize
 	local currentTileH = unitObject.y / map.tileSize
+
 	unitObject.neighbourTiles[1] = map.tiles[currentTileW-1][currentTileH-1].id
 	unitObject.neighbourTiles[2] = map.tiles[currentTileW-1][currentTileH].id
 	unitObject.neighbourTiles[3] = map.tiles[currentTileW-1][currentTileH+1].id
