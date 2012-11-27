@@ -48,7 +48,6 @@ function UnitManager:initUnits()
 	number_of_zombies = orig_number_of_zombies			-- zombies are red
 	number_of_humans = orig_number_of_humans			-- humans are blue
 	-- generating units (Unit Manager coming soon, will make this much shorter )
-
 	
 	-- set up zombies
 	for i = 1, number_of_zombies do

@@ -35,10 +35,9 @@ function Human:new(xnew,ynew)
 	color = 0,
 	controlled = false,
 	onCurrentTile = 0,
-	neighbourTiles = {},
-	prevY = 0
+	neighbourTiles = {}
 	}
-	
+
 	setmetatable(new_object, Human_mt )				-- add the new_object to metatable of Human
 	setmetatable(Human, { __index = Unit })        -- Human is a subclass of class Unit, so set inheritance..				
 	
@@ -56,17 +55,14 @@ function Human:setupUnit()
 	--------------------------               TILE CHECKS
 	--print("Tile type:".. map.tiles[self.y][self.x].id)
 	-- the unit must be randomized on a GROUND tile
-	self.onCurrentTile = self:xyToTileType(self.x, self.y)
+	--[[self.onCurrentTile = self:xyToTileType(self.x, self.y)
 	
 	while not (self.onCurrentTile == "R" or self.onCurrentTile == "G") do
 		self.x = math.random(self.radius * 3, map_w - self.radius * 3)
 		self.y = math.random(self.radius * 3, map_h - self.radius * 3)
 		self.onCurrentTile = self:xyToTileType(self.x, self.y)
-	end
+	end]]
 	
-	--if self.y < 2 then
-	--	print("y is ".. self.y.. ", tag:"..self.tag)
-	--end
 	-- get neighbour tile types
 	--self:updateNeighbours(self)
 	--------------------------		  TILE CHECKS
@@ -241,14 +237,6 @@ function Human:update(dt, zi, paused)
 		
 		
 	end
-		
-	------------------------------- CHECK MAP BOUNDARIES
-	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
-	if val ~= 999 then			-- if it is too close to a boundary..
-		self.angle = val
-		self.targetAngle = val
-		--return
-	end
 	
 	-- check which tiles to go on in order to avoid buildings, water, etc
 	--self:checkTiles()
@@ -256,6 +244,14 @@ function Human:update(dt, zi, paused)
 	------------------------------- UPDATE SELF.ANGLE
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then
 		-- target has been reached, no need to change the direction vector; keep the same self.angle value !
+				-- reset angles if they go over 360 or if they go under 0
+		if self.angle > 360 then
+			self.angle = self.angle - 360
+		end
+		
+		if self.angle < 0 then
+			self.angle = 360 + self.angle
+		end
 	else
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
 		if self.dirVec == 0 then				-- positive direction	( opposite of conventional as y increases downwards )
@@ -282,25 +278,45 @@ function Human:update(dt, zi, paused)
 		end
 	end
 	
-	------------------------------- UPDATE MOVEMENT
+	------------------------------------------------------------------------------ UPDATE MOVEMENT
 	-- get direction vector
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	
+	
+	-- checking the tile that the unit is or will be on
 	local next_x = self.x + (dt * self.dirVector.x)
 	local next_y = self.y + (dt * self.dirVector.y)
+	if self.x < 0 or self.x > map.tileSize*map.width or self.y < 0 or self.y > map.tileSize*map.height then
+		--print("tag:"..self.tag..", prevdt:"..self.prevDt..",prevdy:"..self.prevdy..",prevdx:"..self.prevdx)
+		--print("out of boundaries:"..self.tag)
+	else
+		--[[local nextTileType = self:xyToTileType(next_x,next_y)
+		-- check next tile (not in panic mode)
+		if  not (nextTileType == "G" or nextTileType == "R") then
+			self.directionTimer = self.directionTimer + 5
+			self.state = "STUCK !"
+			return
+		end]]
+	end
 	
-	--[[
-	-- check next tile
-	if self:xyToTileType(next_x,next_y) ~= "G" then
-		self.directionTimer = self.directionTimer + dt
-		self.state = "STUCK !"
+	------------------------------- CHECK MAP BOUNDARIES 						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE
+	if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
+		self.state = "WTF"
+		--print("TAG:".. self.tag.." with dt:"..dt)
 		return
-	end]]
+	end																															-- ** IN THE OTHER DIRECTION !
+	local val = self:checkMapBoundaries(next_x,next_y, self.radius)											
+	if val ~= 999 then			-- if it is too close to a boundary..
+		self.angle = val
+		self.targetAngle = val
+		--return
+	end
+	------------------------------- END OF BOUNDARY CHECK
 	
-	self.prevY = self.y
 	-- update zombie's movement
 	self.x = self.x + (dt * self.dirVector.x)
 	self.y = self.y + (dt * self.dirVector.y)
+	
 	-- update the center x and y values of the unit
 	self.cx = self.x + self.radius
 	self.cy = self.y + self.radius

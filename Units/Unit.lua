@@ -74,30 +74,39 @@ function Unit:checkMapBoundaries(mx, my, unitRadius)
 	local map_h = map.height*map.tileSize
 	local random_direction = math.random(1,2)
 	
-	if  (my < unitRadius * 2) then							-- too close to the top of the screen
-		if random_direction == 1 then return math.random(10,35)
+	if  (my < unitRadius * 3) then							-- too close to the top of the screen
+		--print("top")
+		if random_direction == 1 then return math.random(10,25)
 		else return math.random(155,170) end
-	elseif (mx < unitRadius * 2) then						-- too close to the left side of the screen
+	elseif (mx < unitRadius * 3) then						-- too close to the left side of the screen
+		--print("left")
 		if random_direction == 1 then return math.random(65,80)
 		else return math.random(280,295) end
-	elseif (my > (map_h - unitRadius * 2)) then				-- too close to the bottom of the screen
-		if random_direction == 1 then return math.random(335,350)
-		else return math.random(190,215) end
-	elseif (mx > (map_w - unitRadius * 2)) then				-- too close to the right side of the screen
+	elseif (my > (map_h - unitRadius * 3)) then				-- too close to the bottom of the screen
+		--print("bottom")
 		if random_direction == 1 then return math.random(190,205)
 		else return math.random(335,350) end
+	elseif (mx > (map_w - unitRadius * 3)) then				-- too close to the right side of the screen
+		--print("right")
+		if random_direction == 1 then return math.random(245,260)
+		else return math.random(100,115) end
 	end
 	
 	return 999
 end
 
 function Unit:updateNeighbours(unitObject)
-	--print("HAA:"..unitObject.x)
 	local currentTileW = unitObject.x / map.tileSize
 	local currentTileH = unitObject.y / map.tileSize
-	--print("REal:"..map.tiles[currentTileW][currentTileH].id)
-	--print("second:"..self:xyToTileType(unitObject.x, unitObject.y))
-	--unitObject.neighbourTiles[1] = map.tiles[currentTileW][currentTileH].id
+	unitObject.neighbourTiles[1] = map.tiles[currentTileW-1][currentTileH-1].id
+	unitObject.neighbourTiles[2] = map.tiles[currentTileW-1][currentTileH].id
+	unitObject.neighbourTiles[3] = map.tiles[currentTileW-1][currentTileH+1].id
+	unitObject.neighbourTiles[4] = map.tiles[currentTileW][currentTileH-1].id
+	unitObject.neighbourTiles[5] = map.tiles[currentTileW][currentTileH].id
+	unitObject.neighbourTiles[6] = map.tiles[currentTileW][currentTileH+1].id
+	unitObject.neighbourTiles[7] = map.tiles[currentTileW+1][currentTileH-1].id
+	unitObject.neighbourTiles[8] = map.tiles[currentTileW+1][currentTileH].id
+	unitObject.neighbourTiles[9] = map.tiles[currentTileW+1][currentTileH+1].id
 end
 
 function Unit:xyToTileType(x11,y11)
