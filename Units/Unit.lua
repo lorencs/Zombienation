@@ -98,14 +98,18 @@ end
 function Unit:avoidTile(unitObject)
 	if unitObject.neighbourTiles[2] == "G" or unitObject.neighbourTiles[2] == "R" then
 		unitObject.angle = math.random(180,360)
+		unitObject.targetAngle = unitObject.angle
 	elseif unitObject.neighbourTiles[4] == "G" or unitObject.neighbourTiles[4] == "R" then
 		unitObject.angle = math.random(90,270)
+		unitObject.targetAngle = unitObject.angle
 	elseif unitObject.neighbourTiles[6] == "G" or unitObject.neighbourTiles[6] == "R" then
 		local r = math.random(1,2)
 		if r == 1 then unitObject.angle = math.random(270,360) else
 		unitObject.angle = math.random(0,90) end
+		unitObject.targetAngle = unitObject.angle
 	elseif unitObject.neighbourTiles[8] == "G" or unitObject.neighbourTiles[8] == "R" then
 		unitObject.angle = math.random(0,180)
+		unitObject.targetAngle = unitObject.angle
 	end
 end
 

@@ -17,8 +17,8 @@ function Human:new(xnew,ynew)
     height = 0,
     state = "",
 	speed = 0,
-	normalSpeed = 20,
-	panicSpeed = 25,
+	normalSpeed = 13,
+	panicSpeed = 15,
     runSpeed = 0,
 	directionTimer = 0,
 	initial_direction = 1,
@@ -261,13 +261,13 @@ function Human:update(dt, zi, paused)
 			if self.panicMode == true or self.controlled == true then		-- if the human is panicking, he is able to turn much faster
 				self.angle = self.angle + 1
 			else
-				self.angle = self.angle + 0.2
+				self.angle = self.angle + 0.3
 			end
 		elseif self.dirVec == 1 then			-- negative direction
 			if self.panicMode == true or self.controlled == true then		-- if the human is panicking, he is able to turn much faster
 				self.angle = self.angle - 1
 			else
-				self.angle = self.angle - 0.2
+				self.angle = self.angle - 0.3
 			end
 		end
 		
@@ -297,7 +297,7 @@ function Human:update(dt, zi, paused)
 	local nextTileType = self:xyToTileType(next_x,next_y)
 	-- check next tile (not in panic mode)
 	if  not (nextTileType == "G" or nextTileType == "R") then
-		self.directionTimer = self.directionTimer + 5
+		self.directionTimer = self.directionTimer + dt
 		self.state = "STUCK !"
 		self:avoidTile(self)
 		return

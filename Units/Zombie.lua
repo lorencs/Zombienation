@@ -84,7 +84,7 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	self.cx = self.x + self.radius
 	self.cy = self.y - self.radius
 	
-	self.speed = 30
+	self.speed = 18
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	self.x_direction = 0
 	self.y_direction = 0
@@ -153,7 +153,7 @@ function Zombie:draw(i)
 	love.graphics.setColor(playerColor)
 	
 	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
-	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, 8, 15)
+	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
 	love.graphics.print(self.tag.. " ".. self.state, self.x, self.y + 10)
 	
 	------------------------------- DEBUG CODE -------------------------------------
@@ -202,9 +202,9 @@ function Zombie:update(dt, zi, paused)
 	
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
 		if self.dirVec == 0 then			-- positive direction	( opposite of conventional as y increases downwards )
-			self.angle = self.angle + 0.2
+			self.angle = self.angle + 0.3
 		elseif self.dirVec == 1 then		-- negative direction
-			self.angle = self.angle - 0.2
+			self.angle = self.angle - 0.3
 		end
 		
 		-- reset angles if they go over 360 or if they go under 0
@@ -228,7 +228,7 @@ function Zombie:update(dt, zi, paused)
 	local nextTileType = self:xyToTileType(next_x,next_y)
 	-- check next tile (not in panic mode)
 	if  not (nextTileType == "G" or nextTileType == "R") then
-		self.directionTimer = self.directionTimer + 5
+		self.directionTimer = self.directionTimer + dt
 		self.state = "STUCK !"
 		self:avoidTile(self)
 		return
@@ -372,6 +372,19 @@ function Zombie:update(dt, zi, paused)
 	
 	-- get direction vector
 	self.dirVector = self:getDirection(self.angle, self.speed)
+	
+	-- checking the tile that the unit is or will be on
+	local next_x = self.x + (dt * self.dirVector.x)
+	local next_y = self.y + (dt * self.dirVector.y)
+	
+	local nextTileType = self:xyToTileType(next_x,next_y)
+	-- check next tile (not in panic mode)
+	if  not (nextTileType == "G" or nextTileType == "R") then
+		self.directionTimer = self.directionTimer + dt
+		self.state = "STUCK !"
+		self:avoidTile(self)
+		return
+	end
 	
 	-- update zombie's movement
 	self.x = self.x + (dt * self.dirVector.x)
