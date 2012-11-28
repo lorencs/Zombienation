@@ -123,22 +123,34 @@ function Human:draw(i)
 		local currentTileH = math.floor(self.y / map.tileSize)
 		
 		--love.graphics.rectangle( "fill", currentTileW * 25 , currentTileH * 25 , 25, 25 )
-		love.graphics.setColor(0,255,0, 150, 160)
+		love.graphics.setColor(0,255,60, 150, 150)
 		love.graphics.rectangle( "fill", (currentTileW-1) * 25 , (currentTileH-1) * 25 , 25, 25 )
-		love.graphics.rectangle( "fill", (currentTileW-1) * 25 , (currentTileH) * 25 , 25, 25 )
-		love.graphics.rectangle( "fill", (currentTileW-1) * 25 , (currentTileH-1) * 25 , 25, 25 )
+		love.graphics.rectangle( "fill", currentTileW * 25 , (currentTileH - 1) * 25 , 25, 25 )
+		love.graphics.rectangle( "fill", (currentTileW + 1) * 25 , (currentTileH - 1) * 25 , 25, 25 )
+		
+		love.graphics.rectangle( "fill", (currentTileW - 1) * 25 , (currentTileH) * 25 , 25, 25 )
+		love.graphics.rectangle( "fill", (currentTileW) * 25 , (currentTileH) * 25 , 25, 25 )
+		love.graphics.rectangle( "fill", (currentTileW + 1) * 25 , (currentTileH) * 25 , 25, 25 )
+		
+		love.graphics.rectangle( "fill", (currentTileW - 1) * 25 , (currentTileH+1) * 25 , 25, 25 )
+		love.graphics.rectangle( "fill", (currentTileW) * 25 , (currentTileH+1) * 25 , 25, 25 )
+		love.graphics.rectangle( "fill", (currentTileW + 1) * 25 , (currentTileH+1) * 25 , 25, 25 )
+		
+		
 		--[[
 			local currentTileW = math.floor(unitObject.x / map.tileSize)
 	local currentTileH = math.floor(unitObject.y / map.tileSize)
 	--print("W:"..currentTileW..",H"..currentTileH)
 	unitObject.neighbourTiles[1] = map.tiles[currentTileW-1][currentTileH-1].id
-	unitObject.neighbourTiles[2] = map.tiles[currentTileW-1][currentTileH].id
-	unitObject.neighbourTiles[3] = map.tiles[currentTileW-1][currentTileH+1].id
-	unitObject.neighbourTiles[4] = map.tiles[currentTileW][currentTileH-1].id
+	unitObject.neighbourTiles[2] = map.tiles[currentTileW][currentTileH-1].id
+	unitObject.neighbourTiles[3] = map.tiles[currentTileW+1][currentTileH-1].id
+	
+	unitObject.neighbourTiles[4] = map.tiles[currentTileW-1][currentTileH].id
 	unitObject.neighbourTiles[5] = map.tiles[currentTileW][currentTileH].id
-	unitObject.neighbourTiles[6] = map.tiles[currentTileW][currentTileH+1].id
-	unitObject.neighbourTiles[7] = map.tiles[currentTileW+1][currentTileH-1].id
-	unitObject.neighbourTiles[8] = map.tiles[currentTileW+1][currentTileH].id
+	unitObject.neighbourTiles[6] = map.tiles[currentTileW+1][currentTileH].id
+	
+	unitObject.neighbourTiles[7] = map.tiles[currentTileW-1][currentTileH+1].id
+	unitObject.neighbourTiles[8] = map.tiles[currentTileW][currentTile+1].id
 	unitObject.neighbourTiles[9] = map.tiles[currentTileW+1][currentTileH+1].id
 		--]]
 		
@@ -319,6 +331,13 @@ function Human:update(dt, zi, paused)
 	local next_x = self.x + (dt * self.dirVector.x)
 	local next_y = self.y + (dt * self.dirVector.y)
 	
+	------------------------------- CHECK MAP BOUNDARIES ( # 1 )
+	if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
+		self.state = "WTF"
+		self.directionTimer = self.directionTimer + 5
+		return
+	end	
+	
 	local nextTileType = self:xyToTileType(next_x,next_y)
 	-- check next tile (not in panic mode)
 	if  not (nextTileType == "G" or nextTileType == "R") then
@@ -328,19 +347,13 @@ function Human:update(dt, zi, paused)
 		return
 	end
 	
-	------------------------------- CHECK MAP BOUNDARIES 						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE
-	if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
-		self.state = "WTF"
-		self.directionTimer = self.directionTimer + dt
-		return
-	end																															-- ** IN THE OTHER DIRECTION !
+	------------------------------- CHECK MAP BOUNDARIES ( # 2 )						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE																														-- ** IN THE OTHER DIRECTION !
 	local val = self:checkMapBoundaries(next_x,next_y, self.radius)											
 	if val ~= 999 then			-- if it is too close to a boundary..
 		self.angle = val
 		self.targetAngle = val
 		--return
 	end
-	------------------------------- END OF BOUNDARY CHECK
 	
 	-- update human's movement
 	self.x = self.x + (dt * self.dirVector.x)

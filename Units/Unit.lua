@@ -96,6 +96,34 @@ function Unit:checkMapBoundaries(mx, my, unitRadius)
 end
 
 function Unit:avoidTile(unitObject)
+	local t2 = unitObject.neighbourTiles[2]
+	local t4 = unitObject.neighbourTiles[4]
+	local t6 = unitObject.neighbourTiles[6]
+	local t8 = unitObject.neighbourTiles[8]
+	local stuckDir = "O"
+	
+	if unitObject.angle >= 45 and unitObject.angle <= 135 then stuckDir = "S"
+	elseif unitObject.angle > 135 and unitObject.angle <= 225 then stuckDir = "W"
+	elseif unitObject.angle > 225 and unitObject.angle <= 315 then stuckDir = "N"
+	else stuckDir = "E" end
+	
+	if stuckDir == "N" then
+		unitObject.angle = math.random(0,180)
+		unitObject.targetAngle = unitObject.angle
+	elseif stuckDir == "E" then
+		unitObject.angle = math.random(90,270)
+		unitObject.targetAngle = unitObject.angle
+	elseif stuckDir == "S" then
+		unitObject.angle = math.random(180,360)
+		unitObject.targetAngle = unitObject.angle
+	elseif stuckDir == "W" then
+		local r = math.random(1,2)
+		if r == 1 then unitObject.angle = math.random(270,360) else
+		unitObject.angle = math.random(0,90) end
+		unitObject.targetAngle = unitObject.angle
+	end
+	
+	--[[
 	if unitObject.neighbourTiles[2] == "G" or unitObject.neighbourTiles[2] == "R" then
 		unitObject.angle = math.random(180,360)
 		unitObject.targetAngle = unitObject.angle
@@ -111,20 +139,22 @@ function Unit:avoidTile(unitObject)
 		unitObject.angle = math.random(0,180)
 		unitObject.targetAngle = unitObject.angle
 	end
+	--]]
 end
 
 function Unit:updateNeighbours(unitObject)
 	local currentTileW = math.floor(unitObject.x / map.tileSize)
 	local currentTileH = math.floor(unitObject.y / map.tileSize)
-	--print("W:"..currentTileW..",H"..currentTileH)
 	unitObject.neighbourTiles[1] = map.tiles[currentTileW-1][currentTileH-1].id
-	unitObject.neighbourTiles[2] = map.tiles[currentTileW-1][currentTileH].id
-	unitObject.neighbourTiles[3] = map.tiles[currentTileW-1][currentTileH+1].id
-	unitObject.neighbourTiles[4] = map.tiles[currentTileW][currentTileH-1].id
+	unitObject.neighbourTiles[2] = map.tiles[currentTileW][currentTileH-1].id
+	unitObject.neighbourTiles[3] = map.tiles[currentTileW+1][currentTileH-1].id
+	
+	unitObject.neighbourTiles[4] = map.tiles[currentTileW-1][currentTileH].id
 	unitObject.neighbourTiles[5] = map.tiles[currentTileW][currentTileH].id
-	unitObject.neighbourTiles[6] = map.tiles[currentTileW][currentTileH+1].id
-	unitObject.neighbourTiles[7] = map.tiles[currentTileW+1][currentTileH-1].id
-	unitObject.neighbourTiles[8] = map.tiles[currentTileW+1][currentTileH].id
+	unitObject.neighbourTiles[6] = map.tiles[currentTileW+1][currentTileH].id
+	
+	unitObject.neighbourTiles[7] = map.tiles[currentTileW-1][currentTileH+1].id
+	unitObject.neighbourTiles[8] = map.tiles[currentTileW][currentTileH+1].id
 	unitObject.neighbourTiles[9] = map.tiles[currentTileW+1][currentTileH+1].id
 end
 
