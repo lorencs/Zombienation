@@ -59,20 +59,20 @@ function MapGen:randomMap(difficulty)
 	
 	local freq = 4
 	-- roads
-	print("--placing roads")
-	self:generateRoads(freq, difficulty)	
+	--print("--placing roads")
+	--self:generateRoads(freq, difficulty)	
 	-- water
 	print("--filling depth map")
-	self:generateWater(difficulty)	
+	self:generateWater()	
 	-- update roads
 	--print("--pruning roadways1")
 	--self:thinRoads(freq, difficulty, false)		
 	-- buildings
-	print("--placing buildings")
-	self:generateBuildings(difficulty)
+	--print("--placing buildings")
+	--self:generateBuildings(difficulty)
 	-- update roads
-	print("--pruning roadways2")
-	self:removeRoads(1)
+	--print("--pruning roadways2")
+	--self:removeRoads(1)
 	--self:thinRoads(math.floor(freq / 2), difficulty, true)
 	
 	print("--updating tile info")
@@ -130,29 +130,30 @@ function MapGen:thinRoads(freq, difficulty, veryThin)
 	self:removeComponents(smallRoads, "G")		
 end
 
--- remove less connected roads
-function MapGen:removeRoads(threshold)
+-- set neighbors (neighborType) of tile (tileType) to resetValue 
+-- if not(minN < #neighbors < maxN)
+function MapGen:removeTiles(tileType, neighborType, resetValue, minN, maxN)
 	local m = self.map 
 	
 	for x=0,m.width-1 do
 		for y=0,m.height-1 do
-			if m.tiles[x][y]:getId() == "R" then
+			if m.tiles[x][y]:getId() == tileType then
 				local count = 0
-				if x-1 > -1 and m.tiles[x-1][y]:getId() == "R" then
+				if x-1 > -1 and m.tiles[x-1][y]:getId() == neighborType then
 					count = count + 1
 				end
-				if x+1 < m.width and m.tiles[x+1][y]:getId() == "R" then
+				if x+1 < m.width and m.tiles[x+1][y]:getId() == neighborType then
 					count = count + 1
 				end
-				if y-1 > -1 and m.tiles[x][y-1]:getId() == "R" then
+				if y-1 > -1 and m.tiles[x][y-1]:getId() == neighborType then
 					count = count + 1
 				end
-				if y+1 < m.height and m.tiles[x][y+1]:getId() == "R" then
+				if y+1 < m.height and m.tiles[x][y+1]:getId() == neighborType then
 					count = count + 1
 				end
 				
-				if count < threshold then
-					m.tiles[x][y]:setId("G")
+				if count < minN or count > maxN then
+					m.tiles[x][y]:setId(resetValue)
 				end
 			end
 		end
@@ -244,37 +245,29 @@ function MapGen:removeComponents(comps, tileType)
 end
 
 -- create water bodies using a depth map
-function MapGen:generateWater(difficulty)
-	local waterLevel = 3
-	local range = 15
+function MapGen:generateWater()
+	local m = self.map
+	local w = m.width
+	local h = m.height
 	
-	-- not too much water
-	local area = self.map.width * self.map.height
-	local max = math.floor(area * 0.25)
-	local min = math.floor(area * 0.05)
-	local count = self.map.width * self.map.height
+	-- high octave results in lower values, smoother distribution
+	local octaves = 10
+	depth = generatePerlinNoise(octaves, w, h)
+	--outputNoise(depth, w, h)		-- print depth map to file
 	
-	-- generate a depth map
-	while count > max or count < min  do
-		count = 0
-		depth = create(self.width, self.height, f)
-		for x=0,self.map.width-1 do
-			for y=0,self.height-1 do
-				if depth[x][y] < -waterLevel then
-					count = count + 1
-				end
+	local waterLevel = 35	-- tweak this to work with octaves
+	
+	for x=0,w-1 do
+		for y=0,h-1 do
+			if depth[x][y] < waterLevel then
+				self:addCircleLake(x,y,3)	-- "smooth" water bodies
 			end
 		end
 	end
 	
-	-- set map tiles
-	for x=0,self.map.width-1 do
-		for y=0,self.map.height-1 do
-			if depth[x][y] < -waterLevel or depth[x][y] > range*waterLevel then
-				self:addCircleLake(x,y,1)
-			end
-		end
-	end
+	-- remove useless land
+	self:removeTiles("G", "W", "W", 0, 2)
+	self:removeTiles("G", "W", "W", 0, 3)
 end
 
 -- place random buildings
