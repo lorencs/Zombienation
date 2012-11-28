@@ -39,6 +39,14 @@ function Bullet:update(dt, paused)
 		self.prevy = self.y
 		self.x = self.x + math.cos(self.angle * (math.pi/180))*self.speed*dt
 		self.y = self.y + math.sin(self.angle * (math.pi/180))*self.speed*dt
+		
+		-- check if bullet hits building or blocked area
+		local tile = map.tiles[math.floor(self.x/map.tileSize)][math.floor(self.y/map.tileSize)]
+		if (tile.id == "B") or (tile.id == "D") then
+			self.delete = true
+			return
+		end
+		
 		-- check if any zombies are hit 
 		for i = 1, number_of_zombies do
 			
