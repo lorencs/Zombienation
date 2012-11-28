@@ -44,7 +44,8 @@ function Ranger:new(xnew,ynew)
 	controlled = false,
 	onCurrentTile = 0,
 	neighbourTiles = {},
-	bullets = {}
+	bullets = {},
+	nextTile = "W"
 	}
 
 	setmetatable(new_object, Ranger_mt )				-- add the new_object to metatable of Ranger
@@ -153,6 +154,25 @@ function Ranger:draw(i)
 	for i,_ in pairs(self.bullets) do
 		self.bullets[i]:draw()
 	end
+	
+	--[[love.graphics.setColor(0,255,0, 80)
+	if (self.nextTile == "N") then		
+		love.graphics.rectangle("fill", math.floor(self.cx/25)*25, math.floor(self.cy/25)*25 - 25, 25, 25)
+	elseif (self.nextTile == "NE") then
+		love.graphics.rectangle("fill", math.floor(self.cx/25)*25 + 25, math.floor(self.cy/25)*25 - 25, 25, 25)
+	elseif (self.nextTile == "E") then
+		love.graphics.rectangle("fill", math.floor(self.cx/25)*25 + 25, math.floor(self.cy/25)*25 , 25, 25)
+	elseif (self.nextTile == "SE") then
+		love.graphics.rectangle("fill", math.floor(self.cx/25)*25 + 25, math.floor(self.cy/25)*25 + 25, 25, 25)
+	elseif (self.nextTile == "S") then
+		love.graphics.rectangle("fill", math.floor(self.cx/25)*25, math.floor(self.cy/25)*25 + 25 , 25, 25)
+	elseif (self.nextTile == "SW") then
+		love.graphics.rectangle("fill", math.floor(self.cx/25)*25 - 25, math.floor(self.cy/25)*25 + 25, 25, 25)
+	elseif (self.nextTile == "W") then
+		love.graphics.rectangle("fill", math.floor(self.cx/25)*25 - 25, math.floor(self.cy/25)*25 , 25, 25)
+	elseif (self.nextTile == "NW") then
+		love.graphics.rectangle("fill", math.floor(self.cx/25)*25 - 25, math.floor(self.cy/25)*25 - 25, 25, 25)
+	end]]--
 end
 
 --ranja dont run like no pussy
@@ -346,6 +366,19 @@ function Ranger:update(dt, zi, paused)
 		local next_x = self.cx + (self.radius * self:signOf(self.dirVector.x)) + (dt * self.dirVector.x)
 		local next_y = self.cy + (self.radius * self:signOf(self.dirVector.y)) + (dt * self.dirVector.y)
 		
+		--test
+		local dx = math.floor(next_x/map.tileSize) - math.floor(self.cx/map.tileSize)
+		local dy = math.floor(next_y/map.tileSize) - math.floor(self.cy/map.tileSize)
+
+		if 	   (dx == 0) and (dy == -1) then 	self.nextTile = "N"
+		elseif (dx == 1) and (dy == -1) then 	self.nextTile = "NE"
+		elseif (dx == 1) and (dy == 0) then 	self.nextTile = "E"
+		elseif (dx == 1) and (dy == 1) then 	self.nextTile = "SE"
+		elseif (dx == 0) and (dy == 1) then 	self.nextTile = "S"
+		elseif (dx == -1) and (dy == 1) then 	self.nextTile = "SW"
+		elseif (dx == -1) and (dy == 0) then 	self.nextTile = "W"
+		elseif (dx == -1) and (dy == -1) then 	self.nextTile = "NW" end
+				
 		------------------------------- CHECK MAP BOUNDARIES ( # 1 )
 		if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
 			--self.state = "WTF"
@@ -360,11 +393,12 @@ function Ranger:update(dt, zi, paused)
 			self.directionTimer = 0
 			--self.state = "STUCK !"
 			--self.statestr = "STUCK !"
-			self:avoidTile(self)
+			--self:avoidTile(self)
+			self:avoidTile2(self)
 			return
 		end
 		
-		------------------------------- CHECK MAP BOUNDARIES 						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE
+		------------------------------- CHECK MAP BOUNDARIES 	
 		if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
 			--self.state = "WTF"
 			--self.statestr = "WTF"

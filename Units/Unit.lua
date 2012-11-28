@@ -142,6 +142,44 @@ function Unit:avoidTile(unitObject)
 	--]]
 end
 
+function Unit:avoidTile2(unit)
+	local tile = unit.nextTile
+	if tile == "N" then
+		if unit.angle > 180 and unit.angle <= 270 then
+			unit.angle = math.random(160,175)
+		elseif unit.angle > 270 and unit.angle <= 360 then
+			unit.angle = math.random(5,20)
+		end
+	elseif tile == "E" then
+		if unit.angle > 270 and unit.angle <= 360 then
+			unit.angle = math.random(250,265)
+		elseif unit.angle > 0 and unit.angle <= 90 then
+			unit.angle = math.random(95,110)
+		end	
+	elseif tile == "S" then
+		if unit.angle > 0 and unit.angle <= 90 then
+			unit.angle = math.random(340,355)
+		elseif unit.angle > 90 and unit.angle <= 180 then
+			unit.angle = math.random(185,200)
+		end	
+	elseif tile == "W" then
+		if unit.angle > 90 and unit.angle <= 180 then
+			unit.angle = math.random(70,85)
+		elseif unit.angle > 180 and unit.angle <= 270 then
+			unit.angle = math.random(275,290)
+		end	
+	elseif tile == "NE" then
+		unit.angle = 225
+	elseif tile == "SE" then
+		unit.angle = 315
+	elseif tile == "SW" then
+		unit.angle = 225
+	elseif tile == "NW" then
+		unit.angle = 315
+	end	
+	unit.targetAngle = unit.angle	
+end
+
 function Unit:updateNeighbours(unitObject)
 	local currentTileW = math.floor(unitObject.x / map.tileSize)
 	local currentTileH = math.floor(unitObject.y / map.tileSize)
