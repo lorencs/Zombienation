@@ -44,8 +44,7 @@ function Ranger:new(xnew,ynew)
 	controlled = false,
 	onCurrentTile = 0,
 	neighbourTiles = {},
-	bullets = {},
-	nextTile = "W"
+	bullets = {}
 	}
 
 	setmetatable(new_object, Ranger_mt )				-- add the new_object to metatable of Ranger
@@ -366,18 +365,19 @@ function Ranger:update(dt, zi, paused)
 		local next_x = self.cx + (self.radius * self:signOf(self.dirVector.x)) + (dt * self.dirVector.x)
 		local next_y = self.cy + (self.radius * self:signOf(self.dirVector.y)) + (dt * self.dirVector.y)
 		
-		--test
+		-- determine the direction of the tile the unit will most likely next collide with
 		local dx = math.floor(next_x/map.tileSize) - math.floor(self.cx/map.tileSize)
 		local dy = math.floor(next_y/map.tileSize) - math.floor(self.cy/map.tileSize)
-
-		if 	   (dx == 0) and (dy == -1) then 	self.nextTile = "N"
-		elseif (dx == 1) and (dy == -1) then 	self.nextTile = "NE"
-		elseif (dx == 1) and (dy == 0) then 	self.nextTile = "E"
-		elseif (dx == 1) and (dy == 1) then 	self.nextTile = "SE"
-		elseif (dx == 0) and (dy == 1) then 	self.nextTile = "S"
-		elseif (dx == -1) and (dy == 1) then 	self.nextTile = "SW"
-		elseif (dx == -1) and (dy == 0) then 	self.nextTile = "W"
-		elseif (dx == -1) and (dy == -1) then 	self.nextTile = "NW" end
+		local nextTileDir = ""
+		
+		if 	   (dx == 0) and (dy == -1) then 	nextTileDir = "N"
+		elseif (dx == 1) and (dy == -1) then 	nextTileDir = "NE"
+		elseif (dx == 1) and (dy == 0) then 	nextTileDir = "E"
+		elseif (dx == 1) and (dy == 1) then 	nextTileDir = "SE"
+		elseif (dx == 0) and (dy == 1) then 	nextTileDir = "S"
+		elseif (dx == -1) and (dy == 1) then 	nextTileDir = "SW"
+		elseif (dx == -1) and (dy == 0) then 	nextTileDir = "W"
+		elseif (dx == -1) and (dy == -1) then 	nextTileDir = "NW" end
 				
 		------------------------------- CHECK MAP BOUNDARIES ( # 1 )
 		if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
@@ -394,7 +394,7 @@ function Ranger:update(dt, zi, paused)
 			--self.state = "STUCK !"
 			--self.statestr = "STUCK !"
 			--self:avoidTile(self)
-			self:avoidTile2(self)
+			self:avoidTile2(self, nextTileDir)
 			return
 		end
 		

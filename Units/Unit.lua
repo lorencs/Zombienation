@@ -142,8 +142,7 @@ function Unit:avoidTile(unitObject)
 	--]]
 end
 
-function Unit:avoidTile2(unit)
-	local tile = unit.nextTile
+function Unit:avoidTile2(unit, tile)
 	if tile == "N" then
 		if unit.angle > 180 and unit.angle <= 270 then
 			unit.angle = math.random(160,175)

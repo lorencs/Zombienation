@@ -232,12 +232,26 @@ function Zombie:update(dt, zi, paused)
 	local next_x = self.x + (self.radius * self:signOf(self.dirVector.x)) + (dt * self.dirVector.x)
 	local next_y = self.y + (self.radius * self:signOf(self.dirVector.y)) + (dt * self.dirVector.y)
 	
+	-- determine the direction of the tile the unit will most likely next collide with
+	local dx = math.floor(next_x/map.tileSize) - math.floor(self.cx/map.tileSize)
+	local dy = math.floor(next_y/map.tileSize) - math.floor(self.cy/map.tileSize)
+	local nextTileDir = ""
+	
+	if 	   (dx == 0) and (dy == -1) then 	nextTileDir = "N"
+	elseif (dx == 1) and (dy == -1) then 	nextTileDir = "NE"
+	elseif (dx == 1) and (dy == 0) then 	nextTileDir = "E"
+	elseif (dx == 1) and (dy == 1) then 	nextTileDir = "SE"
+	elseif (dx == 0) and (dy == 1) then 	nextTileDir = "S"
+	elseif (dx == -1) and (dy == 1) then 	nextTileDir = "SW"
+	elseif (dx == -1) and (dy == 0) then 	nextTileDir = "W"
+	elseif (dx == -1) and (dy == -1) then 	nextTileDir = "NW" end
+	
 	local nextTileType = self:xyToTileType(next_x,next_y)
 	-- check next tile (not in panic mode)
 	if  not (nextTileType == "G" or nextTileType == "R") then
 		self.directionTimer = self.directionTimer + dt
 		self.state = "STUCK !"
-		self:avoidTile(self)
+		self:avoidTile2(self,nextTileDir)
 		return
 	end
 	
