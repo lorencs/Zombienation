@@ -42,11 +42,14 @@ function UnitManager:initUnits()
 	print(map.tiles[10][18].id)]]
 	human_tag = 1								-- each unit has a unique tag
 	zombie_tag = 1
+	ranger_tag = 1
 	zombie_list = {}							-- array of zombie objects
 	human_list = {}								-- array of human objects
+	ranger_list = {}								-- array of ranger objects
 	
 	number_of_zombies = orig_number_of_zombies			-- zombies are red
 	number_of_humans = orig_number_of_humans			-- humans are blue
+	number_of_rangers = orig_number_of_rangers			-- humans are blue
 	-- generating units (Unit Manager coming soon, will make this much shorter )
 	
 	-- set up zombies
@@ -63,6 +66,7 @@ function UnitManager:initUnits()
 		human_tag = human_tag + 1
 	end	
 	
+	-- no rangers at start
 end
 
 function UnitManager:resetUnits()
@@ -75,12 +79,17 @@ function UnitManager:resetUnits()
 	for k in pairs (human_list) do
 		human_list [k] = nil
 	end
+	for k in pairs (ranger_list) do
+		ranger_list [k] = nil
+	end
 	
 	-- reset counters and tags
 	number_of_humans = 1
 	number_of_zombies = 1
+	number_of_rangers = 1
 	zombie_tag = 1
 	human_tag = 1
+	ranger_tag = 1
 	-- re init units
 	self:initUnits()
 	
@@ -109,6 +118,10 @@ function UnitManager:update(dt, gravity)
 	for i = 1, number_of_humans do
 		human_list[i]:update(dt,i, self.paused)
 	end
+	-- update rangers
+	for i = 1, number_of_rangers do
+		ranger_list[i]:update(dt,i, self.paused)
+	end
 	
 end
 
@@ -123,6 +136,11 @@ function UnitManager:draw()
 	-- draw humans
 	for i = 1, number_of_humans do
 		human_list[i]:draw(i)
+	end
+	
+	-- draw ranger
+	for i = 1, number_of_rangers do
+		ranger_list[i]:draw(i)
 	end
 end
 
@@ -169,6 +187,14 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 		end
 	end
 	
+	for i = 1, number_of_rangers do
+		if ( ( ranger_list[i].cx > min_x ) and ( ranger_list[i].cx < max_x )
+			and ( ranger_list[i].cy > min_y ) and ( ranger_list[i].cy < max_y ) ) then
+			
+			ranger_list[i].selected = true	-- set the selected value to true
+		end
+	end
+	
 end
 
 function UnitManager:deselectUnits()
@@ -178,6 +204,9 @@ function UnitManager:deselectUnits()
 	end
 	for i = 1, number_of_zombies do
 		zombie_list[i].selected = false	-- deselect all zombies 
+	end
+	for i = 1, number_of_rangers do
+		ranger_list[i].selected = false	-- deselect all zombies 
 	end
 	selectedUnitsCount = 0
 	
