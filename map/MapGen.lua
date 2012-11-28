@@ -92,6 +92,7 @@ end
 
 -- create a random road network
 function MapGen:generateRoads()
+	--[[
 	local m = self.map
 	local freq = 12
 	local pin = 100 	-- start value
@@ -111,6 +112,13 @@ function MapGen:generateRoads()
 			pin = math.floor(math.random() * freq)
 		end
 	end
+	--]]
+	local m = self.map
+	local w = m.width
+	local h = m.height
+	
+	local maze = createMaze(w, h)
+	outputMaze(maze, w, h)
 end
 
 -- thin roads and remove ones that don't make sense
