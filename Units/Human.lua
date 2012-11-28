@@ -23,7 +23,6 @@ function Human:new(xnew,ynew)
 	directionTimer = 0,
 	initial_direction = 1,
 	fov_radius = 90,
-	fov_view = 30,
 	fovStartAngle = 0,
 	fovEndAngle = 0,
 	attacked = 0,								-- if the unit is currently attacked, this var = 1
@@ -107,8 +106,8 @@ function Human:draw(i)
 		
 		-- draw line for angle and targetAngle
 		love.graphics.line(self.x + self.radius,self.y + self.radius, 
-							self.x + math.cos(self.angle * (math.pi/180) )*self.fov_view + self.radius , 
-							self.y + math.sin(self.angle * (math.pi/180))* self.fov_view + self.radius)
+							self.x + math.cos(self.angle * (math.pi/180) )*30 + self.radius , 
+							self.y + math.sin(self.angle * (math.pi/180))* 30 + self.radius)
 		love.graphics.setColor(0,255,0)
 		love.graphics.line(self.x + self.radius,self.y + self.radius, 
 							self.x + math.cos(self.targetAngle * (math.pi/180) )*30 + self.radius , 
