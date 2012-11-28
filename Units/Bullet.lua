@@ -11,7 +11,7 @@ function Bullet:new(_x,_y,_angle)
 	prevy = _y,
 	angle = _angle,
     state = "",
-	speed = 130,
+	speed = 160,
 	delete = false,
 	lifetime = 0
 	}
@@ -29,7 +29,7 @@ end
 -- update function
 function Bullet:update(dt, paused)
 	if not paused then
-		if self.lifetime > 3 then 
+		if self.lifetime > 5 then 
 			self.delete = true
 			return
 		end

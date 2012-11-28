@@ -183,7 +183,7 @@ end
  -- look around for zombies; hunt dat bitch if one is around !
  function Ranger:lookAround()
 	local distToHuntee = 9999
-	if not(huntee == nil) then distToHuntee = self:distanceBetweenPoints(self.x,self.y,huntee.cx, huntee.cy) end
+	if not(self.huntee == nil) then distToHuntee = self:distanceBetweenPoints(self.x,self.y,self.huntee.cx, self.huntee.cy) end
 	local tag = -1
 	if not (self.huntee == nil) then tag = self.huntee.tag end
 	
@@ -193,11 +193,11 @@ end
 			local distToCurrZomb = self:distanceBetweenPoints(self.x,self.y,zombie_list[i].cx, zombie_list[i].cy)		-- redundant but i have no choice 
 			local val = self:pointInArc(self.x, self.y, zombie_list[i].cx, zombie_list[i].cy, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect zomvies in an arc (pie shape)
-			if val and distToCurrZomb < distToHuntee then										-- if zombie i is in the field of view of this Ranger
+			if val and (distToCurrZomb < distToHuntee) then										-- if zombie i is in the field of view of this Ranger
 				self.statestr = "Hunting  ".. zombie_list[i].tag								-- and it's closer than the currently chased zombie
 				self.state = "hunting"
 				self.huntee = zombie_list[i]
-				self:hunt(self.huntee.x, self.huntee.y)
+				self:hunt(self.huntee.cx, self.huntee.cy)
 
 				-- reset angles if they go over 360 or if they go under 0
 				if self.targetAngle > 360 then
@@ -226,6 +226,9 @@ function Ranger:update(dt, zi, paused)
 	--updating neighbours
 	self:updateNeighbours(self)
 	
+	-- get the angle direction ( positive or negative on axis )
+	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+	
 	if self.state == "seeking" then
 	------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS.. unless it's controlled by penguins !
 		-- after 'interval' seconds, the ranger should change his direction (x and y)
@@ -233,10 +236,7 @@ function Ranger:update(dt, zi, paused)
 		
 			-- randomize a degree, 0 to 360
 			self.targetAngle = math.random(360)
-			
-			-- get the angle direction ( positive or negative on axis )
-			self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
-			
+						
 			-- reset directionTimer
 			self.directionTimer = 0	
 
@@ -303,13 +303,13 @@ function Ranger:update(dt, zi, paused)
 	else
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
 		if self.dirVec == 0 then				-- positive direction	( opposite of conventional as y increases downwards )
-			if self.state == "hunting" or self.state == "shooting" or self.controlled then		-- if the Ranger is hunting or shooting, he is able to turn much faster
+			if self.state == "hunting" or self.state == "shooting" then		-- if the Ranger is hunting or shooting, he is able to turn much faster
 				self.angle = self.angle + 1
 			else
 				self.angle = self.angle + 0.3
 			end
 		elseif self.dirVec == 1 then			-- negative direction
-			if self.state == "hunting" or self.state == "shooting" or self.controlled then		-- if the Ranger is hunting or shooting, he is able to turn much faster
+			if self.state == "hunting" or self.state == "shooting" then		-- if the Ranger is hunting or shooting, he is able to turn much faster
 				self.angle = self.angle - 1
 			else
 				self.angle = self.angle - 0.3
@@ -386,7 +386,7 @@ function Ranger:update(dt, zi, paused)
 		end
 	
 		-- if zombie got out of range, go back to hunting him
-		if (self:distanceBetweenPoints(self.x,self.y,self.huntee.x,self.huntee.y) > self.fov_radius) then
+		if (self:distanceBetweenPoints(self.x,self.y,self.huntee.cx,self.huntee.cy) > self.fov_radius) then
 			self.state = "hunting"
 			self.statestr = "hunting " ..self.huntee.tag
 		else
