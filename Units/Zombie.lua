@@ -229,8 +229,8 @@ function Zombie:update(dt, zi, paused)
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	
 	-- checking the tile that the unit is or will be on
-	local next_x = self.x + (dt * self.dirVector.x)
-	local next_y = self.y + (dt * self.dirVector.y)
+	local next_x = self.x + (self.radius * self:signOf(self.dirVector.x)) + (dt * self.dirVector.x)
+	local next_y = self.y + (self.radius * self:signOf(self.dirVector.y)) + (dt * self.dirVector.y)
 	
 	local nextTileType = self:xyToTileType(next_x,next_y)
 	-- check next tile (not in panic mode)

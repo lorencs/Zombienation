@@ -314,8 +314,8 @@ function Human:update(dt, zi, paused)
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	
 	-- checking the tile that the unit is or will be on
-	local next_x = self.cx + (dt * self.dirVector.x)
-	local next_y = self.cy + (dt * self.dirVector.y)
+	local next_x = self.cx + (self.radius * self:signOf(self.dirVector.x)) + (dt * self.dirVector.x)
+	local next_y = self.cy + (self.radius * self:signOf(self.dirVector.y)) + (dt * self.dirVector.y)
 	
 	------------------------------- CHECK MAP BOUNDARIES ( # 1 )
 	if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
