@@ -89,6 +89,7 @@ function Ranger:setupUnit()
 	self.directionTimer = 0
 	self.checkZombieTimer = 0
 	self.shootingTimer = 2
+	self.searchingTimer = 0
 	
 	self.interval = math.random(3,7)
 end
@@ -181,29 +182,33 @@ end
 
  -- look around for zombies; hunt dat bitch if one is around !
  function Ranger:lookAround()
+	local distToHuntee = 9999
+	if not(huntee == nil) then distToHuntee = self:distanceBetweenPoints(self.x,self.y,huntee.cx, huntee.cy) end
+	local tag = -1
+	if not (self.huntee == nil) then tag = self.huntee.tag end
 	
 	-- for each zombie
-	for i = 1, number_of_zombies do
-	
-		local zombie_point = Point:new(zombie_list[i].cx, zombie_list[i].cy)
-		--local val = self:pTriangle(zombie_point, self.v1, self.v2, self.v3)						-- detect zombies in a triangle
-		local val = self:pointInArc(self.x, self.y, zombie_point.x, zombie_point.y, 
-									self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect zomvies in an arc (pie shape)
-		if val then										-- if zombie i is in the field of view of this Ranger
-			self.statestr = "Hunting  ".. zombie_list[i].tag
-			self.state = "hunting"
-			self.huntee = zombie_list[i]
-			self:hunt(self.huntee.x, self.huntee.y)
+	for i = 1, number_of_zombies do		
+		if tag ~= zombie_list[i].tag then		
+			local distToCurrZomb = self:distanceBetweenPoints(self.x,self.y,zombie_list[i].cx, zombie_list[i].cy)		-- redundant but i have no choice 
+			local val = self:pointInArc(self.x, self.y, zombie_list[i].cx, zombie_list[i].cy, 
+										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect zomvies in an arc (pie shape)
+			if val and distToCurrZomb < distToHuntee then										-- if zombie i is in the field of view of this Ranger
+				self.statestr = "Hunting  ".. zombie_list[i].tag								-- and it's closer than the currently chased zombie
+				self.state = "hunting"
+				self.huntee = zombie_list[i]
+				self:hunt(self.huntee.x, self.huntee.y)
 
-			-- reset angles if they go over 360 or if they go under 0
-			if self.targetAngle > 360 then
-				self.targetAngle = self.targetAngle - 360
+				-- reset angles if they go over 360 or if they go under 0
+				if self.targetAngle > 360 then
+					self.targetAngle = self.targetAngle - 360
+				end
+				
+				if self.targetAngle < 0 then
+					self.targetAngle = 360 + self.targetAngle
+				end
+				break
 			end
-			
-			if self.targetAngle < 0 then
-				self.targetAngle = 360 + self.targetAngle
-			end
-			break
 		end
 	end
  end
@@ -241,7 +246,7 @@ function Ranger:update(dt, zi, paused)
 		
 		-- look around for zombies
 		if self.searchTimer > self.searchFreq then
-			self:lookAround()				-- else look around 
+			self:lookAround()				
 			self.searchTimer = 0
 		end
 	end
@@ -258,7 +263,7 @@ function Ranger:update(dt, zi, paused)
 		end
 		
 		-- check if zombie's close enough to shoot
-		if (self:distanceBetweenPoints(self.x,self.y,self.huntee.x,self.huntee.y) < self.fov_radius *4/5) then 
+		if (self:distanceBetweenPoints(self.x,self.y,self.huntee.cx,self.huntee.cy) < self.fov_radius *4/5) then 
 			self.state = "shooting"
 			self.statestr = "shooting " ..self.huntee.tag
 		else 

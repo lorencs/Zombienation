@@ -183,7 +183,7 @@ function Zombie:update(dt, zi, paused)
 		self:follow_human(dt)			-- zombie is following a human
 		return							-- no need to update anything else here so return
 	else
-		if self.searchTimer > 0.25 then
+		if self.searchTimer > self.searchFreq then
 			self:lookAround(zi)				-- else look around 
 			self.searchTimer = 0
 		end
