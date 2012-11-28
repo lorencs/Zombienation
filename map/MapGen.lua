@@ -59,8 +59,8 @@ function MapGen:randomMap(difficulty)
 	
 	local freq = 4
 	-- roads
-	--print("--placing roads")
-	--self:generateRoads(freq, difficulty)	
+	print("--placing roads")
+	self:generateRoads()	
 	-- water
 	print("--filling depth map")
 	self:generateWater()	
@@ -91,9 +91,9 @@ function MapGen:randomMap(difficulty)
 end
 
 -- create a random road network
-function MapGen:generateRoads(freq, difficulty)
+function MapGen:generateRoads()
 	local m = self.map
-	--local freq = 12
+	local freq = 12
 	local pin = 100 	-- start value
 	local chance = 0.075
 	
