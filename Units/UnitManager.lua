@@ -226,6 +226,12 @@ function UnitManager:deselectUnits()
 	
 end
 
+function UnitManager:updateUnit(unitOrig, newType)
+		--local deadx = u[h_index].x
+		--local deady = human_list[h_index].y
+		--table.remove(human_list, h_index)							-- remove human from human_list array
+end
+
 function UnitManager:moveTo(xo,yo)
 	print("hi")
 	
