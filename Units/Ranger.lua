@@ -17,15 +17,17 @@ function Ranger:new(xnew,ynew)
     height = 0,
     state = "",
 	speed = 0,
-	normalSpeed = 13,
+	normalSpeed = 15,
+	huntingSpeed = 17,
     runSpeed = 0,
 	directionTimer = 0,
 	initial_direction = 1,
-	fov_radius = 90,
+	fov_radius = 100,
+	fov_view = 50,
 	fovStartAngle = 0,
 	fovEndAngle = 0,
 	attacked = 0,								-- if the unit is currently attacked, this var = 1
-    panicMode = false,							-- panic mode is on if this is true..
+    huntingMode = false,							-- panic mode is on if this is true..
 	panicTimer = 0,									-- a unit that has spotted a zombie will be in panic mode for 6-7 seconds ( after spotting last zombie )
 	v1 = Point:new(0,0),							-- vertices for the field of view triangle
 	v2 = Point:new(0,0),
@@ -69,14 +71,12 @@ function Ranger:setupUnit()
 	self.cx = self.x + self.radius
 	self.cy = self.y + self.radius
 	
-	self.fovStartAngle = self.angle - 45
-	self.fovEndAngle = self.angle + 45
+	self.fovStartAngle = self.angle - self.angle/2
+	self.fovEndAngle = self.angle + self.angle/2
 	
-	self.width = 50
-	self.height = 50
-	self.state = "Chilling"
+	self.state = "seeking"
 	self.speed = self.normalSpeed
-	self.tag = human_tag
+	self.tag = ranger_tag
 	self.directionTimer = 0
 end
 
@@ -88,11 +88,11 @@ function Ranger:draw(i)
 	--self.v2 = Point:new(self.x + math.cos( (self.angle - 70) * (math.pi/180) )*180 + self.radius, self.y + math.sin( (self.angle - 70) * (math.pi/180) )*180 + self.radius)
 	--self.v3 = Point:new(self.x + math.cos( (self.angle + 70 ) * (math.pi/180) )*180 + self.radius, self.y + math.sin( (self.angle + 70) * (math.pi/180) )*180 + self.radius)
 	-- for arc:
-	self.fovStartAngle = self.angle - 45
-	self.fovEndAngle = self.angle + 45
+	self.fovStartAngle = self.angle - self.angle/2
+	self.fovEndAngle = self.angle + self.angle/2
 	------------------------------- IF UNIT IS SELECTED.. DRAW:
 	if self.selected then
-		love.graphics.setColor(0,0,255,125)
+		love.graphics.setColor(0,255,0,125)
 		-- draw triangle field of view
 		--[[love.graphics.triangle( "fill", 
 			self.v1.x,self.v1.y,
@@ -105,8 +105,8 @@ function Ranger:draw(i)
 		
 		-- draw line for angle and targetAngle
 		love.graphics.line(self.x + self.radius,self.y + self.radius, 
-							self.x + math.cos(self.angle * (math.pi/180) )*30 + self.radius , 
-							self.y + math.sin(self.angle * (math.pi/180))* 30 + self.radius)
+							self.x + math.cos(self.angle * (math.pi/180) )*self.fov_view + self.radius , 
+							self.y + math.sin(self.angle * (math.pi/180))* self.fov_view + self.radius)
 		love.graphics.setColor(0,255,0)
 		love.graphics.line(self.x + self.radius,self.y + self.radius, 
 							self.x + math.cos(self.targetAngle * (math.pi/180) )*30 + self.radius , 
@@ -116,6 +116,11 @@ function Ranger:draw(i)
 		love.graphics.setColor(0,255,0, 150)
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 5, 15 )
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 6, 15 )
+		
+		
+		--love.graphics.rectangle()
+		love.graphics.rectangle( "fill", 0, 0, 25, 25 )
+		
 		
 		-- draw state of unit
 		love.graphics.print(self.state, self.x, self.y + 15)
@@ -165,8 +170,8 @@ end
 			local zombie_point = Point:new(zombie_list[i].cx, zombie_list[i].cy)
 			--local val = self:pTriangle(zombie_point, self.v1, self.v2, self.v3)						-- detect zombies in a triangle
 			local val = self:pointInArc(self.x, self.y, zombie_point.x, zombie_point.y, 
-										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
-			if val == true then										-- if zombie i is in the field of view of this human
+										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect Rangers in an arc (pie shape)
+			if val == true then										-- if zombie i is in the field of view of this Ranger
 				self.state = "Running from  ".. zombie_list[i].tag
 				self.panicMode = true
 				self:runAwayFrom(zombie_list[i].x, zombie_list[i].y)
@@ -191,10 +196,8 @@ function Ranger:update(dt, zi, paused)
 	-- if game is paused, do not update any values
 	if paused == true then return end
 	
-	-- if the human is attacked, then he can't move (or could make him move very slow?)
-	if self.attacked == 1 then
-		return
-	end
+	-- if the Ranger is attacked, then he can't move (or could make him move very slow?)
+	if self.attacked == 1 then return end
 	
 	--updating neighbours
 	self:updateNeighbours(self)
@@ -226,9 +229,9 @@ function Ranger:update(dt, zi, paused)
 		self.speed = self.panicSpeed
 			
 		-- decrease the panicTimer
-		self.panicTimer = self.panicTimer - dt
+		-- self.panicTimer = self.panicTimer - dt
 			
-		-- while in panic mode, self.targetAngle should never change as the human is trying to run from the zombies
+		-- while in panic mode, self.targetAngle should never change as the Ranger is trying to run from the zombies
 		--self.directionTimer = 0
 			
 		-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
@@ -257,13 +260,13 @@ function Ranger:update(dt, zi, paused)
 	else
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
 		if self.dirVec == 0 then				-- positive direction	( opposite of conventional as y increases downwards )
-			if self.panicMode == true or self.controlled == true then		-- if the human is panicking, he is able to turn much faster
+			if self.panicMode == true or self.controlled == true then		-- if the Ranger is panicking, he is able to turn much faster
 				self.angle = self.angle + 1
 			else
 				self.angle = self.angle + 0.3
 			end
 		elseif self.dirVec == 1 then			-- negative direction
-			if self.panicMode == true or self.controlled == true then		-- if the human is panicking, he is able to turn much faster
+			if self.panicMode == true or self.controlled == true then		-- if the Ranger is panicking, he is able to turn much faster
 				self.angle = self.angle - 1
 			else
 				self.angle = self.angle - 0.3
@@ -316,7 +319,7 @@ function Ranger:update(dt, zi, paused)
 	end
 	------------------------------- END OF BOUNDARY CHECK
 	
-	-- update human's movement
+	-- update Ranger's movement
 	self.x = self.x + (dt * self.dirVector.x)
 	self.y = self.y + (dt * self.dirVector.y)
 	
