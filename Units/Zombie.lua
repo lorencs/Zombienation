@@ -27,6 +27,8 @@ function Zombie:new(x_new, y_new)
     state = "",
     runSpeed = 0,
 	directionTimer = 0,
+	searchTimer = 0,
+	searchFreq = 0.25,
 	time_kill = 0,
 	initial_direction = 1,
 	x_direction = math.random(-1,1),
@@ -181,7 +183,10 @@ function Zombie:update(dt, zi, paused)
 		self:follow_human(dt)			-- zombie is following a human
 		return							-- no need to update anything else here so return
 	else
-		self:lookAround(zi)				-- else look around 
+		if self.searchTimer > 0.25 then
+			self:lookAround(zi)				-- else look around 
+			self.searchTimer = 0
+		end
 	end
 	
 	------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS
@@ -259,7 +264,7 @@ function Zombie:update(dt, zi, paused)
 	
 	-- update direction time ( after 5 seconds, the unit will randomly change direction )
 	self.directionTimer = self.directionTimer + dt			-- increasing directionTimer
-	
+	self.searchTimer = self.searchTimer + dt	
 	--self.animation:update(dt)
  end
  

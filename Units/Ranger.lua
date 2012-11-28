@@ -25,7 +25,9 @@ function Ranger:new(xnew,ynew)
 	huntee = nil,
     runSpeed = 0,
 	directionTimer = 0,
-	zombieCheckTimer = 0,					-- if hunting a zombie, check for other zombies every once in a while (probably once a sec, less comp expensive)
+	zombieCheckTimer = 0,						-- if hunting a zombie, check for other zombies every once in a while (probably once a sec, less comp expensive)
+	searchTimer = 0,							-- timer, whenc it reachers searchFreq, human looksAround
+	searchFreq = 0.25,							-- intervals at which to lookAround
 	initial_direction = 1,
 	fov_radius = 150,
 	fov_angle = 150,
@@ -238,7 +240,10 @@ function Ranger:update(dt, zi, paused)
 		end
 		
 		-- look around for zombies
-		self:lookAround()
+		if self.searchTimer > self.searchFreq then
+			self:lookAround()				-- else look around 
+			self.searchTimer = 0
+		end
 	end
 	
 	
@@ -387,23 +392,22 @@ function Ranger:update(dt, zi, paused)
 			end
 		end
 	end
-	-- update direction time ( after 5 seconds, the unit will randomly change direction )
+	-- update timers
 	self.directionTimer = self.directionTimer + dt
 	self.zombieCheckTimer = self.zombieCheckTimer + dt
 	self.shootingTimer = self.shootingTimer + dt
+	self.searchTimer = self.searchTimer + dt	
 	
 	-- update bullets
 	for i,_ in pairs(self.bullets) do
 		self.bullets[i]:update(dt, paused)
 		if self.bullets[i].delete then
-			print("deleting bullets")
 			table.remove(self.bullets, i)
 		end
 	end
  end
 
 function Ranger:shoot()
-	print("shooting new bullet")
 	local newBullet = Bullet:new(self.x, self.y, self.targetAngle)
 	table.insert(self.bullets, newBullet)
 end

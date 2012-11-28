@@ -21,6 +21,8 @@ function Human:new(xnew,ynew)
 	panicSpeed = 15,
     runSpeed = 0,
 	directionTimer = 0,
+	searchTimer = 0,							-- timer, whenc it reachers searchFreq, human looksAround
+	searchFreq = 0.25,							-- intervals at which to lookAround
 	initial_direction = 1,
 	fov_radius = 90,
 	fov_angle = 140,
@@ -236,7 +238,10 @@ function Human:update(dt, zi, paused)
 	
 	------------------------------- PANIC MODE
 	-- look around for zombies
-	self:lookAround()
+	if self.searchTimer > self.searchFreq then
+		self:lookAround()
+		self.searchTimer = 0
+	end
 	
 	-- if panicZombieAngle is true.. increase speed and change targetAngle to run away from the zombie !
 	if self.panicMode == true then
@@ -345,5 +350,5 @@ function Human:update(dt, zi, paused)
 	self.cy = self.y + self.radius
 	-- update direction time ( after 5 seconds, the unit will randomly change direction )
 	self.directionTimer = self.directionTimer + dt
-
+	self.searchTimer = self.searchTimer + dt	
  end
