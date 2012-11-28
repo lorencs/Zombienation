@@ -158,23 +158,23 @@ end
 --ranja dont run like no pussy
 function Ranger:hunt(zom_x, zom_y)
 	local x_v, y_v = 0
-	if (self.x < zom_x) and (self.y < zom_y) then
-		x_v = zom_x - self.x
-		y_v = zom_y - self.y
+	if (self.cx < zom_x) and (self.cy < zom_y) then
+		x_v = zom_x - self.cx
+		y_v = zom_y - self.cy
 		self.targetAngle = math.deg( math.atan(y_v / x_v) ) --+ 180
-	elseif (self.x > zom_x) and (self.y < zom_y) then
-		x_v = self.x - zom_x
-		y_v = zom_y - self.y
+	elseif (self.cx > zom_x) and (self.cy < zom_y) then
+		x_v = self.cx - zom_x
+		y_v = zom_y - self.cy
 		self.targetAngle = math.deg( math.atan(y_v / x_v) )
 		self.targetAngle = 180 - self.targetAngle --+ 180
-	elseif (self.x > zom_x) and (self.y > zom_y) then
-		x_v = self.x - zom_x
-		y_v = self.y - zom_y
+	elseif (self.cx > zom_x) and (self.cy > zom_y) then
+		x_v = self.cx - zom_x
+		y_v = self.cy - zom_y
 		self.targetAngle = math.deg( math.atan(y_v / x_v) )
 		self.targetAngle = 180 + self.targetAngle --+ 180
-	elseif (self.x < zom_x) and (self.y > zom_y) then
-		x_v = zom_x - self.x
-		y_v = self.y - zom_y
+	elseif (self.cx < zom_x) and (self.cy > zom_y) then
+		x_v = zom_x - self.cx
+		y_v = self.cy - zom_y
 		self.targetAngle = math.deg( math.atan(y_v / x_v) )
 		self.targetAngle = 360 - self.targetAngle --+ 180
 	end
@@ -183,14 +183,14 @@ end
  -- look around for zombies; hunt dat bitch if one is around !
  function Ranger:lookAround()
 	local distToHuntee = 9999
-	if not(self.huntee == nil) then distToHuntee = self:distanceBetweenPoints(self.x,self.y,self.huntee.cx, self.huntee.cy) end
+	if not(self.huntee == nil) then distToHuntee = self:distanceBetweenPoints(self.cx,self.cy,self.huntee.cx, self.huntee.cy) end
 	local tag = -1
 	if not (self.huntee == nil) then tag = self.huntee.tag end
 	
 	-- for each zombie
 	for i = 1, number_of_zombies do		
 		if tag ~= zombie_list[i].tag then		
-			local distToCurrZomb = self:distanceBetweenPoints(self.x,self.y,zombie_list[i].cx, zombie_list[i].cy)		-- redundant but i have no choice 
+			local distToCurrZomb = self:distanceBetweenPoints(self.cx,self.cy,zombie_list[i].cx, zombie_list[i].cy)		-- redundant but i have no choice 
 			local val = self:pointInArc(self.x, self.y, zombie_list[i].cx, zombie_list[i].cy, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect zomvies in an arc (pie shape)
 			if val and (distToCurrZomb < distToHuntee) then										-- if zombie i is in the field of view of this Ranger
@@ -215,7 +215,13 @@ end
  
 -- update function
 function Ranger:update(dt, zi, paused)
-	
+	-- check if the zombie youre hunting or shooting is dead
+	if not (self.huntee == nil) then
+		if self.huntee.delete then 
+			self.state = "seeking"
+			self.statestr = "seeking"
+		end
+	end
 	------------------------------- CHECK PAUSE AND ATTACKED; LOOK AROUND FOR ZOMBIES
 	-- if game is paused, do not update any values
 	if paused == true then return end
@@ -263,7 +269,7 @@ function Ranger:update(dt, zi, paused)
 		end
 		
 		-- check if zombie's close enough to shoot
-		if (self:distanceBetweenPoints(self.x,self.y,self.huntee.cx,self.huntee.cy) < self.fov_radius *4/5) then 
+		if (self:distanceBetweenPoints(self.cx,self.cy,self.huntee.cx,self.huntee.cy) < self.fov_radius *4/5) then 
 			self.state = "shooting"
 			self.statestr = "shooting " ..self.huntee.tag
 		else 
@@ -343,6 +349,7 @@ function Ranger:update(dt, zi, paused)
 		------------------------------- CHECK MAP BOUNDARIES ( # 1 )
 		if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
 			self.state = "WTF"
+			self.statestr = "WTF"
 			self.directionTimer = self.directionTimer + 5
 			return
 		end	
@@ -352,6 +359,7 @@ function Ranger:update(dt, zi, paused)
 		if  not (nextTileType == "G" or nextTileType == "R") then
 			self.directionTimer = 0
 			self.state = "STUCK !"
+			self.statestr = "STUCK !"
 			self:avoidTile(self)
 			return
 		end
@@ -359,6 +367,7 @@ function Ranger:update(dt, zi, paused)
 		------------------------------- CHECK MAP BOUNDARIES 						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE
 		if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
 			self.state = "WTF"
+			self.statestr = "STUCK !"
 			self.directionTimer = self.directionTimer + dt
 			return
 		end																															-- ** IN THE OTHER DIRECTION !
@@ -386,7 +395,7 @@ function Ranger:update(dt, zi, paused)
 		end
 	
 		-- if zombie got out of range, go back to hunting him
-		if (self:distanceBetweenPoints(self.x,self.y,self.huntee.cx,self.huntee.cy) > self.fov_radius) then
+		if (self:distanceBetweenPoints(self.cx,self.cy,self.huntee.cx,self.huntee.cy) > self.fov_radius) then
 			self.state = "hunting"
 			self.statestr = "hunting " ..self.huntee.tag
 		else
@@ -400,7 +409,7 @@ function Ranger:update(dt, zi, paused)
 	-- update timers
 	self.directionTimer = self.directionTimer + dt
 	self.zombieCheckTimer = self.zombieCheckTimer + dt
-	self.shootingTimer = self.shootingTimer + dt
+	if self.state == "shooting" then self.shootingTimer = self.shootingTimer + dt end	-- only increment shooting timer if youre shooting
 	self.searchTimer = self.searchTimer + dt	
 	
 	-- update bullets
@@ -413,6 +422,13 @@ function Ranger:update(dt, zi, paused)
  end
 
 function Ranger:shoot()
-	local newBullet = Bullet:new(self.x, self.y, self.targetAngle)
+	local newBullet = Bullet:new(self.cx, self.cy, self.targetAngle, self)
 	table.insert(self.bullets, newBullet)
+end
+
+function Ranger:stopChasing()
+	self.huntee = nil
+	self.state = "seeking"
+	self.statestr = "STUCK !"
+	self.shootingTimer = 2
 end

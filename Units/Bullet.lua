@@ -1,7 +1,7 @@
 Bullet = {}
 
 -- Constructor
-function Bullet:new(_x,_y,_angle)
+function Bullet:new(_x,_y,_angle, ranger)
 
     local object = {					
 	id = 0,								
@@ -13,7 +13,8 @@ function Bullet:new(_x,_y,_angle)
     state = "",
 	speed = 160,
 	delete = false,
-	lifetime = 0
+	lifetime = 0,
+	parent = ranger
 	}
 
 	setmetatable(object, { __index = Bullet})		
@@ -42,7 +43,8 @@ function Bullet:update(dt, paused)
 		for i = 1, number_of_zombies do
 			
 			if (self:distanceBetweenPoints(self.x, self.y, zombie_list[i].cx, zombie_list[i].cy) <= zombie_list[i].radius) then
-				print("ZOMBIE EATS BULLET LIKE A CHAMP")
+				zombie_list[i]:die()
+				self.parent:stopChasing()
 				self.delete = true
 				break
 			end

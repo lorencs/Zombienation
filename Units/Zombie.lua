@@ -44,7 +44,8 @@ function Zombie:new(x_new, y_new)
 	v3 = Point:new(0,0),
 	controlled = false,
 	onCurrentTile = 0,
-	neighbourTiles = {}
+	neighbourTiles = {},
+	delete = false				-- if this is set to true, this zombie will be deleted by unitManager on the next update
 	}												-- is not following a human (yet !)
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
@@ -411,5 +412,23 @@ function Zombie:update(dt, zi, paused)
 			zombie_list[i].state = "Looking around"
 		end
 	end
+end
+
+function Zombie:die()
+	-- tell the human you're following not to panic, its all good now brah
+
+	-- copying and pastng your own code here, but this could have been made much easier if you 
+	-- just saved a reference to the human you're following as a self var like i did with rangers
+	local h_index = -1
+	for i = 1, number_of_humans do
+		if human_list[i].tag == self.fol_human then
+			h_index = i
+			break
+		end
+	end
+	if h_index ~= -1 then human_list[h_index].panicMode = false end
+	
+	-- mark this zombie for deletion (unitManager's update method will delete it on next update)
+	self.delete = true	
 end
  

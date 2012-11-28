@@ -129,6 +129,14 @@ function UnitManager:update(dt, gravity)
 		ranger_list[i]:update(dt,i, self.paused)
 	end
 	
+	
+	-- check if zombies need to be deleted (needs to be done separate from updating units otherwise shit fucks up)
+	for i,v in pairs(zombie_list) do
+		if v.delete then
+			table.remove(zombie_list, i)
+			number_of_zombies = number_of_zombies - 1
+		end
+	end
 end
 
 function UnitManager:draw()
