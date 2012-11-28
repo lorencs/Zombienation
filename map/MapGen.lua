@@ -65,15 +65,11 @@ function MapGen:randomMap(difficulty)
 	print("--filling depth map")
 	self:generateWater()	
 	-- update roads
-	--print("--pruning roadways1")
-	--self:thinRoads(freq, difficulty, false)		
+	print("--pruning roadways")
+	self:thinRoads()		
 	-- buildings
 	--print("--placing buildings")
 	--self:generateBuildings(difficulty)
-	-- update roads
-	--print("--pruning roadways2")
-	--self:removeRoads(1)
-	--self:thinRoads(math.floor(freq / 2), difficulty, true)
 	
 	print("--updating tile info")
 	-- update tiles
@@ -92,55 +88,27 @@ end
 
 -- create a random road network
 function MapGen:generateRoads()
-	--[[
-	local m = self.map
-	local freq = 12
-	local pin = 100 	-- start value
-	local chance = 0.075
-	
-	-- random road grid
-	for x=0,m.width-1 do
-		for y=0,m.height-1 do
-			--if x % freq > pin then
-			if x % freq == 1 and math.random() > chance then
-				m.tiles[x][y]:setId("R")
-			end
-			--if y % freq > pin then
-			if y % freq == 1 and math.random() > chance then 
-				m.tiles[x][y]:setId("R")
-			end
-			pin = math.floor(math.random() * freq)
-		end
+	for _,v in pairs(getSectors(self.map.width, self.map.height)) do
+		self:addRoad(v.x1, v.y1, v.x2, v.y1)
+		self:addRoad(v.x1, v.y1, v.x1, v.y2)
+		self:addRoad(v.x1, v.y2, v.x2, v.y2)
+		self:addRoad(v.x2, v.y1, v.x2, v.y2)				
 	end
-	--]]
-	local m = self.map
-	local w = m.width
-	local h = m.height
 	
-	local maze = createMaze(w, h)
-	outputMaze(maze, w, h)
+	self:removeTiles("R", "R", "G", 0, 7, true)
 end
 
 -- thin roads and remove ones that don't make sense
-function MapGen:thinRoads(freq, difficulty, veryThin)
-	
-	if veryThin then
-		-- remove less connected roads
-		--self:removeRoads(2)
-		-- remove road islands
-		self:removeRoads(1)
-	end
-	
-	
+function MapGen:thinRoads()
 	-- find and remove connected components
-	local scale = 3
-	smallRoads = self:findConnectedComponents(0, scale*freq, "R")
+	local size = 25
+	smallRoads = self:findConnectedComponents(0, size, "R")
 	self:removeComponents(smallRoads, "G")		
 end
 
 -- set neighbors (neighborType) of tile (tileType) to resetValue 
 -- if not(minN < #neighbors < maxN)
-function MapGen:removeTiles(tileType, neighborType, resetValue, minN, maxN)
+function MapGen:removeTiles(tileType, neighborType, resetValue, minN, maxN, eight)
 	local m = self.map 
 	
 	for x=0,m.width-1 do
@@ -158,6 +126,22 @@ function MapGen:removeTiles(tileType, neighborType, resetValue, minN, maxN)
 				end
 				if y+1 < m.height and m.tiles[x][y+1]:getId() == neighborType then
 					count = count + 1
+				end
+				
+				-- 8 way
+				if eight then
+					if x-1 > -1 and y-1 > -1 and m.tiles[x-1][y-1]:getId() == neighborType then
+						count = count + 1
+					end
+					if x+1 < m.width and y-1 > -1 and m.tiles[x+1][y-1]:getId() == neighborType then
+						count = count + 1
+					end
+					if x-1 > -1 and y+1 < m.height and m.tiles[x-1][y+1]:getId() == neighborType then
+						count = count + 1
+					end
+					if x+1 < m.width and y+1 < m.height and m.tiles[x+1][y+1]:getId() == neighborType then
+						count = count + 1
+					end
 				end
 				
 				if count < minN or count > maxN then
@@ -258,12 +242,27 @@ function MapGen:generateWater()
 	local w = m.width
 	local h = m.height
 	
+	local depth = nil
 	-- high octave results in lower values, smoother distribution
 	local octaves = 10
-	depth = generatePerlinNoise(octaves, w, h)
-	--outputNoise(depth, w, h)		-- print depth map to file
-	
 	local waterLevel = 35	-- tweak this to work with octaves
+	local minCover = 0.05
+	local maxCover = 0.1
+	local count = 0
+	
+	local ratio = 1
+	while ratio < minCover or ratio > maxCover do
+		depth = generatePerlinNoise(octaves, w, h)	
+		count = 0
+		for x=0,w-1 do
+			for y=0,h-1 do
+				if depth[x][y] < waterLevel then
+					count = count + 1
+				end
+			end
+		end		
+		ratio = count / (w*h)
+	end
 	
 	for x=0,w-1 do
 		for y=0,h-1 do
@@ -273,9 +272,12 @@ function MapGen:generateWater()
 		end
 	end
 	
+	
 	-- remove useless land
-	self:removeTiles("G", "W", "W", 0, 2)
-	self:removeTiles("G", "W", "W", 0, 3)
+	self:removeTiles("G", "W", "W", 0, 2, false)
+	self:removeTiles("G", "W", "W", 0, 3, false)
+	self:removeTiles("R", "W", "W", 0, 2, false)
+	self:removeTiles("R", "W", "W", 0, 3, false)
 end
 
 -- place random buildings
