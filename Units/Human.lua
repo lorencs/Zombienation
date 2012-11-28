@@ -122,7 +122,8 @@ function Human:draw(i)
 		local currentTileW = math.floor(self.x / map.tileSize)
 		local currentTileH = math.floor(self.y / map.tileSize)
 		
-		--love.graphics.rectangle( "fill", currentTileW * 25 , currentTileH * 25 , 25, 25 )
+		-- drawing neighbour tiles
+		--[[
 		love.graphics.setColor(0,255,60, 150, 150)
 		love.graphics.rectangle( "fill", (currentTileW-1) * 25 , (currentTileH-1) * 25 , 25, 25 )
 		love.graphics.rectangle( "fill", currentTileW * 25 , (currentTileH - 1) * 25 , 25, 25 )
@@ -135,27 +136,7 @@ function Human:draw(i)
 		love.graphics.rectangle( "fill", (currentTileW - 1) * 25 , (currentTileH+1) * 25 , 25, 25 )
 		love.graphics.rectangle( "fill", (currentTileW) * 25 , (currentTileH+1) * 25 , 25, 25 )
 		love.graphics.rectangle( "fill", (currentTileW + 1) * 25 , (currentTileH+1) * 25 , 25, 25 )
-		
-		
-		--[[
-			local currentTileW = math.floor(unitObject.x / map.tileSize)
-	local currentTileH = math.floor(unitObject.y / map.tileSize)
-	--print("W:"..currentTileW..",H"..currentTileH)
-	unitObject.neighbourTiles[1] = map.tiles[currentTileW-1][currentTileH-1].id
-	unitObject.neighbourTiles[2] = map.tiles[currentTileW][currentTileH-1].id
-	unitObject.neighbourTiles[3] = map.tiles[currentTileW+1][currentTileH-1].id
-	
-	unitObject.neighbourTiles[4] = map.tiles[currentTileW-1][currentTileH].id
-	unitObject.neighbourTiles[5] = map.tiles[currentTileW][currentTileH].id
-	unitObject.neighbourTiles[6] = map.tiles[currentTileW+1][currentTileH].id
-	
-	unitObject.neighbourTiles[7] = map.tiles[currentTileW-1][currentTileH+1].id
-	unitObject.neighbourTiles[8] = map.tiles[currentTileW][currentTile+1].id
-	unitObject.neighbourTiles[9] = map.tiles[currentTileW+1][currentTileH+1].id
-		--]]
-		
-		
-		
+		]]
 		
 		-- draw state of unit
 		love.graphics.print(self.state, self.x, self.y + 15)
@@ -328,8 +309,8 @@ function Human:update(dt, zi, paused)
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	
 	-- checking the tile that the unit is or will be on
-	local next_x = self.x + (dt * self.dirVector.x)
-	local next_y = self.y + (dt * self.dirVector.y)
+	local next_x = self.cx + (dt * self.dirVector.x)
+	local next_y = self.cy + (dt * self.dirVector.y)
 	
 	------------------------------- CHECK MAP BOUNDARIES ( # 1 )
 	if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
