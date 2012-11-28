@@ -343,13 +343,13 @@ function Ranger:update(dt, zi, paused)
 		self.dirVector = self:getDirection(self.angle, self.speed)
 	if not(self.state == "shooting") then	-- only move if not shooting
 		-- checking the tile that the unit is or will be on
-		local next_x = self.x + (dt * self.dirVector.x)
-		local next_y = self.y + (dt * self.dirVector.y)
+		local next_x = self.cx + (self.radius * self:signOf(self.dirVector.x)) + (dt * self.dirVector.x)
+		local next_y = self.cy + (self.radius * self:signOf(self.dirVector.y)) + (dt * self.dirVector.y)
 		
 		------------------------------- CHECK MAP BOUNDARIES ( # 1 )
 		if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
-			self.state = "WTF"
-			self.statestr = "WTF"
+			--self.state = "WTF"
+			--self.statestr = "WTF"
 			self.directionTimer = self.directionTimer + 5
 			return
 		end	
@@ -358,16 +358,16 @@ function Ranger:update(dt, zi, paused)
 		-- check next tile (not in panic mode)
 		if  not (nextTileType == "G" or nextTileType == "R") then
 			self.directionTimer = 0
-			self.state = "STUCK !"
-			self.statestr = "STUCK !"
+			--self.state = "STUCK !"
+			--self.statestr = "STUCK !"
 			self:avoidTile(self)
 			return
 		end
 		
 		------------------------------- CHECK MAP BOUNDARIES 						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE
 		if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
-			self.state = "WTF"
-			self.statestr = "STUCK !"
+			--self.state = "WTF"
+			--self.statestr = "WTF"
 			self.directionTimer = self.directionTimer + dt
 			return
 		end																															-- ** IN THE OTHER DIRECTION !
@@ -429,6 +429,6 @@ end
 function Ranger:stopChasing()
 	self.huntee = nil
 	self.state = "seeking"
-	self.statestr = "STUCK !"
+	self.statestr = "seeking"
 	self.shootingTimer = 2
 end

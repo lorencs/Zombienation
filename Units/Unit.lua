@@ -293,3 +293,7 @@ function Unit:pTriangle(pt, v1, v2, v3)
 
   return ((b1 == b2) and (b2 == b3))
 end
+
+function Unit:signOf(v)	
+	return v > 0 and 1 or (v < 0 and -1 or 0)
+end
