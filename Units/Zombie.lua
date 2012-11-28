@@ -388,7 +388,7 @@ function Zombie:update(dt, zi, paused)
 	-- check next tile (not in panic mode)
 	if  not (nextTileType == "G" or nextTileType == "R") then
 		self.directionTimer = self.directionTimer + dt
-		self.state = "STUCK !"
+		--self.state = "STUCK !"
 		self:avoidTile(self)
 		return
 	end
