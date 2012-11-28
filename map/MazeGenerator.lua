@@ -14,15 +14,16 @@ function createMaze(width, height)
 	s = Point:new(math.floor(width/2), math.floor(height/2))
 	table.insert(drill, s)
 	
-	--cur = table.remove(drill)
-	--cur = s
+	cur = s
 	local i = 0
-	cur = drill[0]
+	--local cur = drill[0]
+	print("TEST "..cur.x..","..cur.y)
 	-- loop through the drill
 	while not(cur == nil) do
 		local removeDrill = false
 		
 		r = math.floor(math.random() * 4)
+		print(i..": "..r)
 		
 		if r == 0 then
 			cur.y = cur.y - 2
