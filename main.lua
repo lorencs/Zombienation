@@ -48,7 +48,7 @@ require "Units/Point"
 gold = 0
 orig_number_of_zombies = 1			-- zombies are red
 orig_number_of_humans = 150			-- humans are blue
-orig_number_of_rangers = 0			-- i thought this was a poem
+orig_number_of_rangers = 1			-- i thought this was a poem
 									-- i wish it was too
 
 -- gamestate
@@ -306,7 +306,7 @@ function gameSTATE:mousepressed(x, y, button)
 			dragSelect = true
 			dragx, dragy = x, y
 		elseif (button == "r") then
-			--unitManager:moveTo(x,y)
+			unitManager:moveTo(x,y)
 		end
 	end
 	

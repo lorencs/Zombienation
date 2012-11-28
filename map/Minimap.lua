@@ -107,7 +107,6 @@ function Minimap:draw()
 			local hx = human_list[i].x / self.map.tileSize
 			local hy = human_list[i].y / self.map.tileSize
 			love.graphics.rectangle("fill", self.x + hx, self.y + hy,2,2)
-			--human_list[i].x, human_list[i].y
 		end
 
 		-- draw zombies
@@ -116,7 +115,14 @@ function Minimap:draw()
 			local zx = zombie_list[i].x / self.map.tileSize
 			local zy = zombie_list[i].y / self.map.tileSize
 			love.graphics.rectangle("fill", self.x + zx, self.y + zy,2,2)
-			--human_list[i].x, human_list[i].y
+		end
+		
+		-- draw rangers
+		love.graphics.setColor(0,255,0)
+		for i = 1, #ranger_list do
+			local rx = ranger_list[i].x / self.map.tileSize
+			local ry = ranger_list[i].y / self.map.tileSize
+			love.graphics.rectangle("fill", self.x + rx, self.y + ry,2,2)
 		end
 
 		-- draw view window
