@@ -179,11 +179,11 @@ end
  
 	local x_v1, y_v1 = 0
 	
-	if (x1 < x2) and (y1 < y2) then
+	--[[if (x1 < x2) and (y1 < y2) then]]--
 		x_v1 = x2 - x1
 		y_v1 = y2 - y1
 		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
-	elseif (x1 > x2) and (y1 < y2) then
+	--[[elseif (x1 > x2) and (y1 < y2) then
 		x_v1 = x1 - x2
 		y_v1 = y2 - y1
 		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
@@ -196,7 +196,7 @@ end
 		y_v1 = y1 - y2
 		return math.sqrt( x_v1 * x_v1 + y_v1 * y_v1 )
 	end
-	return 9999
+	return 9999]]--
  end
  
  --[[

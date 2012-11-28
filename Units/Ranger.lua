@@ -1,3 +1,5 @@
+require "Units/Bullet"
+
 Ranger = {}
 Ranger_mt = { __index = Ranger }
 
@@ -20,17 +22,17 @@ function Ranger:new(xnew,ynew)
 	speed = 0,
 	normalSpeed = 15,
 	huntingSpeed = 17,
+	huntee = nil,
     runSpeed = 0,
 	directionTimer = 0,
+	zombieCheckTimer = 0,					-- if hunting a zombie, check for other zombies every once in a while (probably once a sec, less comp expensive)
 	initial_direction = 1,
 	fov_radius = 150,
 	fov_angle = 150,
 	fovStartAngle = 0,
 	fovEndAngle = 0,
 	attacked = 0,								-- if the unit is currently attacked, this var = 1
-    --huntingMode = false,							-- chase zombie 
-	--shootingMode = false,							-- stop and shoot zombie
-	panicTimer = 0,									-- a unit that has spotted a zombie will be in panic mode for 6-7 seconds ( after spotting last zombie )
+	shootingTimer = 0,								-- reload time (pretend he's using a hunting rifle)
 	interval = 0,									-- interval of time before unit changes angle (randomized every time)
 	v1 = Point:new(0,0),							-- vertices for the field of view triangle
 	v2 = Point:new(0,0),
@@ -39,7 +41,8 @@ function Ranger:new(xnew,ynew)
 	color = 0,
 	controlled = false,
 	onCurrentTile = 0,
-	neighbourTiles = {}
+	neighbourTiles = {},
+	bullets = {}
 	}
 
 	setmetatable(new_object, Ranger_mt )				-- add the new_object to metatable of Ranger
@@ -78,9 +81,12 @@ function Ranger:setupUnit()
 	self.fovEndAngle = self.angle + self.angle/2
 	
 	self.state = "seeking"
+	self.statestr = "seeking"
 	self.speed = self.normalSpeed
 	self.tag = ranger_tag
 	self.directionTimer = 0
+	self.checkZombieTimer = 0
+	self.shootingTimer = 2
 	
 	self.interval = math.random(3,7)
 end
@@ -112,7 +118,7 @@ function Ranger:draw(i)
 		love.graphics.line(self.x + self.radius,self.y + self.radius, 
 							self.x + math.cos(self.angle * (math.pi/180))* 30 + self.radius , 
 							self.y + math.sin(self.angle * (math.pi/180))* 30 + self.radius)
-		love.graphics.setColor(0,255,0)
+		love.graphics.setColor(255,0,0)
 		love.graphics.line(self.x + self.radius,self.y + self.radius, 
 							self.x + math.cos(self.targetAngle * (math.pi/180))*30 + self.radius , 
 							self.y + math.sin(self.targetAngle * (math.pi/180))* 30 + self.radius)
@@ -140,6 +146,10 @@ function Ranger:draw(i)
 	-- print tag to screen.. for debug !
 	love.graphics.print(self.tag, self.x, self.y + 10)
 
+	-- draw bullets
+	for i,_ in pairs(self.bullets) do
+		self.bullets[i]:draw()
+	end
 end
 
 --ranja dont run like no pussy
@@ -153,7 +163,7 @@ function Ranger:hunt(zom_x, zom_y)
 		x_v = self.x - zom_x
 		y_v = zom_y - self.y
 		self.targetAngle = math.deg( math.atan(y_v / x_v) )
-		self.targetAngle = 180 - self.targetAngle + 180
+		self.targetAngle = 180 - self.targetAngle --+ 180
 	elseif (self.x > zom_x) and (self.y > zom_y) then
 		x_v = self.x - zom_x
 		y_v = self.y - zom_y
@@ -173,25 +183,26 @@ end
 	-- for each zombie
 	for i = 1, number_of_zombies do
 	
-			local zombie_point = Point:new(zombie_list[i].cx, zombie_list[i].cy)
-			--local val = self:pTriangle(zombie_point, self.v1, self.v2, self.v3)						-- detect zombies in a triangle
-			local val = self:pointInArc(self.x, self.y, zombie_point.x, zombie_point.y, 
-										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect zomvies in an arc (pie shape)
-			if val then										-- if zombie i is in the field of view of this Ranger
-				self.statestr = "Hunting  ".. zombie_list[i].tag
-				self.state = "hunting"
-				self:hunt(zombie_list[i].x, zombie_list[i].y)
+		local zombie_point = Point:new(zombie_list[i].cx, zombie_list[i].cy)
+		--local val = self:pTriangle(zombie_point, self.v1, self.v2, self.v3)						-- detect zombies in a triangle
+		local val = self:pointInArc(self.x, self.y, zombie_point.x, zombie_point.y, 
+									self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect zomvies in an arc (pie shape)
+		if val then										-- if zombie i is in the field of view of this Ranger
+			self.statestr = "Hunting  ".. zombie_list[i].tag
+			self.state = "hunting"
+			self.huntee = zombie_list[i]
+			self:hunt(self.huntee.x, self.huntee.y)
 
-				-- reset angles if they go over 360 or if they go under 0
-				if self.targetAngle > 360 then
-					self.targetAngle = self.targetAngle - 360
-				end
-				
-				if self.targetAngle < 0 then
-					self.targetAngle = 360 + self.targetAngle
-				end
-				
+			-- reset angles if they go over 360 or if they go under 0
+			if self.targetAngle > 360 then
+				self.targetAngle = self.targetAngle - 360
 			end
+			
+			if self.targetAngle < 0 then
+				self.targetAngle = 360 + self.targetAngle
+			end
+			break
+		end
 	end
  end
  
@@ -225,35 +236,48 @@ function Ranger:update(dt, zi, paused)
 			-- randomize interval again
 			self.interval = math.random(3,7)
 		end
+		
+		-- look around for zombies
+		self:lookAround()
 	end
 	
-	-- look around for zombies
-	self:lookAround()
+	
 	
 	------------------------------- HUNTING MODE
 	-- if panicZombieAngle is true.. increase speed and change targetAngle to run away from the zombie !
 	if self.state == "hunting" then
+		-- check if there are any other closer zombies every 1 sec
+		if self.zombieCheckTimer > 1 then
+			self:lookAround()
+			self.zombieCheckTimer = 0
+		end
 		
-		-- change speed to huntingSpeed
-		self.speed = self.huntingSpeed
-			
-		-- decrease the panicTimer
-		-- self.panicTimer = self.panicTimer - dt
-			
-		-- while in panic mode, self.targetAngle should never change as the Ranger is trying to run from the zombies
-		--self.directionTimer = 0
-			
-		-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
-		self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
-	else
-		self.speed = self.normalSpeed
-		self.state = "seeking"
-		
-		
+		-- check if zombie's close enough to shoot
+		if (self:distanceBetweenPoints(self.x,self.y,self.huntee.x,self.huntee.y) < self.fov_radius *4/5) then 
+			self.state = "shooting"
+			self.statestr = "shooting " ..self.huntee.tag
+		else 
+			self:hunt(self.huntee.x, self.huntee.y)
+			-- change speed to huntingSpeed
+			self.speed = self.huntingSpeed
+				
+			-- decrease the panicTimer
+			-- self.panicTimer = self.panicTimer - dt
+				
+			-- while in panic mode, self.targetAngle should never change as the Ranger is trying to run from the zombies
+			--self.directionTimer = 0
+				
+			-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
+			self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+		end
+	elseif self.state == "seeking" then
+		self.speed = self.normalSpeed				
 	end
 	
 	-- check which tiles to go on in order to avoid buildings, water, etc
 	--self:checkTiles()
+	
+	
 	
 	------------------------------- UPDATE SELF.ANGLE
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then
@@ -269,13 +293,13 @@ function Ranger:update(dt, zi, paused)
 	else
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
 		if self.dirVec == 0 then				-- positive direction	( opposite of conventional as y increases downwards )
-			if self.state == "hunting" or self.controlled then		-- if the Ranger is panicking, he is able to turn much faster
+			if self.state == "hunting" or self.state == "shooting" or self.controlled then		-- if the Ranger is hunting or shooting, he is able to turn much faster
 				self.angle = self.angle + 1
 			else
 				self.angle = self.angle + 0.3
 			end
 		elseif self.dirVec == 1 then			-- negative direction
-			if self.state == "hunting" or self.controlled then		-- if the Ranger is panicking, he is able to turn much faster
+			if self.state == "hunting" or self.state == "shooting" or self.controlled then		-- if the Ranger is hunting or shooting, he is able to turn much faster
 				self.angle = self.angle - 1
 			else
 				self.angle = self.angle - 0.3
@@ -291,58 +315,95 @@ function Ranger:update(dt, zi, paused)
 			self.angle = 360 + self.angle
 		end
 	end
+		
+			--if self.x < 0 or self.x > map.tileSize*map.width or self.y < 0 or self.y > map.tileSize*map.height then
+		--	--print("tag:"..self.tag..", prevdt:"..self.prevDt..",prevdy:"..self.prevdy..",prevdx:"..self.prevdx)
+		--	print("out of boundaries:"..self.tag)
+		--end
+		
 	
-		--if self.x < 0 or self.x > map.tileSize*map.width or self.y < 0 or self.y > map.tileSize*map.height then
-	--	--print("tag:"..self.tag..", prevdt:"..self.prevDt..",prevdy:"..self.prevdy..",prevdx:"..self.prevdx)
-	--	print("out of boundaries:"..self.tag)
-	--end
+		------------------------------------------------------------------------------ UPDATE MOVEMENT
+		-- get direction vector
+		self.dirVector = self:getDirection(self.angle, self.speed)
+	if not(self.state == "shooting") then	-- only move if not shooting
+		-- checking the tile that the unit is or will be on
+		local next_x = self.x + (dt * self.dirVector.x)
+		local next_y = self.y + (dt * self.dirVector.y)
+		
+		------------------------------- CHECK MAP BOUNDARIES ( # 1 )
+		if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
+			self.state = "WTF"
+			self.directionTimer = self.directionTimer + 5
+			return
+		end	
+		
+		local nextTileType = self:xyToTileType(next_x,next_y)
+		-- check next tile (not in panic mode)
+		if  not (nextTileType == "G" or nextTileType == "R") then
+			self.directionTimer = 0
+			self.state = "STUCK !"
+			self:avoidTile(self)
+			return
+		end
+		
+		------------------------------- CHECK MAP BOUNDARIES 						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE
+		if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
+			self.state = "WTF"
+			self.directionTimer = self.directionTimer + dt
+			return
+		end																															-- ** IN THE OTHER DIRECTION !
+		local val = self:checkMapBoundaries(next_x,next_y, self.radius)											
+		if val ~= 999 then			-- if it is too close to a boundary..
+			self.angle = val
+			self.targetAngle = val
+			--return
+		end
+		------------------------------- END OF BOUNDARY CHECK
+		
+		-- update Ranger's movement
+		self.x = self.x + (dt * self.dirVector.x)
+		self.y = self.y + (dt * self.dirVector.y)
+		
+		-- update the center x and y values of the unit
+		self.cx = self.x + self.radius
+		self.cy = self.y + self.radius
+	else
+	------------------------------SHOOTING MODE
+		-- check if there are any other closer zombies every 1 sec
+		if self.zombieCheckTimer > 1 then
+			self:lookAround()
+			self.zombieCheckTimer = 0
+		end
 	
-	------------------------------------------------------------------------------ UPDATE MOVEMENT
-	-- get direction vector
-	self.dirVector = self:getDirection(self.angle, self.speed)
-	
-	-- checking the tile that the unit is or will be on
-	local next_x = self.x + (dt * self.dirVector.x)
-	local next_y = self.y + (dt * self.dirVector.y)
-	
-	------------------------------- CHECK MAP BOUNDARIES ( # 1 )
-	if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
-		self.state = "WTF"
-		self.directionTimer = self.directionTimer + 5
-		return
-	end	
-	
-	local nextTileType = self:xyToTileType(next_x,next_y)
-	-- check next tile (not in panic mode)
-	if  not (nextTileType == "G" or nextTileType == "R") then
-		self.directionTimer = 0
-		self.state = "STUCK !"
-		self:avoidTile(self)
-		return
+		-- if zombie got out of range, go back to hunting him
+		if (self:distanceBetweenPoints(self.x,self.y,self.huntee.x,self.huntee.y) > self.fov_radius) then
+			self.state = "hunting"
+			self.statestr = "hunting " ..self.huntee.tag
+		else
+			self:hunt(self.huntee.x, self.huntee.y)
+			if self.shootingTimer > 3 then
+				self:shoot()
+				self.shootingTimer = 0
+			end
+		end
 	end
-	
-	------------------------------- CHECK MAP BOUNDARIES 						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE
-	if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
-		self.state = "WTF"
-		self.directionTimer = self.directionTimer + dt
-		return
-	end																															-- ** IN THE OTHER DIRECTION !
-	local val = self:checkMapBoundaries(next_x,next_y, self.radius)											
-	if val ~= 999 then			-- if it is too close to a boundary..
-		self.angle = val
-		self.targetAngle = val
-		--return
-	end
-	------------------------------- END OF BOUNDARY CHECK
-	
-	-- update Ranger's movement
-	self.x = self.x + (dt * self.dirVector.x)
-	self.y = self.y + (dt * self.dirVector.y)
-	
-	-- update the center x and y values of the unit
-	self.cx = self.x + self.radius
-	self.cy = self.y + self.radius
 	-- update direction time ( after 5 seconds, the unit will randomly change direction )
 	self.directionTimer = self.directionTimer + dt
-
+	self.zombieCheckTimer = self.zombieCheckTimer + dt
+	self.shootingTimer = self.shootingTimer + dt
+	
+	-- update bullets
+	for i,_ in pairs(self.bullets) do
+		self.bullets[i]:update(dt, paused)
+		if self.bullets[i].delete then
+			print("deleting bullets")
+			table.remove(self.bullets, i)
+		end
+	end
  end
+
+function Ranger:shoot()
+	print("shooting new bullet")
+	local newBullet = Bullet:new(self.x, self.y, self.targetAngle)
+	table.insert(self.bullets, newBullet)
+end
