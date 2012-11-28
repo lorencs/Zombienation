@@ -32,6 +32,7 @@ function Zombie:new(x_new, y_new)
 	x_direction = math.random(-1,1),
 	y_direction = math.random(-1,1),
 	fov_radius = 75,
+	fov_angle = 90,
 	fovStartAngle = 0,
 	fovEndAngle = 0,
 	fol_human = 0,									-- index of the human in human_list that this zombie will follow. if it's 0, then this zombie
@@ -122,7 +123,7 @@ function Zombie:draw(i)
 		love.graphics.setColor(201,85,91,125)	
 		
 		-- draw the arc field of view
-		love.graphics.arc( "fill", self.x + self.radius, self.y + self.radius, self.fov_radius, math.rad(self.angle + 45), math.rad(self.angle - 45) )
+		love.graphics.arc( "fill", self.x + self.radius, self.y + self.radius, self.fov_radius, math.rad(self.angle + self.fov_angle / 2), math.rad(self.angle - self.fov_angle / 2) )
 		-- love.graphics.arc( mode, x, y, radius, angle1, angle2, segments )
 		
 		-- draw the triangle fov

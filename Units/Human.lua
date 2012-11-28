@@ -23,6 +23,7 @@ function Human:new(xnew,ynew)
 	directionTimer = 0,
 	initial_direction = 1,
 	fov_radius = 90,
+	fov_angle = 140,
 	fovStartAngle = 0,
 	fovEndAngle = 0,
 	attacked = 0,								-- if the unit is currently attacked, this var = 1
@@ -102,7 +103,7 @@ function Human:draw(i)
 		)]]
 		
 		-- draw the arc field of view
-		love.graphics.arc( "fill", self.x + self.radius, self.y + self.radius, self.fov_radius, math.rad(self.angle + 70), math.rad(self.angle - 70) )
+		love.graphics.arc( "fill", self.x + self.radius, self.y + self.radius, self.fov_radius, math.rad(self.angle + (self.fov_angle / 2)), math.rad(self.angle - (self.fov_angle / 2)) )
 		
 		-- draw line for angle and targetAngle
 		love.graphics.line(self.x + self.radius,self.y + self.radius, 
@@ -118,9 +119,30 @@ function Human:draw(i)
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 5, 15 )
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 6, 15 )
 		
+		local currentTileW = math.floor(self.x / map.tileSize)
+		local currentTileH = math.floor(self.y / map.tileSize)
 		
-		--love.graphics.rectangle()
-		love.graphics.rectangle( "fill", 0, 0, 25, 25 )
+		--love.graphics.rectangle( "fill", currentTileW * 25 , currentTileH * 25 , 25, 25 )
+		love.graphics.setColor(0,255,0, 150, 160)
+		love.graphics.rectangle( "fill", (currentTileW-1) * 25 , (currentTileH-1) * 25 , 25, 25 )
+		love.graphics.rectangle( "fill", (currentTileW-1) * 25 , (currentTileH) * 25 , 25, 25 )
+		love.graphics.rectangle( "fill", (currentTileW-1) * 25 , (currentTileH-1) * 25 , 25, 25 )
+		--[[
+			local currentTileW = math.floor(unitObject.x / map.tileSize)
+	local currentTileH = math.floor(unitObject.y / map.tileSize)
+	--print("W:"..currentTileW..",H"..currentTileH)
+	unitObject.neighbourTiles[1] = map.tiles[currentTileW-1][currentTileH-1].id
+	unitObject.neighbourTiles[2] = map.tiles[currentTileW-1][currentTileH].id
+	unitObject.neighbourTiles[3] = map.tiles[currentTileW-1][currentTileH+1].id
+	unitObject.neighbourTiles[4] = map.tiles[currentTileW][currentTileH-1].id
+	unitObject.neighbourTiles[5] = map.tiles[currentTileW][currentTileH].id
+	unitObject.neighbourTiles[6] = map.tiles[currentTileW][currentTileH+1].id
+	unitObject.neighbourTiles[7] = map.tiles[currentTileW+1][currentTileH-1].id
+	unitObject.neighbourTiles[8] = map.tiles[currentTileW+1][currentTileH].id
+	unitObject.neighbourTiles[9] = map.tiles[currentTileW+1][currentTileH+1].id
+		--]]
+		
+		
 		
 		
 		-- draw state of unit
