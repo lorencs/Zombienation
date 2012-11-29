@@ -41,8 +41,8 @@ function Bullet:update(dt, paused)
 		self.y = self.y + math.sin(self.angle * (math.pi/180))*self.speed*dt
 		
 		-- check if bullet hits building or blocked area
-		local tile = map.tiles[math.floor(self.x/map.tileSize)][math.floor(self.y/map.tileSize)]
-		if (tile.id == "B") or (tile.id == "D") then
+		tile = map.tiles[math.floor(self.prevx/map.tileSize)][math.floor(self.prevy/map.tileSize)]
+		if (tile.id == "B") or (tile.id == "D") or (tile.id == "X") then
 			self.delete = true
 			return
 		end
@@ -50,7 +50,7 @@ function Bullet:update(dt, paused)
 		-- check if any zombies are hit 
 		for i = 1, number_of_zombies do
 			
-			if (self:distanceBetweenPoints(self.x, self.y, zombie_list[i].cx, zombie_list[i].cy) <= zombie_list[i].radius) then
+			if (self:distanceBetweenPoints(self.prevx, self.prevy, zombie_list[i].cx, zombie_list[i].cy) <= zombie_list[i].radius) then
 				zombie_list[i]:die()
 				self.parent:stopChasing()
 				self.delete = true
