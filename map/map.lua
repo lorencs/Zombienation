@@ -234,7 +234,7 @@ function Map:selectGroundSprite(tile)
 	local w = self.tileSize
 
 	i = math.random(0, tile:getImg():getWidth()/w - 1)
-	print(i)
+	--print(i)
 	tile.sprite = love.graphics.newQuad(i*w, 0, w, w, tile:getImg():getWidth(), w)
 end
 
