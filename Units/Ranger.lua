@@ -133,7 +133,7 @@ function Ranger:draw(i)
 		
 		
 		--love.graphics.rectangle()
-		love.graphics.rectangle( "fill", 0, 0, 25, 25 )
+		--love.graphics.rectangle( "fill", 0, 0, 25, 25 )
 		
 		
 		-- draw state of unit

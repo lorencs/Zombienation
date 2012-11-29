@@ -1,3 +1,5 @@
+require "Units/SpriteAnimation"
+
 Human = {}
 Human_mt = { __index = Human }
 
@@ -38,7 +40,8 @@ function Human:new(xnew,ynew)
 	color = 0,
 	controlled = false,
 	onCurrentTile = 0,
-	neighbourTiles = {}
+	neighbourTiles = {},
+	animation = SpriteAnimation:new("Units/images/human1.png", 10, 8, 8, 1)
 	}
 
 	setmetatable(new_object, Human_mt )				-- add the new_object to metatable of Human
@@ -82,6 +85,9 @@ function Human:setupUnit()
 	self.speed = self.normalSpeed
 	self.tag = human_tag
 	self.directionTimer = 0
+	
+	self.animation:load()
+	self.animation:switch(1,8,120)
 end
 
 function Human:draw(i)
@@ -147,12 +153,15 @@ function Human:draw(i)
 	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
-	if self.color == 1 then love.graphics.setColor(255,255,23, 150) end
-	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
+	--[[if self.color == 1 then love.graphics.setColor(255,255,23, 150) end
+	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)]]--
 	
 	-- print tag to screen.. for debug !
 	love.graphics.print(self.tag, self.x, self.y + 10)
 
+	--draw sprite
+	love.graphics.reset()
+	self.animation:draw(self.cx,self.cy)
 end
 
 function Human:runAwayFrom(zom_x, zom_y)
@@ -365,4 +374,8 @@ function Human:update(dt, zi, paused)
 	-- update direction time ( after 5 seconds, the unit will randomly change direction )
 	self.directionTimer = self.directionTimer + dt
 	self.searchTimer = self.searchTimer + dt	
+	
+	--update animation
+	self.animation:rotate(self.angle)
+	self.animation:update(dt)
  end

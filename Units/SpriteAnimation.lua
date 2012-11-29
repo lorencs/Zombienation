@@ -24,7 +24,8 @@ function SpriteAnimation:new(imageString, width, height, numRows, numFrames)
     loop = true,
     flipX = false,
     flipY = false,
-    isRunning = true
+    isRunning = true,
+	angle = 0
     }
     setmetatable(object, { __index = SpriteAnimation})
     return object
@@ -84,7 +85,10 @@ function SpriteAnimation:draw(x, y)
     end
     -- draw the quad
 	--print(self.sprites[self.currentRow][self.currentFrame])
-    love.graphics.drawq(self.spriteImage, self.sprites[self.currentRow][self.currentFrame], x, y, 0, xScale, yScale, xOffset, yOffset)
+	--love.graphics.push()
+	--love.graphics.rotate(self.angle*math.pi/180)
+    love.graphics.drawq(self.spriteImage, self.sprites[self.currentRow][self.currentFrame], x, y, (self.angle+90)*math.pi/180, xScale, yScale, self.width/2, self.height/2)
+	--love.graphics.pop()
 end
  
 function SpriteAnimation:switch(newRow, newMax, newDelay)
@@ -134,6 +138,10 @@ end
 function SpriteAnimation:flip(xIsFlipped, yIsFlipped)
     self.flipX = xIsFlipped
     self.flipY = yIsFlipped
+end
+ 
+function SpriteAnimation:rotate(r)
+	self.angle = r
 end
  
 --[[Copyright (c) 2012 Sean Laurvick
