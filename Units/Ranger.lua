@@ -44,7 +44,8 @@ function Ranger:new(xnew,ynew)
 	controlled = false,
 	onCurrentTile = 0,
 	neighbourTiles = {},
-	bullets = {}
+	bullets = {},
+	animation = SpriteAnimation:new("Units/images/ranger1.png", 10, 12, 8, 1)
 	}
 
 	setmetatable(new_object, Ranger_mt )				-- add the new_object to metatable of Ranger
@@ -92,6 +93,9 @@ function Ranger:setupUnit()
 	self.searchingTimer = 0
 	
 	self.interval = math.random(3,7)
+	
+	self.animation:load()
+	self.animation:switch(1,8,120)
 end
 
 function Ranger:draw(i)
@@ -143,8 +147,8 @@ function Ranger:draw(i)
 	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
 	playerColor = {0,255,0}
 	love.graphics.setColor(playerColor)
-	if self.color == 1 then love.graphics.setColor(255,255,23, 150) end
-	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
+	--if self.color == 1 then love.graphics.setColor(255,255,23, 150) end
+	--love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
 	
 	-- print tag to screen.. for debug !
 	love.graphics.print(self.tag, self.x, self.y + 10)
@@ -154,24 +158,9 @@ function Ranger:draw(i)
 		self.bullets[i]:draw()
 	end
 	
-	--[[love.graphics.setColor(0,255,0, 80)
-	if (self.nextTile == "N") then		
-		love.graphics.rectangle("fill", math.floor(self.cx/25)*25, math.floor(self.cy/25)*25 - 25, 25, 25)
-	elseif (self.nextTile == "NE") then
-		love.graphics.rectangle("fill", math.floor(self.cx/25)*25 + 25, math.floor(self.cy/25)*25 - 25, 25, 25)
-	elseif (self.nextTile == "E") then
-		love.graphics.rectangle("fill", math.floor(self.cx/25)*25 + 25, math.floor(self.cy/25)*25 , 25, 25)
-	elseif (self.nextTile == "SE") then
-		love.graphics.rectangle("fill", math.floor(self.cx/25)*25 + 25, math.floor(self.cy/25)*25 + 25, 25, 25)
-	elseif (self.nextTile == "S") then
-		love.graphics.rectangle("fill", math.floor(self.cx/25)*25, math.floor(self.cy/25)*25 + 25 , 25, 25)
-	elseif (self.nextTile == "SW") then
-		love.graphics.rectangle("fill", math.floor(self.cx/25)*25 - 25, math.floor(self.cy/25)*25 + 25, 25, 25)
-	elseif (self.nextTile == "W") then
-		love.graphics.rectangle("fill", math.floor(self.cx/25)*25 - 25, math.floor(self.cy/25)*25 , 25, 25)
-	elseif (self.nextTile == "NW") then
-		love.graphics.rectangle("fill", math.floor(self.cx/25)*25 - 25, math.floor(self.cy/25)*25 - 25, 25, 25)
-	end]]--
+	--draw sprite
+	love.graphics.reset()
+	self.animation:draw(self.cx,self.cy)
 end
 
 --ranja dont run like no pussy
@@ -453,6 +442,10 @@ function Ranger:update(dt, zi, paused)
 			table.remove(self.bullets, i)
 		end
 	end
+	
+	--update animation
+	self.animation:rotate(self.angle)
+	self.animation:update(dt)
  end
 
 function Ranger:shoot()

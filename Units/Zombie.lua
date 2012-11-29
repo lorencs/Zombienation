@@ -1,3 +1,5 @@
+require "Units/SpriteAnimation"
+
 Zombie = {}
 Zombie_mt = { __index = Zombie }
 
@@ -45,7 +47,8 @@ function Zombie:new(x_new, y_new)
 	controlled = false,
 	onCurrentTile = 0,
 	neighbourTiles = {},
-	delete = false				-- if this is set to true, this zombie will be deleted by unitManager on the next update
+	delete = false,				-- if this is set to true, this zombie will be deleted by unitManager on the next update
+	animation = SpriteAnimation:new("Units/images/zombie2.png", 10, 10, 8, 1)
 	}												-- is not following a human (yet !)
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
@@ -100,11 +103,8 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	self.tag = zombie_tag
 	zombie_tag = zombie_tag + 1
 	
-	------------------------------- ANIMATION
-	--self.spriteImage = love.graphics.newImage("Units/images/pika.png")
-	--delay = 120
-	--self.animation = SpriteAnimation:new("Units/images/robosprites.png", 32, 32, 4, 4)
-    --self.animation:load(delay)
+	self.animation:load()
+	self.animation:switch(1,8,120)
 end
 
 function Zombie:draw(i)
@@ -157,7 +157,7 @@ function Zombie:draw(i)
 	love.graphics.setColor(playerColor)
 	
 	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
-	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
+	--love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
 	love.graphics.print(self.tag.. " ".. self.state, self.x, self.y + 10)
 	
 	------------------------------- DEBUG CODE -------------------------------------
@@ -169,12 +169,16 @@ function Zombie:draw(i)
 	--love.graphics.rectangle("line", self.x, self.y - see_human_dist, 10, 10)
 	-- end debugging
 	
-
+	--draw sprite
+	love.graphics.reset()
+	self.animation:draw(self.cx,self.cy)
 end
 
 -- Update function
 function Zombie:update(dt, zi, paused)
-	--self.animation:update(dt)
+	--update animation
+	self.animation:rotate(self.angle)
+	self.animation:update(dt)
 	
 	------------------------------- CHECK PAUSE AND LOOK AROUND / FOLLOW HUMAN
 	-- if game is paused, do not update any values
@@ -280,7 +284,6 @@ function Zombie:update(dt, zi, paused)
 	-- update direction time ( after 5 seconds, the unit will randomly change direction )
 	self.directionTimer = self.directionTimer + dt			-- increasing directionTimer
 	self.searchTimer = self.searchTimer + dt	
-	--self.animation:update(dt)
  end
  
  function Zombie:lookAround(zi)
@@ -413,7 +416,6 @@ function Zombie:update(dt, zi, paused)
 	-- update the center x and y values of the unit
 	self.cx = self.x + self.radius
 	self.cy = self.y + self.radius
-	
  end
  
  -- alerting all zombies that human with tag 'human_tag' is dead
