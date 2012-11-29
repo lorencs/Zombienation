@@ -2,7 +2,7 @@ Tile = {}
 
 -- tile images
 road = love.graphics.newImage("map/roadSprites.png")
-grass = love.graphics.newImage("map/grassTest.png")
+grass = love.graphics.newImage("map/grassSprites.png")
 water = love.graphics.newImage("map/waterSprites.png")
 blocked = love.graphics.newImage("map/blocked.png")
 roadMM = love.graphics.newImage("map/roadMM.png")
@@ -11,12 +11,13 @@ waterMM = love.graphics.newImage("map/waterMM.png")
 blockedMM = love.graphics.newImage("map/blockedMM.png")
 
 -- constructor
-function Tile:new(_id)
+function Tile:new(_id, ts)
 	local object = {
 		id = _id,
 		img = blocked,
 		mm = grassMM,
-		sprite = love.graphics.newQuad(0, 0, 25, 25, 400, 25)
+		tileSize = ts,
+		sprite = love.graphics.newQuad(0, 0, ts, ts, ts*16, ts)
 	}
 	
 	setmetatable(object, { __index = Tile })

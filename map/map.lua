@@ -18,7 +18,7 @@ end
 function Map:initMap(w,h)
 	self.width = w
 	self.height = h
-	self.tileSize = 25 -- default pixel square size
+	self.tileSize = 54 -- default pixel square size
 	self.canvas = love.graphics.newCanvas(self.width*self.tileSize, self.height*self.tileSize)
 	--[[for i=0, (w * h - 1) do
 		self.tiles[i] = Tile:new()
@@ -28,7 +28,7 @@ function Map:initMap(w,h)
 	for i=0, w-1 do
 		self.tiles[i] = {}
 		for j=0, h-1 do
-			self.tiles[i][j] = Tile:new()
+			self.tiles[i][j] = Tile:new("", self.tileSize)
 			self.tiles[i][j]:setId("G")
 		end
 	end
@@ -234,7 +234,7 @@ function Map:selectGroundSprite(tile)
 	local w = self.tileSize
 
 	i = math.random(0, tile:getImg():getWidth()/w - 1)
-	--print(i)
+	print(i)
 	tile.sprite = love.graphics.newQuad(i*w, 0, w, w, tile:getImg():getWidth(), w)
 end
 
@@ -336,7 +336,7 @@ function Map:newBuilding(x, y, b_type)
 end
 
 function Map:addBoundary()
-	local boundTile = Tile:new("X")
+	local boundTile = Tile:new("X", self.tileSize)
 	for i = -1, self.height do
 		self.tiles[-1][i] = boundTile
 		self.tiles[self.width][i] = boundTile
