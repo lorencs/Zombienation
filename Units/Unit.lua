@@ -1,6 +1,3 @@
-require "Units/shortestPath/Astar"
-require "Units/shortestPath/Node"
-
 Unit = {}
 Unit_mt = { __index = Unit }
 
@@ -29,6 +26,7 @@ function Unit:new()
     state = "",
     normalSpeed = 0,
     runSpeed = 0,
+	path = nil
 	--selected = true
     }
     setmetatable(new_object, Unit_mt )
@@ -344,10 +342,11 @@ function Unit:moveUnitTo(x1,y1,x2,y2)
 	local x2tile = math.floor(x2 / map.tileSize)
 	local y2tile = math.floor(y2 / map.tileSize)
 	
-	star = Astar:new()
-	path = star:findPath(x1tile,y1tile,x2tile,y2tile)
+	self.path = astar:findPath(x1tile,y1tile,x2tile,y2tile)
 	print("path is:")
-	for i,v in pairs(path) do
-		print(v.x..", "..v.y)
+	if (self.path ~= nil) then
+	for i,v in pairs(self.path) do
+		--print(v.x..", "..v.y)
+	end
 	end
 end

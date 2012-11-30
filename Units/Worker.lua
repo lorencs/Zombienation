@@ -88,7 +88,7 @@ function Worker:setupUnit()
 	
 	--star = Astar:new()
 	--star:findPath(22,30, 24,30)
-	Astar:findPath(22,30,24,30)
+	--Astar:findPath(22,30,24,30)
 	--[[
 	some = {}
 	some[1] = 5

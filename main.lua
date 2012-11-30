@@ -7,6 +7,7 @@ require "camera"
 require "units/UnitManager"
 require "loveframes/init"
 require "Units/Point"
+require "Units/shortestPath/Astar"
 
 --[[ 
 	write little messages here so changes arent confusing ? if i do modify something and it still needs to be changed,
@@ -81,9 +82,13 @@ function love:load()
 	-- get the map	
 	map = generator:getMap()
 	
-		-- initiate units
+	-- A* algorithm
+	astar = Astar:new()
+	astar:init()
+	
+	-- initiate units
 	unitManager = UnitManager:new()
-	unitManager:initUnits()
+	unitManager:initUnits()	
 	
 	-- graphics setup	
 	width = love.graphics.getWidth()
@@ -310,8 +315,9 @@ function gameSTATE:mousepressed(x, y, button)
 			dragx, dragy = x, y
 		elseif (button == "r") then
 			--unitManager:createRanger(x,y)
-			unitManager:moveTo(x,y)
-			
+			local timer = os.clock()
+			unitManager:moveTo(x+view.x,y+view.y)
+			print(string.format("elapsed time: %.2f\n", os.clock() - timer))
 		end
 	end
 	

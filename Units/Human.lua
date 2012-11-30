@@ -38,7 +38,8 @@ function Human:new(xnew,ynew)
 	controlled = false,
 	onCurrentTile = 0,
 	neighbourTiles = {},
-	animation = SpriteAnimation:new("Units/images/human1.png", 10, 8, 8, 1)
+	animation = SpriteAnimation:new("Units/images/human1.png", 10, 8, 8, 1),
+	path = nil
 	}
 
 	setmetatable(new_object, Human_mt )				-- add the new_object to metatable of Human
@@ -157,6 +158,14 @@ function Human:draw(i)
 	--draw sprite
 	love.graphics.reset()
 	self.animation:draw(self.cx,self.cy)
+	
+	--draw path
+	love.graphics.setColor(0,255,0,50)
+	if (self.path ~= nil) then
+	for i,v in pairs(self.path) do
+		love.graphics.rectangle("fill", v.x*54, v.y*54, 54, 54)
+	end
+	end
 end
 
 function Human:runAwayFrom(zom_x, zom_y)
