@@ -1,10 +1,4 @@
-require "map/Map"
-require "map/Tile"
-require "map/Building"
 require "map/MapGen"
-require "map/Minimap"
-require "map/PerlinNoise"
-require "map/Sector"
 require "gui/Menu"
 require "gui/StartMenu"
 require "gui/PauseMenu"
@@ -78,8 +72,8 @@ function love:load()
 	generator = MapGen:new()
 	--generator:defaultMap()
 	difficulty = 1
-	--generator:randomMap(difficulty)
-	generator:newMap(100,100)
+	generator:randomMap()
+	--generator:newMap(100,100)
 
 	-- get the map	
 	map = generator:getMap()

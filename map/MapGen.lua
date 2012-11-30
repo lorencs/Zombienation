@@ -1,3 +1,11 @@
+require "map/Map"
+require "map/Tile"
+require "map/Building"
+require "map/Minimap"
+require "map/PerlinNoise"
+require "map/Sector"
+require "map/District"
+
 MapGen = {}
 
 -- constructor
@@ -49,7 +57,7 @@ function MapGen:newMap(w, h)
 end
 
 -- create random map based on difficulty
-function MapGen:randomMap(difficulty)
+function MapGen:randomMap()
 	print("generating random map")
 	-- init new map
 	self.width = 100 -- / random number
@@ -59,17 +67,8 @@ function MapGen:randomMap(difficulty)
 	
 	local freq = 4
 	-- roads
-	print("--placing roads")
-	self:generateRoads()	
-	-- water
-	print("--filling depth map")
-	self:generateWater()	
-	-- update roads
-	print("--pruning roadways")
-	self:thinRoads()		
-	-- buildings
-	--print("--placing buildings")
-	--self:generateBuildings(difficulty)
+	print("--dividing city")
+	self:divideCity()	
 	
 	print("--updating tile info")
 	-- update tiles
@@ -86,22 +85,71 @@ function MapGen:randomMap(difficulty)
 	print("-complete")
 end
 
--- create a random road network
-function MapGen:generateRoads()
-	for _,v in pairs(getSectors(self.map.width, self.map.height)) do
-		self:addRoad(v.x1, v.y1, v.x2, v.y1)
-		self:addRoad(v.x1, v.y1, v.x1, v.y2)
-		self:addRoad(v.x1, v.y2, v.x2, v.y2)
-		self:addRoad(v.x2, v.y1, v.x2, v.y2)				
+-- split city to districts, split districts to sectors
+function MapGen:divideCity()
+	local m = self.map
+	-- split city into districts
+	m.districts = getDistricts(m.width, m.height)
+	
+	for _,v in pairs(m.districts) do
+		-- add roads between districts
+		if not(v.y1 == 0) then
+			self:addRoad(v.x1, v.y1, v.x2, v.y1)
+		end
+		if not(v.x1 == 0) then
+			self:addRoad(v.x1, v.y1, v.x1, v.y2)
+		end
+		if not(v.y2 == m.height-1) then
+			self:addRoad(v.x1, v.y2, v.x2, v.y2)
+		end
+		if not(v.x2 == m.width-1) then
+			self:addRoad(v.x2, v.y1, v.x2, v.y2)				
+		end
+		
+		-- split district into sectors
+		v:createSectors(m)
+		
+		
+		-- add roads to divide sectors
+		local roadChance = 0.8
+		for _,s in pairs(v.sectors) do
+			if math.random() < roadChance and 
+				not(s.y1 == v.y1+1) and not(s.y1 == 0) then
+				self:addRoad(s.x1, s.y1, s.x2, s.y1)
+			end
+			if math.random() < roadChance and 
+				not(s.x1 == v.x1+1) and not(s.x1 == 0) then
+				self:addRoad(s.x1, s.y1, s.x1, s.y2)
+			end
+			if math.random() < roadChance and 
+				not(s.y2 == v.y2-1) and not(s.y2 == m.height-1) then
+				self:addRoad(s.x1, s.y2, s.x2, s.y2)
+			end
+			if math.random() < roadChance and 
+				not(s.x2 == v.x2-1) and not(s.x2 == m.width-1) then
+				self:addRoad(s.x2, s.y1, s.x2, s.y2)
+			end
+		end
+
+		
+		-- generate water for each district
+		local waterChance = 0.75
+		if math.random() < waterChance then
+			-- water never touches the district separating roads...easy to change
+			self:generateWater(v:xd()-6, v:yd()-6, Point:new(v.x1+3, v.y1+3))
+		end
+		--]]
 	end
 	
-	self:removeTiles("R", "R", "G", 0, 7, true)
+	-- remove roads to nowhere
+	local size = 25
+	self:thinRoads(size)
+	
 end
 
 -- thin roads and remove ones that don't make sense
-function MapGen:thinRoads()
+function MapGen:thinRoads(size)
 	-- find and remove connected components
-	local size = 25
 	smallRoads = self:findConnectedComponents(0, size, "R")
 	self:removeComponents(smallRoads, "G")		
 end
@@ -237,10 +285,11 @@ function MapGen:removeComponents(comps, tileType)
 end
 
 -- create water bodies using a depth map
-function MapGen:generateWater()
+-- p is the top left corner of the district
+function MapGen:generateWater(w, h, p)
 	local m = self.map
-	local w = m.width
-	local h = m.height
+	--local w = m.width
+	--local h = m.height
 	
 	local depth = nil
 	-- high octave results in lower values, smoother distribution
@@ -267,7 +316,7 @@ function MapGen:generateWater()
 	for x=0,w-1 do
 		for y=0,h-1 do
 			if depth[x][y] < waterLevel then
-				self:addCircleLake(x,y,3)	-- "smooth" water bodies
+				self:addCircleLake(x + p.x, y + p.y , 2)	-- "smooth" water bodies
 			end
 		end
 	end

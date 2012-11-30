@@ -7,6 +7,7 @@ function Map:new()
 		tileSize = 0,
 		tiles = {},
 		buildings = {},
+		districts = {},
 		canvas = 0,
 		minimap = nil	,
 		bloodImg = love.graphics.newImage("Map/blood1.png")
