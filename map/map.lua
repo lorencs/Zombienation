@@ -70,10 +70,6 @@ function Map:saveMap(filename)
 	end
 end	
 
-function Map:makeCanvas()
-	self.canvas = love.graphics.newCanvas(self.width*self.tileSize, self.height*self.tileSize)
-end
-
 -- draw map to canvas
 function Map:drawMap()
 	resetColor = {255,255,255}

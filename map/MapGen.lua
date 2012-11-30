@@ -349,7 +349,6 @@ function MapGen:defaultMap()
 			end
 		end
 		
-		self.map:makeCanvas()
 		self.map:drawMap()
 	-- generate a random map
 	else
