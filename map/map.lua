@@ -239,7 +239,66 @@ function Map:selectRoadSprite(tile)
 		spritei[2], spritei[4], spritei[5], spritei[8], spritei[11], spritei[13], spritei[14], spritei[15] = 0,0,0,0,0,0,0,0 end
 		
 	local i = self:findi(spritei)
-	tile.sprite = love.graphics.newQuad((i-1)*w, 0, w, w, tile:getImg():getWidth(), w)
+	
+	local j = 0
+	
+	-- check for horiz and vert double roads
+	if (i == 11) then
+		if (NE == 1) and (NW == 1) then
+			i = 2
+			j = 2
+		elseif (NE == 0) and (NW == 1) then
+			j = 1
+		elseif (NE == 1) and (NW == 0) then
+			j = 2
+		end
+	end
+	if (i == 12) then
+		if (NE == 1) and (SE == 1) then
+			i = 1
+			j = 1
+		elseif (NE == 1) and (SE == 0) then
+			j = 1
+		elseif (NE == 0) and (SE == 1) then
+			j = 2
+		end
+	end
+	if (i == 13) then
+		if (SE == 1) and (SW == 1) then
+			i = 2
+			j = 1
+		elseif (SE == 1) and (SW == 0) then
+			j = 1
+		elseif (SE == 0) and (SW == 1) then
+			j = 2
+		end
+	end
+	if (i == 14) then
+		if (NW == 1) and (SW == 1) then
+			i = 1
+			j = 2
+		elseif (NW == 0) and (SW == 1) then
+			j = 1
+		elseif (NW == 1) and (SW == 0) then
+			j = 2
+		end
+	end
+	
+	-- check for curved double roads
+	if (i == 3) and (SE == 1) then j = 1 end
+	if (i == 4) and (SW == 1) then j = 1 end
+	if (i == 5) and (NW == 1) then j = 1 end
+	if (i == 6) and (NE == 1) then j = 1 end		
+	
+	-- check for 4way double roads
+	if (i == 15) then
+		if (NE == 1) and (SE == 1) then j = 1 end
+		if (NW == 1) and (SW == 1) then j = 2 end
+		if (SE == 1) and (SW == 1) then j,i = 1,16 end
+		if (NE == 1) and (NW == 1) then j,i = 2,16 end
+	end
+	
+	tile.sprite = love.graphics.newQuad((i-1)*w, j*w, w, w, tile:getImg():getWidth(), tile:getImg():getHeight())
 end
 
 function Map:selectWaterSprite(tile)
