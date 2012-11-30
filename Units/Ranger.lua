@@ -89,7 +89,7 @@ function Ranger:setupUnit()
 	self.tag = ranger_tag
 	self.directionTimer = 0
 	self.checkZombieTimer = 0
-	self.shootingTimer = 2
+	self.shootingTimer = 1
 	self.searchingTimer = 0
 	
 	self.interval = math.random(3,7)
@@ -280,6 +280,7 @@ function Ranger:update(dt, zi, paused)
 		if (self:distanceBetweenPoints(self.cx,self.cy,self.huntee.cx,self.huntee.cy) < self.fov_radius *4/5) then 
 			self.state = "shooting"
 			self.statestr = "shooting " ..self.huntee.tag
+			self.animation:stop()
 		else 
 			self:hunt(self.huntee.x, self.huntee.y)
 			-- change speed to huntingSpeed
@@ -421,9 +422,10 @@ function Ranger:update(dt, zi, paused)
 		if (self:distanceBetweenPoints(self.cx,self.cy,self.huntee.cx,self.huntee.cy) > self.fov_radius) then
 			self.state = "hunting"
 			self.statestr = "hunting " ..self.huntee.tag
+			self.animation:start()
 		else
 			self:hunt(self.huntee.x, self.huntee.y)
-			if self.shootingTimer > 3 then
+			if self.shootingTimer > 2 then
 				self:shoot()
 				self.shootingTimer = 0
 			end
@@ -458,4 +460,5 @@ function Ranger:stopChasing()
 	self.state = "seeking"
 	self.statestr = "seeking"
 	self.shootingTimer = 2
+	self.animation:start()
 end

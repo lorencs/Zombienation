@@ -8,7 +8,8 @@ function Map:new()
 		tiles = {},
 		buildings = {},
 		canvas = 0,
-		minimap = nil
+		minimap = nil	,
+		bloodImg = love.graphics.newImage("Map/blood1.png")
 	}
 	setmetatable(object, { __index = Map })
 	return object
@@ -96,6 +97,12 @@ end
 
 function Map:draw()
 	love.graphics.draw(self.canvas, 0,0)
+end
+
+function Map:drawBlood(bx, by, angle)
+	love.graphics.setCanvas(self.canvas)
+		love.graphics.draw(self.bloodImg, bx, by, angle*math.pi/180, 1,1, self.bloodImg:getWidth()/2, self.bloodImg:getHeight()/2)
+	love.graphics.setCanvas()
 end
 
 -- tile index

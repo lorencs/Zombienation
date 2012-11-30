@@ -16,7 +16,7 @@ function Minimap:new(_map, _view, um, _x, _y, ww, wh)
 		camY = 0,
 		canvas = 0,
 		moving = false,
-		visible = true
+		visible = true		
 	}
 			
 	setmetatable(object, { __index = Minimap })

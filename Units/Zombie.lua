@@ -48,7 +48,7 @@ function Zombie:new(x_new, y_new)
 	onCurrentTile = 0,
 	neighbourTiles = {},
 	delete = false,				-- if this is set to true, this zombie will be deleted by unitManager on the next update
-	animation = SpriteAnimation:new("Units/images/zombie2.png", 10, 10, 8, 1)
+	animation = SpriteAnimation:new("Units/images/zombie2.png", 10, 12, 8, 1)
 	}												-- is not following a human (yet !)
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie

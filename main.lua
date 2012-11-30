@@ -171,6 +171,11 @@ function gameSTATE:enter()
 	-- reset units
 	unitManager:resetUnits()	
 	
+	-- redraw map (to get rid of blood splatter)
+	map:drawMap()
+	
+	-- reset camera
+	view.x, view.y = 0,0
 	paused = false
 end
 
@@ -342,6 +347,10 @@ function gameSTATE:keyreleased(key)
 	elseif key == "r" and (not paused) then
 		--if paused then gameSTATE:pauseResume() end
 		Gamestate.switch(gameSTATE)
+	elseif key == "]"  then
+		camera:scale(1/1.3,1/1.3)
+	elseif key == "["  then
+		camera:scale(1.3,1.3)
 	end	
 	
 	--loveframes
