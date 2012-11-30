@@ -17,7 +17,11 @@ function Tile:new(_id, ts)
 		img = blocked,
 		mm = grassMM,
 		tileSize = ts,
-		sprite = love.graphics.newQuad(0, 0, ts, ts, ts*16, ts)
+		sprite = love.graphics.newQuad(0, 0, ts, ts, ts*16, ts),
+		NE = false,
+		SE = false,
+		SW = false,
+		NW = false
 	}
 	
 	setmetatable(object, { __index = Tile })

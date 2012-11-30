@@ -72,11 +72,17 @@ end
 
 -- draw map to canvas
 function Map:drawMap()
-	resetColor = {255,255,255}
-	love.graphics.setColor(resetColor)
+	love.graphics.reset()
 
 	self.canvas:clear()	
 	
+	local w = self.tileSize
+	
+	local NEcorner = love.graphics.newQuad(0, 16*w, w, w, w*16, w*20)
+	local SEcorner = love.graphics.newQuad(0, 17*w, w, w, w*16, w*20)
+	local SWcorner = love.graphics.newQuad(0, 18*w, w, w, w*16, w*20)
+	local NWcorner = love.graphics.newQuad(0, 19*w, w, w, w*16, w*20)
+		
 	for x=0,self.width-1 do
 		for y=0,self.height-1 do
 			xb = x * self.tileSize
@@ -84,11 +90,14 @@ function Map:drawMap()
 
 			tile = self.tiles[x][y]
 				
-			--love.graphics.drawq(tile:getImg(), tile.sprite, xb, yb)
-			-- draw to canvas instead, and on each main draw call, draw the canvas
-			--self.canvas:renderTo(function()
 			love.graphics.setCanvas(self.canvas)
 				love.graphics.drawq(tile:getImg(), tile.sprite, xb, yb)
+				if (tile.id == "W") then
+					if tile.NE then love.graphics.drawq(tile:getImg(), NEcorner, xb, yb) end
+					if tile.SE then love.graphics.drawq(tile:getImg(), SEcorner, xb, yb) end
+					if tile.SW then love.graphics.drawq(tile:getImg(), SWcorner, xb, yb) end
+					if tile.NW then love.graphics.drawq(tile:getImg(), NWcorner, xb, yb) end
+				end
 			love.graphics.setCanvas()
 			--end)
 		end
@@ -132,6 +141,12 @@ function Map:getNeighborInfo(x,y)
 	
 	--index = self:index(x,y)
 	tile = self.tiles[x][y]
+	
+	-- reset corner flags
+	tile.NE = false
+	tile.SE = false
+	tile.SW = false
+	tile.NW = false
 	
 	-- check bounds and set each neighbor to 1 if it is the same tile
 	if (y-1 > -1) then
@@ -188,6 +203,17 @@ function Map:getNeighborInfo(x,y)
 	--self.canvas:renderTo(function()
 	love.graphics.setCanvas(self.canvas)
 		love.graphics.drawq(tile:getImg(), tile.sprite, xb, yb)
+		if (tile.id == "W") then
+			local w = self.tileSize
+			local NEcorner = love.graphics.newQuad(0, 16*w, w, w, w*16, w*20)
+			local SEcorner = love.graphics.newQuad(0, 17*w, w, w, w*16, w*20)
+			local SWcorner = love.graphics.newQuad(0, 18*w, w, w, w*16, w*20)
+			local NWcorner = love.graphics.newQuad(0, 19*w, w, w, w*16, w*20)
+			if tile.NE then love.graphics.drawq(tile:getImg(), NEcorner, xb, yb) end
+			if tile.SE then love.graphics.drawq(tile:getImg(), SEcorner, xb, yb) end
+			if tile.SW then love.graphics.drawq(tile:getImg(), SWcorner, xb, yb) end
+			if tile.NW then love.graphics.drawq(tile:getImg(), NWcorner, xb, yb) end
+		end
 	love.graphics.setCanvas()
 	--end)
 end
@@ -232,9 +258,19 @@ function Map:selectWaterSprite(tile)
 	if (W == 1) then
 		spritei[1], spritei[4], spritei[3], spritei[10], spritei[2], spritei[6], spritei[8], spritei[13] = 0,0,0,0,0,0,0,0 else
 		spritei[5], spritei[11], spritei[7], spritei[14], spritei[9], spritei[15], spritei[12], spritei[16] = 0,0,0,0,0,0,0,0 end
-		
+	
 	local i = self:findi(spritei)
-	tile.sprite = love.graphics.newQuad(0, (i-1)*w, w, w, w, tile:getImg():getHeight())
+		
+	local j = 0
+	if (i == 16) then
+		j = math.random(0,15)
+		if (NE == 0) then tile.NE = true end	
+		if (SE == 0) then tile.SE = true end	
+		if (SW == 0) then tile.SW = true end	
+		if (NW == 0) then tile.NW = true end	
+	end
+	
+	tile.sprite = love.graphics.newQuad(j*w, (i-1)*w, w, w, tile:getImg():getWidth(), tile:getImg():getHeight())
 end
 
 function Map:selectGroundSprite(tile)
