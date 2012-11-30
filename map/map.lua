@@ -296,6 +296,11 @@ function Map:selectRoadSprite(tile)
 		if (NW == 1) and (SW == 1) then j = 2 end
 		if (SE == 1) and (SW == 1) then j,i = 1,16 end
 		if (NE == 1) and (NW == 1) then j,i = 2,16 end
+		
+		if (NE == 1) and (SE == 1) and (SW == 1) and (NW == 0) then i,j = 9,1 end
+		if (NE == 0) and (SE == 1) and (SW == 1) and (NW == 1) then i,j = 9,2 end
+		if (NE == 1) and (SE == 1) and (SW == 0) and (NW == 1) then i,j = 10,1 end
+		if (NE == 1) and (SE == 0) and (SW == 1) and (NW == 1) then i,j = 10,2 end
 	end
 	
 	tile.sprite = love.graphics.newQuad((i-1)*w, j*w, w, w, tile:getImg():getWidth(), tile:getImg():getHeight())

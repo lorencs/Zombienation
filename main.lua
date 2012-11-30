@@ -72,10 +72,10 @@ function love:load()
 	generator = MapGen:new()
 	--generator:defaultMap()
 	difficulty = 1
-	--generator:randomMap()
+	generator:randomMap()
 	--generator:newMap(100,100)
 	--generator:randomMap(difficulty)
-	generator:newMap(75,75)
+	--generator:newMap(75,75)
 
 
 	-- get the map	
