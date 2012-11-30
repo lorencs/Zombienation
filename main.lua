@@ -172,7 +172,7 @@ function gameSTATE:enter()
 	unitManager:resetUnits()	
 	
 	-- redraw map (to get rid of blood splatter)
-	map:drawMap()
+	map:drawMap(true)
 	
 	-- reset camera
 	view.x, view.y = 0,0

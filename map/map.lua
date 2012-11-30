@@ -71,11 +71,15 @@ function Map:saveMap(filename)
 end	
 
 -- draw map to canvas
-function Map:drawMap()
+function Map:drawMap(redraw)
 	resetColor = {255,255,255}
 	love.graphics.setColor(resetColor)
 	
-	self.canvas = love.graphics.newCanvas(self.width*self.tileSize, self.height*self.tileSize)
+	if not redraw then
+		self.canvas = love.graphics.newCanvas(self.width*self.tileSize, self.height*self.tileSize)
+	else
+		self.canvas:clear()	
+	end
 	
 	for x=0,self.width-1 do
 		for y=0,self.height-1 do

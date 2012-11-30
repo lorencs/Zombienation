@@ -349,7 +349,7 @@ function MapGen:defaultMap()
 			end
 		end
 		
-		self.map:drawMap()
+		self.map:drawMap(false)
 	-- generate a random map
 	else
 		--self:newMap(100,100)
