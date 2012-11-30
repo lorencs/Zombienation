@@ -26,25 +26,35 @@ function Astar:findPath(startX, startY, endX, endY)
 	
 	startNode = Node:new(startX, startY)
 	openList[1] = startNode
-	
+	--local n = 0
+	print("Calculating Shortest Path ")
 	while #openList > 0 do
-		print("open List count:"..#openList)
-		currentNode = self:lowestCostNodeInArray(openList)
 		
+		--[[n = n + 1
+		if n > 2 then 
+			while 1 do end
+		end]]
+		local retList = {}
+		--print("open List count:"..#openList)
+		currentNode = self:lowestCostNodeInArray(openList)
+		--if currentNode == 0 then return end
 		-- if the current node is at endX and endY, path found
 		if (currentNode.nodeX == endX) and (currentNode.nodeY == endY) then
 			print("Path found !")
 			
-			local hehe = currentNode.parentNode
-			while (hehe.parentNode ~= nil) do
-				print("x:"..hehe.nodeX..",y:"..hehe.nodeY)
-				hehe = hehe.parentNode
+			local listToRet = currentNode.parentNode
+			while (listToRet.parentNode ~= nil) do
+				--print("x:"..listToRet.nodeX..",y:"..listToRet.nodeY)
+				listToRet = listToRet.parentNode
+				local p = Point:new(listToRet.nodeX, listToRet.nodeY)
+				table.insert(retList, p)
 			end
-			return
+			return retList
 		end
 		
 		table.insert(closedList, currentNode)
-		table.remove(openList, #openList)
+		local ind = self:indexOfNode(openList,currentNode)
+		table.remove(openList, ind)
 		
 		local currentX = currentNode.nodeX
 		local currentY = currentNode.nodeY
@@ -54,10 +64,7 @@ function Astar:findPath(startX, startY, endX, endY)
 					
 			for xx = -1, 1 do
 				local newX = currentX + xx
-				
 				if not ((yy == 0) and (xx == 0)) then
-					
-					--print("bounds: newX:"..(map.width*map.tileSize)..",newY:"..(map.height*map.tileSize))
 					-- checking bounds:
 					if (newX>=0) and (newY>=0) and (newX < map.width*map.tileSize) and (newY < map.height*map.tileSize) then
 						-- if node isn't in open list
@@ -65,9 +72,7 @@ function Astar:findPath(startX, startY, endX, endY)
 						if not (self:nodeInArray(openList, newX, newY)) then
 							if not (self:nodeInArray(closedList, newX, newY)) then
 							--print("newX:"..newX..",newY:"..newY)
-							--print()
 								if (map.tiles[newX][newY].id == "G") or (map.tiles[newX][newY].id == "R") then
-									print("x:"..newX..",y:"..newY)
 									local aNode = Node:new()
 									aNode.nodeX = newX
 									aNode.nodeY = newY
@@ -84,13 +89,23 @@ function Astar:findPath(startX, startY, endX, endY)
 		end
 	end
 	print("No Path Found !")
-	
+	return nil
 end
 	-- i is index, v is object
 	--for i,v in pairs(zombie_list) do
 	--	print("index:"..i)
 	--	print("object..tag:"..v.tag)
 	--end
+	
+function Astar:indexOfNode(list, node)
+	for i,v in pairs(list) do
+		if node == v then
+			return i
+		end
+	end
+	return nil
+end
+
 function Astar:lowestCostNodeInArray(list)
 	n = Node:new()
 	lowest = 0

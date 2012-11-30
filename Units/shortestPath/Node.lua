@@ -7,7 +7,7 @@ function Node:new(x_a, y_a)
     nodeX = x_a,
     nodeY = y_a,
 	cost = 0,
-	parentNode = 0
+	parentNode = nil
     }
     setmetatable(new_object, Node_mt )
     return new_object

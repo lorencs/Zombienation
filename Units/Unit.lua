@@ -1,3 +1,6 @@
+require "Units/shortestPath/Astar"
+require "Units/shortestPath/Node"
+
 Unit = {}
 Unit_mt = { __index = Unit }
 
@@ -333,4 +336,18 @@ end
 
 function Unit:signOf(v)	
 	return v > 0 and 1 or (v < 0 and -1 or 0)
+end
+
+function Unit:moveUnitTo(x1,y1,x2,y2)
+	local x1tile = math.floor(x1 / map.tileSize)
+	local y1tile = math.floor(y1 / map.tileSize)
+	local x2tile = math.floor(x2 / map.tileSize)
+	local y2tile = math.floor(y2 / map.tileSize)
+	
+	star = Astar:new()
+	path = star:findPath(x1tile,y1tile,x2tile,y2tile)
+	print("path is:")
+	for i,v in pairs(path) do
+		print(v.x..", "..v.y)
+	end
 end

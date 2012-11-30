@@ -309,7 +309,9 @@ function gameSTATE:mousepressed(x, y, button)
 			dragSelect = true
 			dragx, dragy = x, y
 		elseif (button == "r") then
+			--unitManager:createRanger(x,y)
 			unitManager:moveTo(x,y)
+			
 		end
 	end
 	

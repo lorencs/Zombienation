@@ -264,8 +264,22 @@ function UnitManager:updateUnit(unitOrig, newType)
 		--table.remove(human_list, h_index)							-- remove human from human_list array
 end
 
+function UnitManager:createRanger(xo,yo)
+	print("Creating a Ranger at x:"..xo..",y:"..yo)
+	number_of_rangers = number_of_rangers + 1					-- increase count of zombies alive
+	ranger_list[number_of_rangers] = Ranger:new(xo+view.x, yo+view.y)	-- create new zombie at the location of this zombie
+	ranger_list[number_of_rangers]:setupUnit()
+	ranger_tag = ranger_tag + 1
+end
+
 function UnitManager:moveTo(xo,yo)
 	print("hi")
+	
+	for i,v in pairs (human_list) do
+		if v.selected == true then
+			v:moveUnitTo(v.x,v.y,xo,yo)
+		end
+	end
 	
 	--number_of_zombies = number_of_zombies + 1					-- increase count of zombies alive
 	--zombie_list[number_of_zombies] = Zombie:new(xo, yo)	-- create new zombie at the location of this zombie
@@ -275,10 +289,7 @@ function UnitManager:moveTo(xo,yo)
 	human_list[number_of_humans] = Human:new(xo, yo)	-- create new zombie at the location of this zombie
 	human_list[number_of_humans]:setupUnit()					-- setup zombie]]--
 	
-	number_of_rangers = number_of_rangers + 1					-- increase count of zombies alive
-	ranger_list[number_of_rangers] = Ranger:new(xo+view.x, yo+view.y)	-- create new zombie at the location of this zombie
-	ranger_list[number_of_rangers]:setupUnit()
-	ranger_tag = ranger_tag + 1
+
 	--[[
 	for i = 1, number_of_humans do
 		if human_list[i].selected == true then

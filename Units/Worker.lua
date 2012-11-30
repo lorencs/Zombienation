@@ -1,6 +1,5 @@
 require "Units/SpriteAnimation"
-require "Units/shortestPath/Astar"
-require "Units/shortestPath/Node"
+
 
 Worker = {}
 Worker_mt = { __index = Worker }
@@ -36,6 +35,7 @@ function Worker:new(xnew,ynew)
 	v2 = Point:new(0,0),
 	v3 = Point:new(0,0),
 	selected = false,
+	--working = 0,
 	color = 0,
 	controlled = false,
 	onCurrentTile = 0,
@@ -86,9 +86,10 @@ function Worker:setupUnit()
 	self.animation:load()
 	self.animation:switch(1,8,120)
 	
-	star = Astar:new()
-	star:findPath(22,30, 23,30)
-	
+	--star = Astar:new()
+	--star:findPath(22,30, 24,30)
+	Astar:findPath(22,30,24,30)
+	--[[
 	some = {}
 	some[1] = 5
 	some[2] = 84
@@ -102,7 +103,7 @@ function Worker:setupUnit()
 	table.insert(some,99)
 	for i,v in pairs(some) do
 		print("value:"..v)
-	end
+	end]]
 	
 end
 
@@ -146,8 +147,6 @@ function Worker:draw(i)
 		local currentTileW = math.floor(self.x / map.tileSize)
 		local currentTileH = math.floor(self.y / map.tileSize)
 		
-		
-
 		-- drawing neighbour tiles
 		--[[
 		love.graphics.setColor(0,255,60, 150, 150)
@@ -169,7 +168,7 @@ function Worker:draw(i)
 	end
 		love.graphics.setColor(0,255,60, 150, 150)
 		love.graphics.rectangle( "fill", (22) * 54 , (30) * 54 , 54, 54 )
-		love.graphics.rectangle( "fill", (23) * 54 , (30) * 54 , 54, 54 )
+		love.graphics.rectangle( "fill", (24) * 54 , (30) * 54 , 54, 54 )
 	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
