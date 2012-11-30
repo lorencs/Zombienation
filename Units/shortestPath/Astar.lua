@@ -91,11 +91,6 @@ function Astar:findPath(startX, startY, endX, endY)
 	print("No Path Found !")
 	return nil
 end
-	-- i is index, v is object
-	--for i,v in pairs(zombie_list) do
-	--	print("index:"..i)
-	--	print("object..tag:"..v.tag)
-	--end
 	
 function Astar:indexOfNode(list, node)
 	for i,v in pairs(list) do
