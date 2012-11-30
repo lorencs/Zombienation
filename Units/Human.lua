@@ -159,12 +159,15 @@ function Human:draw(i)
 	love.graphics.reset()
 	self.animation:draw(self.cx,self.cy)
 	
-	--draw path
+	--draw path (in reverse, red is first block)
 	love.graphics.setColor(0,255,0,50)
+	local j = 0
 	if (self.path ~= nil) then
-	for i,v in pairs(self.path) do
-		love.graphics.rectangle("fill", v.x*54, v.y*54, 54, 54)
-	end
+		for i = #self.path, 1, -1 do
+			if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
+			love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
+			j = j + 1
+		end
 	end
 end
 

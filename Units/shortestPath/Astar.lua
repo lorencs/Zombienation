@@ -20,11 +20,6 @@ function Astar:new()
 end
 
 function Astar:init()
-
-	h = Heap.new()
-	for i=1,10 do h:push(i, math.random()) end
-	while not h:isempty() do print(h:pop()) end
-
 	for i = 0, map.width-1 do
 		self.openVec[i] = {}
 		self.closedVec[i] = {}
@@ -74,12 +69,12 @@ function Astar:findPath(startX, startY, endX, endY)
 		if (currentNode.nodeX == endX) and (currentNode.nodeY == endY) then
 			print("Path found !")
 			
-			local listToRet = currentNode.parentNode
+			local listToRet = currentNode--.parentNode
 			while (listToRet.parentNode ~= nil) do
-				--print("x:"..listToRet.nodeX..",y:"..listToRet.nodeY)
-				listToRet = listToRet.parentNode
+				--print("x:"..listToRet.nodeX..",y:"..listToRet.nodeY)				
 				local p = Point:new(listToRet.nodeX, listToRet.nodeY)
 				table.insert(retList, p)
+				listToRet = listToRet.parentNode
 			end
 			return retList
 		end

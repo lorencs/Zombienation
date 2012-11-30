@@ -342,11 +342,5 @@ function Unit:moveUnitTo(x1,y1,x2,y2)
 	local x2tile = math.floor(x2 / map.tileSize)
 	local y2tile = math.floor(y2 / map.tileSize)
 	
-	self.path = astar:findPath(x1tile,y1tile,x2tile,y2tile)
-	print("path is:")
-	if (self.path ~= nil) then
-	for i,v in pairs(self.path) do
-		--print(v.x..", "..v.y)
-	end
-	end
+	self.path = astar:findPath(x1tile,y1tile,x2tile,y2tile)	
 end
