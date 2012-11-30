@@ -44,7 +44,7 @@ gold = 0
 orig_number_of_zombies = 1			-- zombies are red
 orig_number_of_humans = 150			-- humans are blue
 orig_number_of_rangers = 1			-- i thought this was a poem
-									-- i wish it was too
+orig_number_of_workers = 1		-- i wish it was too
 
 -- gamestate
 Gamestate = require "utils/gamestate"
@@ -74,6 +74,8 @@ function love:load()
 	difficulty = 1
 	generator:randomMap()
 	--generator:newMap(100,100)
+	--generator:randomMap(difficulty)
+	generator:newMap(75,75)
 
 	-- get the map	
 	map = generator:getMap()

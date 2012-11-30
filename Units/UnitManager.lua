@@ -2,6 +2,7 @@ require "Units/Unit"
 require "Units/Zombie"
 require "Units/Human"
 require "Units/Ranger"
+require "Units/Worker"
 require "Units/SpriteAnimation"
 
 UnitManager = {}
@@ -44,14 +45,15 @@ function UnitManager:initUnits()
 	human_tag = 1								-- each unit has a unique tag
 	zombie_tag = 1
 	ranger_tag = 1
+	worker_tag = 1
 	zombie_list = {}							-- array of zombie objects
 	human_list = {}								-- array of human objects
 	ranger_list = {}								-- array of ranger objects
-	
+	worker_list = {}
 	number_of_zombies = orig_number_of_zombies			-- zombies are red
 	number_of_humans = orig_number_of_humans			-- humans are blue
 	number_of_rangers = orig_number_of_rangers			-- humans are blue
-	-- generating units (Unit Manager coming soon, will make this much shorter )
+	number_of_workers = orig_number_of_workers			-- 
 	
 	-- set up zombies
 	for i = 1, number_of_zombies do
@@ -73,6 +75,12 @@ function UnitManager:initUnits()
 		ranger_list[i]:setupUnit()
 		ranger_tag = ranger_tag + 1
 	end	
+	
+	for i = 1, number_of_workers do
+		worker_list[i] = Worker:new()
+		worker_list[i]:setupUnit()
+		worker_tag = worker_tag + 1
+	end
 end
 
 function UnitManager:resetUnits()
@@ -88,14 +96,18 @@ function UnitManager:resetUnits()
 	for k in pairs (ranger_list) do
 		ranger_list [k] = nil
 	end
-	
+	for k in pairs (worker_list) do
+		worker_list [k] = nil
+	end
 	-- reset counters and tags
 	number_of_humans = 1
 	number_of_zombies = 1
 	number_of_rangers = 1
+	number_of_workers = 1
 	zombie_tag = 1
 	human_tag = 1
 	ranger_tag = 1
+	worker_tag = 1
 	-- re init units
 	self:initUnits()
 	
@@ -128,9 +140,13 @@ function UnitManager:update(dt, gravity)
 	for i = 1, number_of_rangers do
 		ranger_list[i]:update(dt,i, self.paused)
 	end
+	-- update workers
+	for i = 1, number_of_workers do
+		worker_list[i]:update(dt,i, self.paused)
+	end
 	
 	
-	-- check if zombies need to be deleted (needs to be done separate from updating units otherwise shit fucks up)
+	-- check if zombies need to be deleted (needs to be done separate from updating units otherwise 'it messed things up')
 	for i,v in pairs(zombie_list) do
 		if v.delete then
 			table.remove(zombie_list, i)
@@ -152,9 +168,14 @@ function UnitManager:draw()
 		human_list[i]:draw(i)
 	end
 	
-	-- draw ranger
+	-- draw rangers
 	for i = 1, number_of_rangers do
 		ranger_list[i]:draw(i)
+	end
+	
+	-- draw workers
+	for i = 1, number_of_workers do
+		worker_list[i]:draw(i)
 	end
 end
 
@@ -209,18 +230,29 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 		end
 	end
 	
+	for i = 1, number_of_workers do
+		if ( ( worker_list[i].cx > min_x ) and ( worker_list[i].cx < max_x )
+			and ( worker_list[i].cy > min_y ) and ( worker_list[i].cy < max_y ) ) then
+			
+			worker_list[i].selected = true	-- set the selected value to true
+		end
+	end
+	
 end
 
 function UnitManager:deselectUnits()
 	print("deselect")
 	for i = 1, number_of_humans do
-		human_list[i].selected = false	-- deselect all zombies 
+		human_list[i].selected = false	-- deselect all humans 
 	end
 	for i = 1, number_of_zombies do
 		zombie_list[i].selected = false	-- deselect all zombies 
 	end
 	for i = 1, number_of_rangers do
-		ranger_list[i].selected = false	-- deselect all zombies 
+		ranger_list[i].selected = false	-- deselect all rangers 
+	end
+	for i = 1, number_of_workers do
+		worker_list[i].selected = false	-- deselect all workers 
 	end
 	selectedUnitsCount = 0
 	

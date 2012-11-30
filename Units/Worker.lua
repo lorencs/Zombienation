@@ -1,10 +1,12 @@
 require "Units/SpriteAnimation"
+require "Units/shortestPath/Astar"
+require "Units/shortestPath/Node"
 
-Human = {}
-Human_mt = { __index = Human }
+Worker = {}
+Worker_mt = { __index = Worker }
 
 -- Constructor
-function Human:new(xnew,ynew)
+function Worker:new(xnew,ynew)
 
     local new_object = {					-- define our parameters here
 	tag = 0,								-- tag of unit
@@ -41,13 +43,13 @@ function Human:new(xnew,ynew)
 	animation = SpriteAnimation:new("Units/images/human1.png", 10, 8, 8, 1)
 	}
 
-	setmetatable(new_object, Human_mt )				-- add the new_object to metatable of Human
-	setmetatable(Human, { __index = Unit })        -- Human is a subclass of class Unit, so set inheritance..				
+	setmetatable(new_object, Worker_mt )				-- add the new_object to metatable of Human
+	setmetatable(Worker, { __index = Unit })        -- Human is a subclass of class Unit, so set inheritance..				
 	
     return new_object
 end
 
-function Human:setupUnit()
+function Worker:setupUnit()
 
 	local map_w = map.width*map.tileSize
 	local map_h = map.height*map.tileSize
@@ -76,16 +78,35 @@ function Human:setupUnit()
 	self.fovStartAngle = self.angle - 45
 	self.fovEndAngle = self.angle + 45
 	
-	self.state = "Chilling"
+	self.state = "WORKER !"
 	self.speed = self.normalSpeed
-	self.tag = human_tag
+	self.tag = worker_tag
 	self.directionTimer = 0
 	
 	self.animation:load()
 	self.animation:switch(1,8,120)
+	
+	star = Astar:new()
+	star:findPath(22,30, 23,30)
+	
+	some = {}
+	some[1] = 5
+	some[2] = 84
+	some[3] = 56
+	some[4] = 3
+	some[5] = 65
+	some[6] = 15
+	some[7] = 9
+	
+	table.remove(some, 1)
+	table.insert(some,99)
+	for i,v in pairs(some) do
+		print("value:"..v)
+	end
+	
 end
 
-function Human:draw(i)
+function Worker:draw(i)
 	
 	------------------------------- UPDATE FIELD OF VIEW VERTICES
 	-- for triangle:
@@ -118,13 +139,15 @@ function Human:draw(i)
 							self.y + math.sin(self.targetAngle * (math.pi/180))* 30 + self.radius)
 			
 		-- draw circle around selected unit
-		love.graphics.setColor(0,255,0, 150)
+		love.graphics.setColor(0,0,255, 150)
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 5, 15 )
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 6, 15 )
 		
 		local currentTileW = math.floor(self.x / map.tileSize)
 		local currentTileH = math.floor(self.y / map.tileSize)
 		
+		
+
 		-- drawing neighbour tiles
 		--[[
 		love.graphics.setColor(0,255,60, 150, 150)
@@ -144,7 +167,9 @@ function Human:draw(i)
 		-- draw state of unit
 		love.graphics.print(self.state, self.x, self.y + 15)
 	end
-	
+		love.graphics.setColor(0,255,60, 150, 150)
+		love.graphics.rectangle( "fill", (22) * 54 , (30) * 54 , 54, 54 )
+		love.graphics.rectangle( "fill", (23) * 54 , (30) * 54 , 54, 54 )
 	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
@@ -159,7 +184,7 @@ function Human:draw(i)
 	self.animation:draw(self.cx,self.cy)
 end
 
-function Human:runAwayFrom(zom_x, zom_y)
+function Worker:runAwayFrom(zom_x, zom_y)
 	local x_v, y_v = 0
 	if (self.x < zom_x) and (self.y < zom_y) then
 		x_v = zom_x - self.x
@@ -184,7 +209,7 @@ function Human:runAwayFrom(zom_x, zom_y)
 end
 
  -- look around for zombies; panic if one is around !
- function Human:lookAround()
+ function Worker:lookAround()
 	
 	-- for each zombie
 	for i = 1, number_of_zombies do
@@ -212,13 +237,13 @@ end
  end
  
 -- update function
-function Human:update(dt, zi, paused)
+function Worker:update(dt, zi, paused)
 	
 	------------------------------- CHECK PAUSE AND ATTACKED; LOOK AROUND FOR ZOMBIES
 	-- if game is paused, do not update any values
 	if paused == true then return end
 	
-	-- if the human is attacked, then he can't move (or could make him move very slow?)
+	-- if the worker is attacked, then he can't move (or could make him move very slow?)
 	if self.attacked == 1 then return end
 	
 	-- updating neighbours
@@ -263,7 +288,7 @@ function Human:update(dt, zi, paused)
 		self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
 	else
 		self.speed = self.normalSpeed
-		self.state = "chilling !"
+		self.state = "worker !"
 		
 		
 	end
@@ -356,7 +381,7 @@ function Human:update(dt, zi, paused)
 		--return
 	end
 	
-	-- update human's movement
+	-- update worker's movement
 	self.x = self.x + (dt * self.dirVector.x)
 	self.y = self.y + (dt * self.dirVector.y)
 	
