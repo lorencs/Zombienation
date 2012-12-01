@@ -152,8 +152,8 @@ function Ranger:draw(i)
 	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
 	playerColor = {0,255,0}
 	love.graphics.setColor(playerColor)
-	--if self.color == 1 then love.graphics.setColor(255,255,23, 150) end
-	--love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
+	if self.color == 1 then love.graphics.setColor(255,255,23, 150) end
+	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
 	
 	-- print tag to screen.. for debug !
 	love.graphics.print(self.tag, self.x, self.y + 10)
@@ -204,7 +204,7 @@ end
 	for i = 1, number_of_zombies do		
 		if ztag ~= zombie_list[i].tag then		
 			local distToCurrZomb = self:distanceBetweenPoints(self.cx,self.cy,zombie_list[i].cx, zombie_list[i].cy)		-- redundant but i have no choice 
-			local val = self:pointInArc(self.x, self.y, zombie_list[i].cx, zombie_list[i].cy, 
+			local val = self:pointInArc(self.cx, self.cy, zombie_list[i].cx, zombie_list[i].cy, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect zomvies in an arc (pie shape)
 			if val and (distToCurrZomb < distToHuntee) then										-- if zombie i is in the field of view of this Ranger
 				self.statestr = "Hunting  ".. zombie_list[i].tag								-- and it's closer than the currently chased zombie
@@ -479,6 +479,7 @@ function Ranger:update(dt, zi, paused)
  end
 
 function Ranger:shoot()
+	local bulletAngle = self:angleToXY(self.cx,self.cy,self.huntee.cx,self.huntee.cy)
 	local newBullet = Bullet:new(self.cx, self.cy, self.targetAngle, self)
 	table.insert(self.bullets, newBullet)
 end
@@ -492,15 +493,18 @@ function Ranger:stopChasing()
 end
 
 function Ranger:patrol()
-	self.state = "moving"
+	if (self.path ~= nil) then
+		self.state = "moving"
 
-	self.tilesCrossed = 0
-	self.targetX = self.path[#self.path - self.tilesCrossed].x 
-	self.targetY = self.path[#self.path - self.tilesCrossed].y
-	self.tilesCrossed = self.tilesCrossed + 1
-	self.targetAngle = self:angleToXY( self.x, self.y, self.targetX * map.tileSize + map.tileSize / 2, self.targetY * map.tileSize + map.tileSize / 2 )
-	--self.angle = self.targetAngle
-	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
-	self.turnFast = true
+		self.tilesCrossed = 0
+		
+		self.targetX = self.path[#self.path - self.tilesCrossed].x 
+		self.targetY = self.path[#self.path - self.tilesCrossed].y
+		self.tilesCrossed = self.tilesCrossed + 1
+		self.targetAngle = self:angleToXY( self.x, self.y, self.targetX * map.tileSize + map.tileSize / 2, self.targetY * map.tileSize + map.tileSize / 2 )
+		--self.angle = self.targetAngle
+		self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+		self.turnFast = true
+	end
 
 end

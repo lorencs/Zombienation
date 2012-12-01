@@ -159,7 +159,7 @@ function Zombie:draw(i)
 	love.graphics.setColor(playerColor)
 	
 	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
-	--love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
+	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
 	love.graphics.print(self.tag.. " ".. self.state, self.x, self.y + 10)
 	
 	------------------------------- DEBUG CODE -------------------------------------

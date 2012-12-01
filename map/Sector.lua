@@ -94,30 +94,59 @@ end
 -- semi-randomness
 function Sector:placeBuildings(map)
 	if self.sectorType == "residential" then
-		if map.tiles[self.x1+1][self.y1]:getId() == "R" or
-			map.tiles[self.x1][self.y1+1]:getId() == "R" then
-						
-			map:newBuilding(self.x1+1, self.y1+1, 11)
-			local r = math.random()
-			local nx = self.x1 + 2*math.floor(self:xd() / 3)
-			if r < .25 and map.tiles[nx][self.y1+1]:getId() == "G"then
-				map:newBuilding(nx, self.y1+1, 21)
-				
-				local nx = self.x1 + math.floor(self:xd() / 2)
-				if r > 0.1 and 
-					map.tiles[nx][self.y2]:getId() == "R" then
-					
-					map:newBuilding(nx+1, self.y2-1, 21)
-				end
-			elseif r > .75 then
-				map:newBuilding(self.x1+1, self.y1+3, 21)
-				if r < 0.9 and self:yd() > 3 and map.tiles[self.x2][self.y2-3]:getId() == "R" then
-					map:newBuilding(self.x2-1, self.y2-3, 11)
+		self:residential(map)
+	end
+end
+
+-- residential sector
+function Sector:residential(map)
+	local r = math.random()
+	local x1,y1,x2,y2 = self.x1, self.y1, self.x2, self.y2
+		
+	-- north road
+	for x=x1+1,x2-1 do
+		local yn = y1+1 -- building placement y 
+		if tileHere(map,x,y1,"R") and tileHere(map,x,yn,"G") then						
+			if math.random() < 0.7 then
+				if math.random() < 0.5 then
+					map:newBuilding(x,yn,11,"N")
+				elseif tileHere(map,x+1,yn,"G") then
+					map:newBuilding(x,yn,21,"N")
+					x = x + 1
 				end
 			end
 		end
-		
 	end
+	-- west road
+	for y=y1+1,y2-1 do
+		local xn = x1+1
+		if tileHere(map,x1,y,"R") and tileHere(map,xn,y,"G") then
+			if math.random() < 0.7 then
+				if math.random() < 0.5 then
+					map:newBuilding(xn,y,11,"W")
+				else
+					map:newBuilding(xn,y,12,"W")
+					y = y + 1
+				end
+			end
+		end
+	end
+	-- south road
+	for x=x1+1,x2-1 do
+		local yn = y2-1
+		if tileHere(map,x,y2,"R") and tileHere(map,x,yn,"G") then
+		
+		end
+	end
+end
+
+-- place commercial buildings
+function Sector:commercial(map)
+	
+end
+
+function tileHere(map,x,y,t)
+	return map.tiles[x][y]:getId() == t
 end
 
 function outputSectors(sectors)

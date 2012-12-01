@@ -8,8 +8,15 @@ b3x4 = love.graphics.newImage("map/buildings/b5.png") -- 34 - barn
 --b6x4 = love.graphics.newImage("map/buildings/b6.png") -- 64 - garage
 
 -- new b_type
-house = love.graphics.newImage("map/buildings/house.png") -- 1x1
-garage = love.graphics.newImage("map/buildings/garage.png") -- 2x1
+houseN = love.graphics.newImage("map/buildings/houseN.png") -- 1x1
+houseW = love.graphics.newImage("map/buildings/houseW.png")
+houseS = love.graphics.newImage("map/buildings/houseS.png")
+houseE = love.graphics.newImage("map/buildings/houseE.png")
+
+garageN = love.graphics.newImage("map/buildings/garageN.png") -- 2x1
+garageW = love.graphics.newImage("map/buildings/garageW.png") -- 1x2
+garageS = love.graphics.newImage("map/buildings/garageS.png")
+garageE = love.graphics.newImage("map/buildings/garageE.png")
 
 -- need minimap images
 
@@ -27,7 +34,7 @@ function Building:new()
 	return object
 end
 
-function Building:set(x, y, b_type)
+function Building:set(x, y, b_type,dir)
 	self.x = x
 	self.y = y		
 	self.width = math.floor(b_type / 10)
@@ -35,26 +42,20 @@ function Building:set(x, y, b_type)
 	self.xend = x + self.width - 1
 	self.yend = y + self.height - 1		
 	
-	--[[ type check
-	if b_type == 66 then
-		self.img = b6x6
-	elseif b_type == 43 then
-		self.img = b4x3
-	elseif b_type == 35 then
-		self.img = b3x5
-	elseif b_type == 33 then
-		self.img = b3x3
-	elseif b_type == 34 then
-		self.img = b3x4
-	elseif b_type == 64 then
-		self.img = b6x4
-	end
-	--]]
-	
 	if b_type == 11 then
-		self.img = house
+		if dir == "N" then self.img = houseN 
+		elseif dir == "W" then self.img = houseW
+		elseif dir == "S" then self.img = houseS
+		elseif dir == "E" then self.img = houseE
+		end
 	elseif b_type == 21 then
-		self.img = garage
+		if dir == "N" then self.img = garageN
+		elseif dir == "S" then self.img = garageS
+		end
+	elseif b_type == 12 then
+		if dir == "W" then self.img = garageW 
+		elseif dir == "E" then self.img = garageE
+		end
 	end
 end
 
