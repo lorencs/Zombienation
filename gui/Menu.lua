@@ -63,7 +63,8 @@ function Menu:setMainMenu()
 	upgradeWorkerBtn:SetImage(love.graphics.newImage("gui/workerbutton.png"))
 	upgradeWorkerBtn:SetVisible(false)
 	upgradeWorkerBtn.OnClick = function(object)
-		
+		unitManager:convertUnits("Worker")
+		unitManager:deselectUnits()
 	end
 	
 	workerText = loveframes.Create("text")
@@ -77,7 +78,8 @@ function Menu:setMainMenu()
 	upgradeRangerBtn:SetImage(love.graphics.newImage("gui/rangerbutton.png"))
 	upgradeRangerBtn:SetVisible(false)
 	upgradeRangerBtn.OnClick = function(object)
-		
+		unitManager:convertUnits("Ranger")
+		unitManager:deselectUnits()
 	end
 	
 	rangerText = loveframes.Create("text")

@@ -355,7 +355,7 @@ function UnitManager:convertUnits(convType)
 			end
 		end
 	elseif (convType == "Ranger") then
-		for i,v in pairs (ranger_list) do
+		for i,v in pairs (human_list) do
 			if v.selected == true then
 				local dx = v.x
 				local dy = v.y
