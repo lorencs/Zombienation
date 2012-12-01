@@ -25,7 +25,11 @@ function UnitManager:new()
     -- define our parameters here
     local new_object = {
 	paused = false,
-	RangerCost = 10
+	RangerCost = 10,
+	baseTilePos = Point:new(),
+	storeTilePos = Point:new(),
+	storeToBasePath = {},
+	baseToStorePath = {}
     }
     setmetatable(new_object, UnitManager_mt )
     return new_object
@@ -90,6 +94,11 @@ function UnitManager:initUnits()
 		unitTag = unitTag + 1
 		--worker_tag = worker_tag + 1
 	end
+	self.baseTilePos = map.baseTilePt
+	self.storeTilePos = map.storeTilePt
+	
+	--storeToBasePath = Unit:getShortestPath(v.x,v.y,xo,yo)
+	--baseToStorePath = 
 	
 	--[[
 	for i = 1, number_of_cars do
@@ -307,7 +316,7 @@ function UnitManager:moveTo(xo,yo)
 
 	for i,v in pairs (worker_list) do
 		if v.selected == true then
-			v:getShortestPath(v.x,v.y,xo,yo)
+			--v:getShortestPath(v.x,v.y,xo,yo)
 			v:sendToWork()
 		end
 	end
