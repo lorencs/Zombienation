@@ -349,8 +349,10 @@ end
 -- find the correct sprite within building
 function Map:selectBuildingSprite(tile, x, y)
 	local building = self:findBuilding(x, y) 
-	tile.img = building.img
-	tile.sprite = building:getSprite(x, y, self.tileSize)
+	if not(building == nil) then
+		tile.img = building.img
+		tile.sprite = building:getSprite(x, y, self.tileSize)
+	end
 end
 
 -- return building containing [x,y], else nil
@@ -409,10 +411,10 @@ end
 
 -- add building from here rather than MapGen
 -- return success as boolean
-function Map:newBuilding(x, y, b_type)
+function Map:newBuilding(x, y, b_type, dir)
 	-- add building to list
 	local b = Building:new()
-	b:set(x, y, b_type)
+	b:set(x, y, b_type, dir)
 	
 	-- building out of bounds
 	if (b.xend >= self.width) or (b.yend >= self.height) then

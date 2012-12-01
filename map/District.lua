@@ -17,13 +17,7 @@ function District:new(xa, ya, xb, yb, d)
 		sectorCount_commercial = 0,
 		sectorCount_rural = 0,
 		sectorCount_industrial = 0,
-		sectorCount_park = 0,
-		
-		max_residential = 5,
-		max_commercial = 4,
-		max_rural = 3,
-		max_industrial = 2,
-		max_park = 1
+		sectorCount_park = 0
 	}
 	setmetatable(object, { __index = District })
 	return object
