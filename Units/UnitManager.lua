@@ -284,6 +284,16 @@ function UnitManager:createRanger(xo,yo)
 	ranger_tag = ranger_tag + 1
 end
 
+function UnitManager:sendWorkersToWork()
+	print("Sending the puppies to work !")
+	--for i,v in pairs (worker_list) do
+		--if v.selected == true then
+			--v:moveUnitTo(v.x,v.y,xo,yo)		-- this will get the shortest path for all units selected and store it in the 'path' list
+			--v:sendToWork()					-- sends selected units ( workers in this case ) to work..
+		--end
+	--end
+end
+
 function UnitManager:moveTo(xo,yo)
 	print("hi")
 	
