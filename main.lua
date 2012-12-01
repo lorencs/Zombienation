@@ -346,8 +346,10 @@ function gameSTATE:mousereleased(x, y, button)
 		if dragSelect then
 			dragSelect = false
 			unitManager:selectUnits(dragx+view.x, dragy+view.y, x+view.x, y+view.y)
-		elseif selectPatrol then
+		end
+		if selectPatrol then
 			selectPatrol = false
+			print(selectPatrol)
 			--unitManager:()
 		end
 	end	
