@@ -28,8 +28,8 @@ function Worker:new(xnew,ynew)
 	fov_angle = 140,
 	fovStartAngle = 0,
 	fovEndAngle = 0,
-	attacked = 0,									-- if the unit is currently attacked, this var = 1
-    panicMode = false,								-- panic mode is on if this is true..
+	attacked = 0,								-- if the unit is currently attacked, this var = 1
+    panicMode = false,							-- panic mode is on if this is true..
 	panicTimer = 0,									-- a unit that has spotted a zombie will be in panic mode for 6-7 seconds ( after spotting last zombie )
 	v1 = Point:new(0,0),							-- vertices for the field of view triangle
 	v2 = Point:new(0,0),
@@ -40,8 +40,6 @@ function Worker:new(xnew,ynew)
 	tarYTile = -1,
 	turnFast = false,
 	workingTileCount = 0,
-	atLocation = "None",
-	carryingResource = false,
 	color = 0,
 	controlled = false,
 	onCurrentTile = 0,
@@ -237,7 +235,7 @@ end
 			if val == true then										-- if zombie i is in the field of view of this human
 				self.state = "Running from  ".. zombie_list[i].tag
 				self.panicMode = true
-				self.working = false								-- the worker is getting chased, so he is not working anymore
+				self.working = false
 				self:runAwayFrom(zombie_list[i].x, zombie_list[i].y)
 
 				-- reset angles if they go over 360 or if they go under 0
@@ -318,17 +316,14 @@ function Worker:update(dt, zi, paused)
 		if self.angle < 0 then
 			self.angle = 360 + self.angle
 		end
-		
-		------------------------------- IF THE WORKER IS WORKING ( ON A PATH )
+			
 		if self.working == true then
 			if self.workingTileCount > 0 then self.turnFast = false end
 			if (self.tarXTile == math.floor(self.x / map.tileSize)) and (self.tarYTile == math.floor(self.y / map.tileSize)) then
-			
 				if (#self.path == self.workingTileCount) then
-					self.working = false						-- the path of the worker should be finished by now, so the worker should be at a set location
-					self:checkLocation()						-- check location and set next path of this worker
+					self.working = false
 				else
-					self.tarXTile = self.path[#self.path - self.workingTileCount].x 		-- else worker is still on path to a destination..
+					self.tarXTile = self.path[#self.path - self.workingTileCount].x 
 					self.tarYTile = self.path[#self.path - self.workingTileCount].y
 					self.workingTileCount = self.workingTileCount + 1
 					self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
@@ -442,36 +437,12 @@ function Worker:update(dt, zi, paused)
 	self.animation:update(dt)
  end
  
- function Worker:checkLocation()
-	--baseTilePos = Point:new(),
-	--storeTilePos = Point:new(),
-	if ( (unitManager.baseTilePos.x == math.floor(self.x / map.tileSize) ) and (unitManager.baseTilePos.y == math.floor(self.y / map.tileSize) ) ) then
-		print("Arrived at the base ! Heading to the store..")
-		self.atLocation = "Base"
-		self.path = unitManager.baseToStorePath
-		self.carryingResource = 0
-	elseif ( (unitManager.storeTilePos.x == math.floor(self.x / map.tileSize) ) and (unitManager.storeTilePos.y == math.floor(self.y / map.tileSize) ) ) then
-		print("Arrived at the store ! Heading to the base..")
-		self.atLocation = "Store"
-		self.path = unitManager.storeToBasePath
-		self.carryingResource = 1
-	else
-		self.atLocation = "Transit"
-	end	
- end
- 
- -- if atLocation is at Base, self.path will be set to baseToStorePath
- -- if at... 			store ...					   storeToBasePath
- -- if at ..			Transit, then it is following a path, don't interrupt
- -- if at ..			Lost, then it needs to check if its carrying package. if it is, send to base, else send to store !
- 
 function Worker:sendToWork()
-	self:checkLocation()
-	
+	self.working = true
 	if (self.path ~= nil) then
-		self.working = true
+		--print()
 		self.workingTileCount = 0
-		self.tarXTile = self.path[#self.path - self.workingTileCount].x
+		self.tarXTile = self.path[#self.path - self.workingTileCount].x 
 		self.tarYTile = self.path[#self.path - self.workingTileCount].y
 		self.workingTileCount = self.workingTileCount + 1
 		self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
