@@ -252,7 +252,6 @@ end
  
 -- update function
 function Worker:update(dt, zi, paused)
-	
 	------------------------------- CHECK PAUSE AND ATTACKED; LOOK AROUND FOR ZOMBIES
 	-- if game is paused, do not update any values
 	if paused == true then return end
@@ -316,19 +315,11 @@ function Worker:update(dt, zi, paused)
 		if self.angle < 0 then
 			self.angle = 360 + self.angle
 		end
-		
-		if self.turnFast == true then
-			print("turn fast is TRUE")
-		else
-			print("turn fast is FALSE")
-		end
-		
+			
 		if self.working == true then
-			print("UPDATE: x:".. math.floor(self.x / map.tileSize).. ",y:"..math.floor(self.y / map.tileSize))
+			if self.workingTileCount > 0 then self.turnFast = false end
 			if (self.tarXTile == math.floor(self.x / map.tileSize)) and (self.tarYTile == math.floor(self.y / map.tileSize)) then
-				self.turnFast = false
 				if (#self.path == self.workingTileCount) then
-					print("AT STORE !")
 					self.working = false
 				else
 					self.tarXTile = self.path[#self.path - self.workingTileCount].x 
@@ -347,18 +338,22 @@ function Worker:update(dt, zi, paused)
 		if self.dirVec == 0 then				-- positive direction	( opposite of conventional as y increases downwards )
 			if self.panicMode == true or self.controlled == true then		-- if the human is panicking, he is able to turn much faster
 				self.angle = self.angle + 1
-			elseif self.turnFast == true then
+			elseif self.turnFast then
 				self.angle = self.angle + 1.1
-			else
+			elseif self.working then
 				self.angle = self.angle + 0.5
+			else
+				self.angle = self.angle + 0.3
 			end
 		elseif self.dirVec == 1 then			-- negative direction
 			if self.panicMode == true or self.controlled == true then		-- if the human is panicking, he is able to turn much faster
 				self.angle = self.angle - 1
-			elseif self.turnFast == true then
+			elseif self.turnFast then
 				self.angle = self.angle - 1.1
-			else
+			elseif self.working then
 				self.angle = self.angle - 0.5
+			else
+				self.angle = self.angle - 0.3
 			end
 		end
 		
@@ -443,8 +438,7 @@ function Worker:update(dt, zi, paused)
  
 function Worker:sendToWork()
 	self.working = true
-	print("==========")
-	print("path count:".. (#self.path))
+
 	--print()
 	self.workingTileCount = 0
 	self.tarXTile = self.path[#self.path - self.workingTileCount].x 
@@ -454,29 +448,5 @@ function Worker:sendToWork()
 	--self.angle = self.targetAngle
 	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
 	self.turnFast = true
-	--print("map tile size:".. map.tileSize)
-	print("target x:"..self.path[#self.path].x* map.tileSize ..",y:"..self.path[#self.path].y* map.tileSize..", i:"..#self.path)
-	print("tar x:".. self.tarXTile..", y:"..self.tarYTile)
-	--table.remove(self.path, #self.path)
-	
-	-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
-	
-		-- get direction vector
-	--[[print("x max:".. self.path[#self.path].x)
-	if (self.path ~= nil) then
-		for i = #self.path, 1, -1 do
-			print("x:".. self.path[i].x..",y:"..self.path[i].y)
-		end
-	end
-	--]]
-	-- get angle from this worker's position to the resources
-	--self.targetAngle = self:angleToXY(self.x,self.y,human_list[h_index].x,human_list[h_index].y)
-	--[[
-	if (self.path ~= nil) then
-		for i = #self.path, 1, -1 do
-			if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
-			love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
-			j = j + 1
-		end
-	end]]
+
 end

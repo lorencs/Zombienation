@@ -45,6 +45,10 @@ function Ranger:new(xnew,ynew)
 	onCurrentTile = 0,
 	neighbourTiles = {},
 	bullets = {},
+	targetX = -1,
+	targetY = -1,
+	tilesCrossed = 0,
+	turnFast = false,
 	animation = SpriteAnimation:new("Units/images/ranger1.png", 10, 12, 8, 1)
 	}
 
@@ -206,7 +210,8 @@ end
 				self.state = "hunting"
 				self.huntee = zombie_list[i]
 				self:hunt(self.huntee.cx, self.huntee.cy)
-
+				self.turnFast = true
+				
 				-- reset angles if they go over 360 or if they go under 0
 				if self.targetAngle > 360 then
 					self.targetAngle = self.targetAngle - 360
@@ -243,10 +248,10 @@ function Ranger:update(dt, zi, paused)
 	-- get the angle direction ( positive or negative on axis )
 	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
 	
-	if self.state == "seeking" then
+	if (self.state == "seeking") or (self.state == "moving")then
 	------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS.. unless it's controlled by penguins !
 		-- after 'interval' seconds, the ranger should change his direction (x and y)
-		if self.directionTimer > self.interval then 
+		if self.directionTimer > self.interval and self.state == "seeking" then 
 		
 			-- randomize a degree, 0 to 360
 			self.targetAngle = math.random(360)
@@ -315,19 +320,41 @@ function Ranger:update(dt, zi, paused)
 		if self.angle < 0 then
 			self.angle = 360 + self.angle
 		end
+		
+		if self.state == "moving" then
+			if self.tilesCrossed > 0 then self.turnFast = false end
+			if (self.targetX == math.floor(self.x / map.tileSize)) and (self.targetY == math.floor(self.y / map.tileSize)) then
+				
+				if (#self.path == self.tilesCrossed) then
+					self.state = "seeking"
+				else
+					self.targetX = self.path[#self.path - self.tilesCrossed].x 
+					self.targetY = self.path[#self.path - self.tilesCrossed].y
+					self.tilesCrossed = self.tilesCrossed + 1
+					self.targetAngle = self:angleToXY( self.x, self.y, self.targetX * map.tileSize + map.tileSize / 2, self.targetY * map.tileSize + map.tileSize / 2 )
+					--self.angle = self.targetAngle
+					self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+				end
+			end
+			
+		end
 	else
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
 		if self.dirVec == 0 then				-- positive direction	( opposite of conventional as y increases downwards )
-			if self.state == "hunting" or self.state == "shooting" then		-- if the Ranger is hunting or shooting, he is able to turn much faster
-				self.angle = self.angle + 1
-			else
+			if self.state == "hunting" or self.state == "shooting" or self.turnFast then		-- if the Ranger is hunting or shooting, he is able to turn much faster
+				self.angle = self.angle + 1.1
+			elseif self.state == "moving" then
 				self.angle = self.angle + 0.5
+			else
+				self.angle = self.angle + 0.3
 			end
 		elseif self.dirVec == 1 then			-- negative direction
-			if self.state == "hunting" or self.state == "shooting" then		-- if the Ranger is hunting or shooting, he is able to turn much faster
-				self.angle = self.angle - 1
-			else
+			if self.state == "hunting" or self.state == "shooting" or self.turnFast then		-- if the Ranger is hunting or shooting, he is able to turn much faster
+				self.angle = self.angle - 1.1
+			elseif self.state == "moving" then
 				self.angle = self.angle - 0.5
+			else
+				self.angle = self.angle - 0.3
 			end
 		end
 		
@@ -410,7 +437,7 @@ function Ranger:update(dt, zi, paused)
 		-- update the center x and y values of the unit
 		self.cx = self.x + self.radius
 		self.cy = self.y + self.radius
-	else
+	elseif (self.state == "shooting") then 
 	------------------------------SHOOTING MODE
 		-- check if there are any other closer zombies every 1 sec
 		if self.zombieCheckTimer > 1 then
@@ -461,4 +488,18 @@ function Ranger:stopChasing()
 	self.statestr = "seeking"
 	self.shootingTimer = 2
 	self.animation:start()
+end
+
+function Ranger:patrol()
+	self.state = "moving"
+
+	self.tilesCrossed = 0
+	self.targetX = self.path[#self.path - self.tilesCrossed].x 
+	self.targetY = self.path[#self.path - self.tilesCrossed].y
+	self.tilesCrossed = self.tilesCrossed + 1
+	self.targetAngle = self:angleToXY( self.x, self.y, self.targetX * map.tileSize + map.tileSize / 2, self.targetY * map.tileSize + map.tileSize / 2 )
+	--self.angle = self.targetAngle
+	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+	self.turnFast = true
+
 end

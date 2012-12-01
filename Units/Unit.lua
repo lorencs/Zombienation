@@ -336,7 +336,7 @@ function Unit:signOf(v)
 	return v > 0 and 1 or (v < 0 and -1 or 0)
 end
 
-function Unit:moveUnitTo(x1,y1,x2,y2)
+function Unit:getShortestPath(x1,y1,x2,y2)
 	local x1tile = math.floor(x1 / map.tileSize)
 	local y1tile = math.floor(y1 / map.tileSize)
 	local x2tile = math.floor(x2 / map.tileSize)

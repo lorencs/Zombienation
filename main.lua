@@ -42,6 +42,7 @@ require "Units/shortestPath/Astar"
 
 -- game settings
 resources = 0
+
 orig_number_of_zombies = 3			-- zombies are red
 orig_number_of_humans = 25			-- humans are blue
 orig_number_of_rangers = 2			-- i thought this was a poem
@@ -75,9 +76,9 @@ function love:load()
 	--generator:defaultMap()
 	difficulty = 1
 	--generator:randomMap()
-	--generator:newMap(100,100)
+	generator:newMap(100,100)
 	--generator:randomMap(difficulty)
-	generator:newMap(75,75)
+	--generator:newMap(75,75)
 
 
 	-- get the map	
@@ -321,9 +322,14 @@ end
 function gameSTATE:mousepressed(x, y, button)
 	if (y < viewHeight) and not menu.debugMode then
 		--unitManager:deselectUnits()
-		if (button == "l") then		
-			dragSelect = true
-			dragx, dragy = x, y
+		if (button == "l") then	
+			if selectPatrol then
+						selectPatrol = false
+						unitManager:patrol(x+view.x, y+view.y)
+			else
+				dragSelect = true
+				dragx, dragy = x, y
+			end
 		elseif (button == "r") then
 			--unitManager:createRanger(x,y)
 			local timer = os.clock()
@@ -342,16 +348,11 @@ function gameSTATE:mousereleased(x, y, button)
 	
 	minimap:mousereleased()
 	
-	if (button == "l") and not menu.debugMode and (y < viewHeight) then
+	if (button == "l") and not menu.debugMode and (y < viewHeight) then	
 		if dragSelect then
 			dragSelect = false
 			unitManager:selectUnits(dragx+view.x, dragy+view.y, x+view.x, y+view.y)
-		end
-		if selectPatrol then
-			selectPatrol = false
-			print(selectPatrol)
-			--unitManager:()
-		end
+		end		
 	end	
 	
 end

@@ -185,6 +185,7 @@ function UnitManager:draw()
 end
 
 function UnitManager:selectUnits(x1,y1,x2,y2)
+	print("select")
 	-- get the max y and x coords
 	--if not x1
 	self:deselectUnits()
@@ -248,6 +249,7 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 end
 
 function UnitManager:deselectUnits()
+print("deselect")
 	for i = 1, number_of_humans do
 		human_list[i].selected = false	-- deselect all humans 
 	end
@@ -284,38 +286,37 @@ function UnitManager:createRanger(xo,yo)
 	ranger_tag = ranger_tag + 1
 end
 
-function UnitManager:sendWorkersToWork()
-	print("Sending the puppies to work !")
-	--for i,v in pairs (worker_list) do
-		--if v.selected == true then
-			--v:moveUnitTo(v.x,v.y,xo,yo)		-- this will get the shortest path for all units selected and store it in the 'path' list
-			--v:sendToWork()					-- sends selected units ( workers in this case ) to work..
-		--end
-	--end
-end
-
 function UnitManager:moveTo(xo,yo)
-	print("hi")
-	
+
 	for i,v in pairs (human_list) do
 		if v.selected == true then
-			v:moveUnitTo(v.x,v.y,xo,yo)
+			v:getShortestPath(v.x,v.y,xo,yo)
 		end
 	end
 
 	for i,v in pairs (worker_list) do
 		if v.selected == true then
-			v:moveUnitTo(v.x,v.y,xo,yo)
+			v:getShortestPath(v.x,v.y,xo,yo)
 			v:sendToWork()
 		end
 	end
 end
 
 function UnitManager:collectSupplies()
-	for i,v in pairs (worker_list) do
+	--[[for i,v in pairs (worker_list) do
 		if v.selected == true then
-			v:moveUnitTo(v.x,v.y,xo,yo)
+			v:getShortestPath(v.x,v.y,xo,yo)
 			v:sendToWork()
+		end
+	end]]--
+end
+
+function UnitManager:patrol(xtar,ytar)
+	for i,v in pairs (ranger_list) do
+		if v.selected == true then
+			print("patrol")
+			v:getShortestPath(v.x,v.y,xtar,ytar)
+			v:patrol()
 		end
 	end
 end
