@@ -7,6 +7,11 @@ require "Units/SpriteAnimation"
 
 UnitManager = {}
 UnitManager_mt = { __index = UnitManager }
+
+humans_selected = 0
+zombies_selected = 0
+rangers_selected = 0
+workers_selected = 0
 	--[[ 
 
 	-> each unit has a unique tag. When zombies chase a unit, they chase them by the tag (eg. human_tag)
@@ -210,6 +215,7 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 			human_list[i].selected = true	-- set the selected value to true
 			selected_units[i] = human_list[i].tag
 			selectedUnitsCount = selectedUnitsCount + 1
+			humans_selected = humans_selected + 1
 		end
 	end
 	
@@ -218,6 +224,7 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 			and ( zombie_list[i].cy > min_y ) and ( zombie_list[i].cy < max_y ) ) then
 			
 			zombie_list[i].selected = true	-- set the selected value to true
+			zombies_selected = zombies_selected + 1
 		end
 	end
 	
@@ -226,6 +233,7 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 			and ( ranger_list[i].cy > min_y ) and ( ranger_list[i].cy < max_y ) ) then
 			
 			ranger_list[i].selected = true	-- set the selected value to true
+			rangers_selected = rangers_selected + 1
 		end
 	end
 	
@@ -234,9 +242,10 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 			and ( worker_list[i].cy > min_y ) and ( worker_list[i].cy < max_y ) ) then
 			
 			worker_list[i].selected = true	-- set the selected value to true
+			workers_selected = workers_selected + 1
 		end
 	end
-	
+	total_units_selected
 end
 
 function UnitManager:deselectUnits()
@@ -253,6 +262,12 @@ function UnitManager:deselectUnits()
 		worker_list[i].selected = false	-- deselect all workers 
 	end
 	selectedUnitsCount = 0
+	
+	humans_selected = 0
+	zombies_selected = 0
+	rangers_selected = 0
+	workers_selected = 0
+
 	
 end
 
@@ -307,7 +322,25 @@ function UnitManager:moveTo(xo,yo)
 	--]]
 end
 
-function UnitManager:convertUnit(unit)
+function UnitManager:selectedType()
+	local total_units_selected = zombies_selected + rangers_selected + workers_selected + humans_selected
+	local uType = "X"
+	if zombies_selected == 0 and rangers_selected == 0 and workers_selected == 0 then
+		uType = "Humans"
+	elseif zombies_selected == 0 and rangers_selected == 0 and humans_selected == 0 then
+		uType = "Workers"
+	elseif zombies_selected == 0 and workers_selected == 0 and humans_selected == 0 then
+		uType = "Rangers"
+	elseif workers_selected == 0 and rangers_selected == 0 and humans_selected == 0 then
+		uType = "Zombies"
+	else
+		uType = "Mixed"
+	end
+	return total_units_selected, uType
+end
+
+function UnitManager:convertUnits(unit)
+	
 	for i = 1, number_of_humans do
 		if human_list[i].selected == true then
 			local angle = Unit:angleToXY(human_list[i].x,human_list[i].y, xo,yo)
@@ -316,4 +349,3 @@ function UnitManager:convertUnit(unit)
 		end
 	end
 end
-

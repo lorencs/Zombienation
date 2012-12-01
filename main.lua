@@ -296,6 +296,7 @@ function gameSTATE:draw()
 	love.graphics.print("Framerate: " .. love.timer.getFPS(), 0, 60)
 	love.graphics.print("Press ( P / S ) for music", 0, 75)
 	love.graphics.print("Gold: ".. gold, 715, 0)
+	love.graphics.print("Under Ranger: ".. gold, 715, 0)
 	
 	-- loveframes
 	loveframes.draw()
