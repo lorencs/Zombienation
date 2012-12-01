@@ -1,35 +1,35 @@
 require "Units/SpriteAnimation"
 
 
-Worker = {}
-Worker_mt = { __index = Worker }
+Car = {}
+Car_mt = { __index = Car }
 
 -- Constructor
-function Worker:new(xnew,ynew)
+function Car:new(xnew,ynew)
 
-    local new_object = {					-- define our parameters here
-	tag = 0,								-- tag of unit
-    x = xnew,									-- x and y coordinates ( by default, left top )
+    local new_object = {							-- define our parameters here
+	tag = 0,										-- tag of unit
+    x = xnew,										-- x and y coordinates ( by default, left top )
     y = ynew,
-	cx = 0,									-- centered x and y coordinates of the unit
+	cx = 0,											-- centered x and y coordinates of the unit
 	cy = 0,
 	radius = 4,
-	angle = math.random(360),				-- randomize initial angles
+	angle = math.random(360),						-- randomize initial angles
 	targetAngle = math.random(360),
     state = "",
 	speed = 0,
 	normalSpeed = 13,
 	panicSpeed = 15,
 	directionTimer = 0,
-	searchTimer = 0,							-- timer, whenc it reachers searchFreq, human looksAround
-	searchFreq = 0.25,							-- intervals at which to lookAround
+	searchTimer = 0,								-- timer, whenc it reachers searchFreq, human looksAround
+	searchFreq = 0.25,								-- intervals at which to lookAround
 	initial_direction = 1,
 	fov_radius = 90,
 	fov_angle = 140,
 	fovStartAngle = 0,
 	fovEndAngle = 0,
-	attacked = 0,								-- if the unit is currently attacked, this var = 1
-    panicMode = false,							-- panic mode is on if this is true..
+	attacked = 0,									-- if the unit is currently attacked, this var = 1
+    panicMode = false,								-- panic mode is on if this is true..
 	panicTimer = 0,									-- a unit that has spotted a zombie will be in panic mode for 6-7 seconds ( after spotting last zombie )
 	v1 = Point:new(0,0),							-- vertices for the field of view triangle
 	v2 = Point:new(0,0),
@@ -47,13 +47,13 @@ function Worker:new(xnew,ynew)
 	animation = SpriteAnimation:new("Units/images/worker1.png", 10, 8, 8, 1)
 	}
 
-	setmetatable(new_object, Worker_mt )				-- add the new_object to metatable of Human
-	setmetatable(Worker, { __index = Unit })        -- Human is a subclass of class Unit, so set inheritance..				
+	setmetatable(new_object, Car_mt )				-- add the new_object to metatable of Human
+	setmetatable(Car, { __index = Unit })        -- Human is a subclass of class Unit, so set inheritance..				
 	
     return new_object
 end
 
-function Worker:setupUnit()
+function Car:setupUnit()
 
 	local map_w = map.width*map.tileSize
 	local map_h = map.height*map.tileSize
@@ -66,7 +66,7 @@ function Worker:setupUnit()
 	-- the unit must be randomized on a GROUND tile
 	self.onCurrentTile = self:xyToTileType(self.x, self.y)
 	
-	while not (self.onCurrentTile == "R" or self.onCurrentTile == "G") do
+	while not (self.onCurrentTile == "R") do
 		self.x = math.random(self.radius * 3, map_w - self.radius * 3)
 		self.y = math.random(self.radius * 3, map_h - self.radius * 3)
 		self.onCurrentTile = self:xyToTileType(self.x, self.y)
@@ -82,10 +82,9 @@ function Worker:setupUnit()
 	self.fovStartAngle = self.angle - 45
 	self.fovEndAngle = self.angle + 45
 	
-	self.state = "WORKER !"
+	self.state = "CAR !"
 	self.speed = self.normalSpeed
-	--self.tag = worker_tag
-	self.tag = unitTag
+	self.tag = car_tag
 	self.directionTimer = 0
 	
 	self.animation:load()
@@ -112,7 +111,7 @@ function Worker:setupUnit()
 	
 end
 
-function Worker:draw(i)
+function Car:draw(i)
 	
 	------------------------------- UPDATE FIELD OF VIEW VERTICES
 	-- for triangle:
@@ -198,7 +197,7 @@ function Worker:draw(i)
 	self.animation:draw(self.cx,self.cy)
 end
 
-function Worker:runAwayFrom(zom_x, zom_y)
+function Car:runAwayFrom(zom_x, zom_y)
 	local x_v, y_v = 0
 	if (self.x < zom_x) and (self.y < zom_y) then
 		x_v = zom_x - self.x
@@ -223,7 +222,7 @@ function Worker:runAwayFrom(zom_x, zom_y)
 end
 
  -- look around for zombies; panic if one is around !
- function Worker:lookAround()
+ function Car:lookAround()
 	
 	-- for each zombie
 	for i = 1, number_of_zombies do
@@ -252,16 +251,17 @@ end
  end
  
 -- update function
-function Worker:update(dt, zi, paused)
+function Car:update(dt, zi, paused)
 	------------------------------- CHECK PAUSE AND ATTACKED; LOOK AROUND FOR ZOMBIES
 	-- if game is paused, do not update any values
 	if paused == true then return end
 	
 	-- if the worker is attacked, then he can't move (or could make him move very slow?)
-	if self.attacked == 1 then return end
+	-- if self.attacked == 1 then return end
 	
 	-- updating neighbours
 	self:updateNeighbours(self)
+	--[[
 	if self.working == false then			-- don't randomize if the worker is working !
 		if self.panicMode == false then
 		------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS.. unless it's controlled by penguins !
@@ -279,12 +279,15 @@ function Worker:update(dt, zi, paused)
 			end
 		end
 	end
+	
+	
 	------------------------------- PANIC MODE
 	-- look around for zombies
 	if self.searchTimer > self.searchFreq then
 		self:lookAround()
 		self.searchTimer = 0
 	end
+	
 	
 	-- if panicZombieAngle is true.. increase speed and change targetAngle to run away from the zombie !
 	if self.panicMode == true then
@@ -304,6 +307,8 @@ function Worker:update(dt, zi, paused)
 		self.speed = self.normalSpeed
 		self.state = "worker !"
 	end
+	
+	--]]
 	
 	------------------------------- UPDATE SELF.ANGLE
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then
@@ -437,7 +442,7 @@ function Worker:update(dt, zi, paused)
 	self.animation:update(dt)
  end
  
-function Worker:sendToWork()
+function Car:sendToWork()
 	self.working = true
 	if (self.path ~= nil) then
 		--print()

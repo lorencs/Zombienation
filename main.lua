@@ -46,7 +46,8 @@ resources = 0
 orig_number_of_zombies = 60			-- zombies are red
 orig_number_of_humans = 25			-- humans are blue
 orig_number_of_rangers = 2			-- i thought this was a poem
-orig_number_of_workers = 25		-- i wish it was too
+orig_number_of_workers = 25			-- i wish it was too
+orig_number_of_cars = 5
 
 -- gamestate
 Gamestate = require "utils/gamestate"

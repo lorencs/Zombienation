@@ -12,6 +12,7 @@ humans_selected = 0
 zombies_selected = 0
 rangers_selected = 0
 workers_selected = 0
+
 	--[[ 
 
 	-> each unit has a unique tag. When zombies chase a unit, they chase them by the tag (eg. human_tag)
@@ -19,9 +20,6 @@ workers_selected = 0
 	
   ]]
   
-  	selectedUnitsCount = 0
-	selected_units = {}
-		
 -- Constructor
 function UnitManager:new()
     -- define our parameters here
@@ -47,10 +45,11 @@ function UnitManager:initUnits()
 	print(map.tiles[10][16].id)
 	print(map.tiles[10][17].id)
 	print(map.tiles[10][18].id)]]
-	human_tag = 1								-- each unit has a unique tag
-	zombie_tag = 1
-	ranger_tag = 1
-	worker_tag = 1
+	unitTag = 1
+	--human_tag = 1								-- each unit has a unique tag
+	--zombie_tag = 1
+	--ranger_tag = 1
+	--worker_tag = 1
 	zombie_list = {}							-- array of zombie objects
 	human_list = {}								-- array of human objects
 	ranger_list = {}								-- array of ranger objects
@@ -59,33 +58,46 @@ function UnitManager:initUnits()
 	number_of_humans = orig_number_of_humans			-- humans are blue
 	number_of_rangers = orig_number_of_rangers			-- humans are blue
 	number_of_workers = orig_number_of_workers			-- 
+	number_of_cars = orig_number_of_cars
 	
 	-- set up zombies
 	for i = 1, number_of_zombies do
 		zombie_list[i] = Zombie:new()
 		zombie_list[i]:setupUnit()
-		zombie_tag = zombie_tag + 1
+		unitTag = unitTag + 1
+		--zombie_tag = zombie_tag + 1
 	end
 	
 	-- set up humans
 	for i = 1, number_of_humans do
 		human_list[i] = Human:new()
 		human_list[i]:setupUnit()
-		human_tag = human_tag + 1
+		unitTag = unitTag + 1
+		--human_tag = human_tag + 1
 	end	
 	
 	-- only setup rangers at start for testing
 	for i = 1, number_of_rangers do
 		ranger_list[i] = Ranger:new()
 		ranger_list[i]:setupUnit()
-		ranger_tag = ranger_tag + 1
+		unitTag = unitTag + 1
+		--ranger_tag = ranger_tag + 1
 	end	
 	
 	for i = 1, number_of_workers do
 		worker_list[i] = Worker:new()
 		worker_list[i]:setupUnit()
-		worker_tag = worker_tag + 1
+		unitTag = unitTag + 1
+		--worker_tag = worker_tag + 1
 	end
+	
+	--[[
+	for i = 1, number_of_cars do
+		car_list[i] = Car:new()
+		car_list[i]:setupUnit()
+		worker_tag = worker_tag + 1
+	end]]
+	
 end
 
 function UnitManager:resetUnits()
@@ -109,10 +121,11 @@ function UnitManager:resetUnits()
 	number_of_zombies = 1
 	number_of_rangers = 1
 	number_of_workers = 1
-	zombie_tag = 1
-	human_tag = 1
-	ranger_tag = 1
-	worker_tag = 1
+	--zombie_tag = 1
+	--human_tag = 1
+	--ranger_tag = 1
+	--worker_tag = 1
+	unitTag = 1
 	-- re init units
 	self:initUnits()
 	
@@ -214,8 +227,6 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 			and ( human_list[i].cy > min_y ) and ( human_list[i].cy < max_y ) ) then
 			
 			human_list[i].selected = true	-- set the selected value to true
-			selected_units[i] = human_list[i].tag
-			selectedUnitsCount = selectedUnitsCount + 1
 			humans_selected = humans_selected + 1
 		end
 	end
@@ -262,7 +273,6 @@ print("deselect")
 	for i = 1, number_of_workers do
 		worker_list[i].selected = false	-- deselect all workers 
 	end
-	selectedUnitsCount = 0
 	
 	humans_selected = 0
 	zombies_selected = 0
@@ -283,7 +293,8 @@ function UnitManager:createRanger(xo,yo)
 	number_of_rangers = number_of_rangers + 1					-- increase count of zombies alive
 	ranger_list[number_of_rangers] = Ranger:new(xo+view.x, yo+view.y)	-- create new zombie at the location of this zombie
 	ranger_list[number_of_rangers]:setupUnit()
-	ranger_tag = ranger_tag + 1
+	unitTag = unitTag + 1
+	--ranger_tag = ranger_tag + 1
 end
 
 function UnitManager:moveTo(xo,yo)
@@ -348,7 +359,8 @@ function UnitManager:convertUnits(convType)
 				newWorker = Worker:new(dx,dy)
 				table.insert(worker_list, newWorker)
 				worker_list[number_of_workers]:setupUnit()
-				worker_tag = worker_tag + 1
+				unitTag = unitTag + 1
+				--worker_tag = worker_tag + 1
 				
 				table.remove(human_list, i)
 				number_of_humans = number_of_humans - 1
@@ -363,7 +375,8 @@ function UnitManager:convertUnits(convType)
 				newRanger = Ranger:new(dx,dy)
 				table.insert(ranger_list, newRanger)
 				ranger_list[number_of_rangers]:setupUnit()
-				ranger_tag = ranger_tag + 1
+				--ranger_tag = ranger_tag + 1
+				unitTag = unitTag + 1
 				
 				table.remove(human_list, i)
 				number_of_humans = number_of_humans - 1

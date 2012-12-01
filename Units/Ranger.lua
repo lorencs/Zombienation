@@ -90,7 +90,8 @@ function Ranger:setupUnit()
 	self.state = "seeking"
 	self.statestr = "seeking"
 	self.speed = self.normalSpeed
-	self.tag = ranger_tag
+	--self.tag = ranger_tag
+	self.tag = unitTag
 	self.directionTimer = 0
 	self.checkZombieTimer = 0
 	self.shootingTimer = 1
@@ -196,12 +197,12 @@ end
  function Ranger:lookAround()
 	local distToHuntee = 9999
 	if not(self.huntee == nil) then distToHuntee = self:distanceBetweenPoints(self.cx,self.cy,self.huntee.cx, self.huntee.cy) end
-	local tag = -1
-	if not (self.huntee == nil) then tag = self.huntee.tag end
+	local ztag = -1
+	if not (self.huntee == nil) then ztag = self.huntee.tag end
 	
 	-- for each zombie
 	for i = 1, number_of_zombies do		
-		if tag ~= zombie_list[i].tag then		
+		if ztag ~= zombie_list[i].tag then		
 			local distToCurrZomb = self:distanceBetweenPoints(self.cx,self.cy,zombie_list[i].cx, zombie_list[i].cy)		-- redundant but i have no choice 
 			local val = self:pointInArc(self.x, self.y, zombie_list[i].cx, zombie_list[i].cy, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect zomvies in an arc (pie shape)

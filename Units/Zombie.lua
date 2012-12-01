@@ -101,8 +101,9 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	self.state = "Looking around"
 	self.normalSpeed = 5
 	self.runSpeed = 7
-	self.tag = zombie_tag
-	zombie_tag = zombie_tag + 1
+	--self.tag = zombie_tag
+	self.tag = unitTag
+	--zombie_tag = zombie_tag + 1
 	
 	self.animation:load()
 	self.animation:switch(1,8,120)
@@ -417,7 +418,7 @@ function Zombie:update(dt, zi, paused)
 			number_of_zombies = number_of_zombies + 1					-- increase count of zombies alive
 			zombie_list[number_of_zombies] = Zombie:new(deadx, deady)	-- create new zombie at the location of this zombie
 			zombie_list[number_of_zombies]:setupUnit()					-- setup zombie
-			
+			unitTag = unitTag + 1
 			-- tell all zombies that human with tag 'self.followingTag' is dead
 			self:tellZombies(self.followingTag)		
 			

@@ -79,7 +79,8 @@ function Human:setupUnit()
 	
 	self.state = "Chilling"
 	self.speed = self.normalSpeed
-	self.tag = human_tag
+	--self.tag = human_tag
+	self.tag = unitTag
 	self.directionTimer = 0
 	
 	self.animation:load()
