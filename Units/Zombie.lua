@@ -379,9 +379,9 @@ function Zombie:update(dt, zi, paused)
 	else
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
 		if self.dirVec == 0 then			-- positive direction	( opposite of conventional as y increases downwards )
-			self.angle = self.angle + 0.2
+			self.angle = self.angle + 0.35
 		elseif self.dirVec == 1 then		-- negative direction
-			self.angle = self.angle - 0.2
+			self.angle = self.angle - 0.35
 		end
 		
 		-- reset angles if they go over 360 or if they go under 0

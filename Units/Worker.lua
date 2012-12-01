@@ -344,7 +344,7 @@ function Worker:update(dt, zi, paused)
 			elseif self.turnFast == true then
 				self.angle = self.angle + 1.1
 			else
-				self.angle = self.angle + 0.3
+				self.angle = self.angle + 0.5
 			end
 		elseif self.dirVec == 1 then			-- negative direction
 			if self.panicMode == true or self.controlled == true then		-- if the human is panicking, he is able to turn much faster
@@ -352,7 +352,7 @@ function Worker:update(dt, zi, paused)
 			elseif self.turnFast == true then
 				self.angle = self.angle - 1.1
 			else
-				self.angle = self.angle - 0.3
+				self.angle = self.angle - 0.5
 			end
 		end
 		
