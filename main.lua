@@ -191,6 +191,7 @@ function gameSTATE:leave()
 end
 
 function gameSTATE:pauseResume(menubool, mmbool)
+	selectPatrol = false
 	unitManager:pauseGame()	-- pause and resume game
 	paused = not paused
 	menu:showHide(menubool)
@@ -331,6 +332,9 @@ function gameSTATE:mousepressed(x, y, button)
 				dragx, dragy = x, y
 			end
 		elseif (button == "r") then
+			if selectPatrol then
+				selectPatrol = false
+			end
 			--unitManager:createRanger(x,y)
 			local timer = os.clock()
 			unitManager:moveTo(x+view.x,y+view.y)

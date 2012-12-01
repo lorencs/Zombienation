@@ -52,7 +52,8 @@ function PauseMenu:setup()
 	buttonRestart:SizeToImage() 
 	buttonRestart:SetVisible(false)
 	buttonRestart.OnClick = function(object)
-		gameSTATE:pauseResume()
+		gameSTATE:pauseResume(false,true)
+		minimap:showHide()
 		Gamestate.switch(gameSTATE)
 	end
 	
