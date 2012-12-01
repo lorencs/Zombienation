@@ -438,15 +438,15 @@ function Worker:update(dt, zi, paused)
  
 function Worker:sendToWork()
 	self.working = true
-
-	--print()
-	self.workingTileCount = 0
-	self.tarXTile = self.path[#self.path - self.workingTileCount].x 
-	self.tarYTile = self.path[#self.path - self.workingTileCount].y
-	self.workingTileCount = self.workingTileCount + 1
-	self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
-	--self.angle = self.targetAngle
-	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
-	self.turnFast = true
-
+	if (self.path ~= nil) then
+		--print()
+		self.workingTileCount = 0
+		self.tarXTile = self.path[#self.path - self.workingTileCount].x 
+		self.tarYTile = self.path[#self.path - self.workingTileCount].y
+		self.workingTileCount = self.workingTileCount + 1
+		self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
+		--self.angle = self.targetAngle
+		self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+		self.turnFast = true
+	end
 end
