@@ -38,6 +38,7 @@ function Worker:new(xnew,ynew)
 	working = false,
 	tarXTile = -1,
 	tarYTile = -1,
+	turnFast = false,
 	workingTileCount = 0,
 	color = 0,
 	controlled = false,
@@ -319,6 +320,7 @@ function Worker:update(dt, zi, paused)
 		if self.working == true then
 			print("UPDATE: x:".. math.floor(self.x / map.tileSize).. ",y:"..math.floor(self.y / map.tileSize))
 			if (self.tarXTile == math.floor(self.x / map.tileSize)) and (self.tarYTile == math.floor(self.y / map.tileSize)) then
+				self.turnFast = false
 				if (#self.path == self.workingTileCount) then
 					print("AT STORE !")
 					self.working = false
@@ -327,7 +329,7 @@ function Worker:update(dt, zi, paused)
 					self.tarYTile = self.path[#self.path - self.workingTileCount].y
 					self.workingTileCount = self.workingTileCount + 1
 					self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
-					self.angle = self.targetAngle
+					--self.angle = self.targetAngle
 					self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
 				end
 			end
@@ -339,12 +341,16 @@ function Worker:update(dt, zi, paused)
 		if self.dirVec == 0 then				-- positive direction	( opposite of conventional as y increases downwards )
 			if self.panicMode == true or self.controlled == true then		-- if the human is panicking, he is able to turn much faster
 				self.angle = self.angle + 1
+			elseif self.turnFast == true then
+				self.angle = self.angle + 1.1
 			else
 				self.angle = self.angle + 0.3
 			end
 		elseif self.dirVec == 1 then			-- negative direction
 			if self.panicMode == true or self.controlled == true then		-- if the human is panicking, he is able to turn much faster
 				self.angle = self.angle - 1
+			elseif self.turnFast == true then
+				self.angle = self.angle - 1.1
 			else
 				self.angle = self.angle - 0.3
 			end
@@ -439,8 +445,9 @@ function Worker:sendToWork()
 	self.tarYTile = self.path[#self.path - self.workingTileCount].y
 	self.workingTileCount = self.workingTileCount + 1
 	self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
-	self.angle = self.targetAngle
+	--self.angle = self.targetAngle
 	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+	self.turnFast = true
 	--print("map tile size:".. map.tileSize)
 	print("target x:"..self.path[#self.path].x* map.tileSize ..",y:"..self.path[#self.path].y* map.tileSize..", i:"..#self.path)
 	print("tar x:".. self.tarXTile..", y:"..self.tarYTile)
