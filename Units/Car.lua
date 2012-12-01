@@ -307,7 +307,7 @@ function Car:update(dt, zi, paused)
 		self.speed = self.normalSpeed
 		self.state = "worker !"
 	end
-	
+	--
 	--]]
 	
 	------------------------------- UPDATE SELF.ANGLE
