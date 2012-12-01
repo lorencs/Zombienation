@@ -107,7 +107,7 @@ function Menu:setMainMenu()
 	patrolButton:SetImage(love.graphics.newImage("gui/patrolbutton.png"))
 	patrolButton:SetVisible(false)
 	patrolButton.OnClick = function(object)
-		
+		selectPatrol = true
 	end
 	
 	patrolText = loveframes.Create("text")
@@ -398,7 +398,7 @@ function Menu:update(dt)
 	if (count > 0) then	
 		if not (uType == "Mixed") then		
 			text = {{0,0,0,255}, count.." "..uType.." Selected"}
-		else
+		elseif (uType == "Mixed") then
 			text = {{0,0,0,255}, count.." "..uType.." Units Selected"}
 		end
 		
@@ -410,7 +410,7 @@ function Menu:update(dt)
 		elseif uType == "Workers" then
 			suppliesButton:SetVisible(true)
 			suppliesText:SetVisible(true)
-		elseif uType == "Workers" then
+		elseif uType == "Rangers" then
 			patrolButton:SetVisible(true)
 			patrolText:SetVisible(true)
 		end

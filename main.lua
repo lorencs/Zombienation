@@ -59,6 +59,7 @@ function love:load()
 	-- debug menu bools
 	drawTile = "R"
 	dragSelect = false
+	selectPatrol = false
 	dragx, dragy = 0, 0
 	defaultFont = love.graphics.newFont(12)
 	
@@ -110,6 +111,7 @@ function love:load()
 	-- cursor
 	love.mouse.setVisible(false)
 	cursor = love.graphics.newImage("gui/cursor.png")
+	xcursor = love.graphics.newImage("gui/xcursor.png")
 	
 	Gamestate.switch(startMenuSTATE)
 end
@@ -306,7 +308,11 @@ function gameSTATE:draw()
 	
 	-- cursor
 	love.graphics.reset()	
-	love.graphics.draw(cursor, love.mouse.getX(), love.mouse.getY())	
+	if not selectPatrol then
+		love.graphics.draw(cursor, love.mouse.getX(), love.mouse.getY())	
+	else
+		love.graphics.draw(xcursor, love.mouse.getX(), love.mouse.getY())	
+	end
 	
 	love.graphics.reset()	
 end
@@ -336,10 +342,16 @@ function gameSTATE:mousereleased(x, y, button)
 	
 	minimap:mousereleased()
 	
-	if (button == "l") and not menu.debugMode and (y < viewHeight) and dragSelect then
-		dragSelect = false
-		unitManager:selectUnits(dragx+view.x, dragy+view.y, x+view.x, y+view.y)
+	if (button == "l") and not menu.debugMode and (y < viewHeight) then
+		if dragSelect then
+			dragSelect = false
+			unitManager:selectUnits(dragx+view.x, dragy+view.y, x+view.x, y+view.y)
+		elseif selectPatrol then
+			selectPatrol = false
+			--unitManager:()
+		end
 	end	
+	
 end
 
 function gameSTATE:keypressed(key, unicode)
