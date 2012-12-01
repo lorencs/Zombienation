@@ -41,7 +41,7 @@ require "Units/shortestPath/Astar"
 ]]--
 
 -- game settings
-gold = 0
+resources = 0
 orig_number_of_zombies = 1			-- zombies are red
 orig_number_of_humans = 10			-- humans are blue
 orig_number_of_rangers = 1			-- i thought this was a poem
@@ -298,8 +298,8 @@ function gameSTATE:draw()
 	love.graphics.print("Humans alive: " .. number_of_humans, 0, 45)
 	love.graphics.print("Framerate: " .. love.timer.getFPS(), 0, 60)
 	love.graphics.print("Press ( P / S ) for music", 0, 75)
-	love.graphics.print("Gold: ".. gold, 715, 0)
-	love.graphics.print("Under Ranger: ".. gold, 715, 0)
+	--love.graphics.print("Gold: ".. gold, 715, 0)
+	--love.graphics.print("Under Ranger: ".. gold, 715, 0)
 	
 	-- loveframes
 	loveframes.draw()

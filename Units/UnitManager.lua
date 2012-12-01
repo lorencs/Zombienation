@@ -245,7 +245,6 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 			workers_selected = workers_selected + 1
 		end
 	end
-	
 end
 
 function UnitManager:deselectUnits()

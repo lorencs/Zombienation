@@ -54,7 +54,75 @@ function Menu:setMainMenu()
 	-- selection text
 	selectText = loveframes.Create("text")
 	selectText:SetPos(91, height - menuWidth + 15)
-	selectText:SetText({{0,0,0,150}, "No units selected"})
+	selectText:SetText({{0,0,0,150}, "No Units Selected"})
+	
+	-- WORKER BTN
+	upgradeWorkerBtn = loveframes.Create("imagebutton")
+	upgradeWorkerBtn:SetSize(23,23)
+	upgradeWorkerBtn:SetPos(92, height - menuWidth + 34)		
+	upgradeWorkerBtn:SetImage(love.graphics.newImage("gui/workerbutton.png"))
+	upgradeWorkerBtn:SetVisible(false)
+	upgradeWorkerBtn.OnClick = function(object)
+		
+	end
+	
+	workerText = loveframes.Create("text")
+	workerText:SetPos(120, height - menuWidth + 38)
+	workerText:SetText("Upgrade to Worker")
+	workerText:SetVisible(false)
+	
+	upgradeRangerBtn = loveframes.Create("imagebutton")
+	upgradeRangerBtn:SetSize(23,23)
+	upgradeRangerBtn:SetPos(92, height - menuWidth + 64)		
+	upgradeRangerBtn:SetImage(love.graphics.newImage("gui/rangerbutton.png"))
+	upgradeRangerBtn:SetVisible(false)
+	upgradeRangerBtn.OnClick = function(object)
+		
+	end
+	
+	rangerText = loveframes.Create("text")
+	rangerText:SetPos(120, height - menuWidth + 68)
+	rangerText:SetText("Upgrade to Ranger")
+	rangerText:SetVisible(false)
+	
+	-- supplies BTN
+	suppliesButton = loveframes.Create("imagebutton")
+	suppliesButton:SetSize(23,23)
+	suppliesButton:SetPos(92, height - menuWidth + 34)		
+	suppliesButton:SetImage(love.graphics.newImage("gui/suppliesbutton.png"))
+	suppliesButton:SetVisible(false)
+	suppliesButton.OnClick = function(object)
+		
+	end
+	
+	suppliesText = loveframes.Create("text")
+	suppliesText:SetPos(120, height - menuWidth + 38)
+	suppliesText:SetText("Gather Supplies")
+	suppliesText:SetVisible(false)
+	
+	-- PATROL BTN
+	patrolButton = loveframes.Create("imagebutton")
+	patrolButton:SetSize(23,23)
+	patrolButton:SetPos(92, height - menuWidth + 34)		
+	patrolButton:SetImage(love.graphics.newImage("gui/patrolbutton.png"))
+	patrolButton:SetVisible(false)
+	patrolButton.OnClick = function(object)
+		
+	end
+	
+	patrolText = loveframes.Create("text")
+	patrolText:SetPos(120, height - menuWidth + 38)
+	patrolText:SetText("Patrol Area")
+	patrolText:SetVisible(false)
+	
+	table.insert(self.mainMenu, upgradeWorkerBtn)
+	table.insert(self.mainMenu, workerText)
+	table.insert(self.mainMenu, upgradeRangerBtn)
+	table.insert(self.mainMenu, rangerText)
+	table.insert(self.mainMenu, suppliesButton)
+	table.insert(self.mainMenu, suppliesText)
+	table.insert(self.mainMenu, patrolButton)
+	table.insert(self.mainMenu, patrolText)
 end
 
 
@@ -316,18 +384,39 @@ end
 
 function Menu:update(dt)
 	for _,v in pairs(self.mainMenu) do
-		v:SetVisible(not(self.debugMode))
+		v:SetVisible(false)
 	end
 	for _,v in pairs(self.debugMenu) do
 		v:SetVisible(self.debugMode)
 	end
-	
+
 	selectDebug:SetVisible(self.debugMode)
 	
-	--[[local count, local uType = unitManager:selectedType()
-	if (count > 0) then
-		local text = {{0,0,0,255}, count.." "..uType.." selected}
-	end]]--
+	local count, uType = unitManager:selectedType()
+
+	local text = {{0,0,0,150}, "No units selected"}
+	if (count > 0) then	
+		if not (uType == "Mixed") then		
+			text = {{0,0,0,255}, count.." "..uType.." Selected"}
+		else
+			text = {{0,0,0,255}, count.." "..uType.." Units Selected"}
+		end
+		
+		if uType == "Humans" then
+			upgradeWorkerBtn:SetVisible(true)
+			workerText:SetVisible(true)
+			upgradeRangerBtn:SetVisible(true)
+			rangerText:SetVisible(true)
+		elseif uType == "Workers" then
+			suppliesButton:SetVisible(true)
+			suppliesText:SetVisible(true)
+		elseif uType == "Workers" then
+			patrolButton:SetVisible(true)
+			patrolText:SetVisible(true)
+		end
+	end
+	
+	selectText:SetText(text)
 end
 
 -- draw the menu
