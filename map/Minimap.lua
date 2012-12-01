@@ -102,7 +102,7 @@ function Minimap:draw()
 		end
 
 		-- draw humans
-		love.graphics.setColor(0,0,255)
+		love.graphics.setColor(153,217,234)
 		for i = 1, #human_list do
 			local hx = human_list[i].x / self.map.tileSize
 			local hy = human_list[i].y / self.map.tileSize
@@ -110,7 +110,7 @@ function Minimap:draw()
 		end
 
 		-- draw zombies
-		love.graphics.setColor(255,0,0)
+		love.graphics.setColor(252,16,81)
 		for i = 1, #zombie_list do
 			local zx = zombie_list[i].x / self.map.tileSize
 			local zy = zombie_list[i].y / self.map.tileSize
@@ -126,7 +126,7 @@ function Minimap:draw()
 		end
 		
 		-- draw workers
-		love.graphics.setColor(255,140,0)
+		love.graphics.setColor(255,242,0)
 		for i = 1, #worker_list do
 			local wx = worker_list[i].x / self.map.tileSize
 			local wy = worker_list[i].y / self.map.tileSize
