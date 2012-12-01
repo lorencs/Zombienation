@@ -307,3 +307,4 @@ function UnitManager:moveTo(xo,yo)
 	--]]
 end
 
+function UnitManager:convertUnit()
