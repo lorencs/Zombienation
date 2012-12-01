@@ -124,6 +124,14 @@ function Minimap:draw()
 			local ry = ranger_list[i].y / self.map.tileSize
 			love.graphics.rectangle("fill", self.x + rx, self.y + ry,2,2)
 		end
+		
+		-- draw workers
+		love.graphics.setColor(255,140,0)
+		for i = 1, #worker_list do
+			local wx = worker_list[i].x / self.map.tileSize
+			local wy = worker_list[i].y / self.map.tileSize
+			love.graphics.rectangle("fill", self.x + wx, self.y + wy,2,2)
+		end
 
 		-- draw view window
 		love.graphics.setColor(255,255,0)

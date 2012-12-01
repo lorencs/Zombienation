@@ -93,14 +93,14 @@ function love:load()
 	-- graphics setup	
 	width = love.graphics.getWidth()
 	height = love.graphics.getHeight()
-	menuWidth = 200
+	menuWidth = 115
 	viewWidth = width - menuWidth
 	
 	-- viewpoint
 	view = View:new(viewWidth, map)
 	
 	-- minimap
-	minimap = Minimap:new(map, view, unitManager, width - 150, height - map.height - 100, width, height)
+	minimap = Minimap:new(map, view, unitManager, width - menuWidth + 8, height - map.height - 65, width, height)
 	minimap:init()
 	map:setMinimap(minimap)
 		
@@ -213,7 +213,7 @@ function gameSTATE:update(dt)
 	-- map editing
 	
 	-- in building mode
-	if menu.buildingMode then
+	--[[if menu.buildingMode then
 		-- clicking, not on the side menu
 		if love.mouse.isDown("l") and love.mouse.getX() < viewWidth then
 			-- valid map position
@@ -222,8 +222,9 @@ function gameSTATE:update(dt)
 				map:newBuilding(xpos, ypos, menu.b_type)
 			end
 		end
-	elseif menu.debugMode then
-		if love.mouse.isDown("l") and (love.mouse.getX() < viewWidth)then
+	else]]--
+	if menu.debugMode then
+		if love.mouse.isDown("l") and (love.mouse.getX() < viewWidth) and  not minimap.moving then
 			if (xpos > -1) and (ypos > -1) and (xpos < map.width) and (ypos < map.height) then
 				--map.tiles[map:index(xpos,ypos)]:setId(drawTile)
 				map.tiles[xpos][ypos]:setId(drawTile);
@@ -260,7 +261,7 @@ function gameSTATE:draw()
 	map:draw() 		
 	
 	-- draw building placement rectangle
-	menu:buildingPlacement(map, view.x, view.y)
+	--menu:buildingPlacement(map, view.x, view.y)
 	
 	-- draw the units
 	unitManager:draw()
@@ -275,7 +276,7 @@ function gameSTATE:draw()
 	minimap:draw()
 	
 	-- drag selection
-	if (not(menu.debugMode) and not(menu.buildingMode) and dragSelect) then 
+	if (not(menu.debugMode) --[[and not(menu.buildingMode)]] and dragSelect) then 
 		love.graphics.setColor(50,50,50,50)
 		love.graphics.rectangle("fill", dragx, dragy, mx - dragx, my - dragy)
 		love.graphics.setColor(50,50,50,150)

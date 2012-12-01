@@ -22,13 +22,13 @@ function Menu:new(baseX, w, h)
 		lineColor = {0,0,100,100},
 		
 		debugMode = false,
-		buildingMode = false,
+		--buildingMode = false,
 		drawTile = nil,
-		b_type = nil,
+		--b_type = nil,
 		
 		mainMenu = {},
 		debugMenu = {},
-		buildingMenu = {},
+		--buildingMenu = {},
 		
 		visible = true
 	}	
@@ -41,7 +41,7 @@ end
 function Menu:setup()
 	self:setMainMenu()
 	self:setDebugMenu()
-	self:setBuildingMenu()
+	--self:setBuildingMenu()
 end
 
 -- set default menu buttons
@@ -79,14 +79,14 @@ end
 function Menu:setDebugMenu()
 	-- debug text
 	textDebug = loveframes.Create("text")
-	textDebug:SetPos(width-115, height - 27)
+	textDebug:SetPos(width-menuWidth + 31, height - 25)
 	textDebug:SetMaxWidth(100)
 	textDebug:SetText("Debug")
 	
 	-- button to select road tile draw
 	roadButton = loveframes.Create("imagebutton")
 	roadButton:SetSize(25, 25)
-	roadButton:SetPos(width-140, height-62)		
+	roadButton:SetPos(width-menuWidth + 8, height-58)		
 	roadButton:SetImage(love.graphics.newImage("gui/roadBtnSelect.png"))
 	roadButton:SetVisible(false)
 	roadButton.OnClick = function(object)
@@ -99,7 +99,7 @@ function Menu:setDebugMenu()
 	-- button to select water tile draw
 	waterButton = loveframes.Create("imagebutton")
 	waterButton:SetSize(25, 25)
-	waterButton:SetPos(width-114, height-62)		
+	waterButton:SetPos(width- menuWidth + 38, height-58)		
 	waterButton:SetImage(love.graphics.newImage("gui/waterBtn.png"))
 	waterButton:SetVisible(false)
 	waterButton.OnClick = function(object)
@@ -112,7 +112,7 @@ function Menu:setDebugMenu()
 	-- button to select ground tile draw
 	groundButton = loveframes.Create("imagebutton")
 	groundButton:SetSize(25, 25)
-	groundButton:SetPos(width-88, height-62)		
+	groundButton:SetPos(width- menuWidth + 68, height-58)		
 	groundButton:SetImage(love.graphics.newImage("gui/groundBtn.png"))
 	groundButton:SetVisible(false)
 	groundButton.OnClick = function(object)
@@ -123,7 +123,7 @@ function Menu:setDebugMenu()
 	end
 	
 	-- checkbox to activate building mode
-	local textBuilding = loveframes.Create("text")
+	--[[local textBuilding = loveframes.Create("text")
 	textBuilding:SetPos(width-115, height-87)
 	textBuilding:SetMaxWidth(100)
 	textBuilding:SetText("Building Mode")
@@ -132,31 +132,31 @@ function Menu:setDebugMenu()
 	checkBuilding:SetPos(width-140, height-87)
 	checkBuilding.OnChanged = function(object)
 		self.buildingMode = not(self.buildingMode)
-	end
+	end]]--
 			
 	table.insert(self.debugMenu, roadButton)
 	table.insert(self.debugMenu, waterButton)
 	table.insert(self.debugMenu, groundButton)
-	table.insert(self.debugMenu, textBuilding)
-	table.insert(self.debugMenu, checkBuilding)
+	--table.insert(self.debugMenu, textBuilding)
+	--table.insert(self.debugMenu, checkBuilding)
 		
 	-- checkbox to enable Debug
 	checkDebug = loveframes.Create("checkbox")
-	checkDebug:SetPos(width-140, height - 30)
+	checkDebug:SetPos(width- menuWidth + 8, height - 28)
 	checkDebug.OnChanged = function(object)
 		--[[DEBUG = not DEBUG
 		roadButton:SetVisible(not roadButton:GetVisible())
 		waterButton:SetVisible(not waterButton:GetVisible())
 		groundButton:SetVisible(not groundButton:GetVisible())--]]
 		self.debugMode = not(self.debugMode)
-		if self.buildingMode then
+		--[[if self.buildingMode then
 			self.buildingMode = false
 			checkBuilding.checked = false
-		end
+		end]]--
 	end	
 end
 
-function Menu:setBuildingMenu()
+--[[function Menu:setBuildingMenu()
 	-- b_type = 66
 	buttonB1 = loveframes.Create("imagebutton")
 	buttonB1:SetSize(25, 25)
@@ -303,8 +303,9 @@ function Menu:setBuildingMenu()
 	table.insert(self.buildingMenu, buttonB6)
 	table.insert(self.buildingMenu, textB6)
 end
+]]--
 
--- update menu
+--update menu
 function Menu:showHide(bool)
 	if bool then self.visible = not self.visible end
 	
@@ -314,9 +315,9 @@ function Menu:showHide(bool)
 	for _,v in pairs(self.debugMenu) do
 		v:SetVisible(self.visible)
 	end
-	for _,v in pairs(self.buildingMenu) do
+	--[[for _,v in pairs(self.buildingMenu) do
 		v:SetVisible(self.visible)
-	end
+	end]]--
 	
 	textDebug:SetVisible(self.visible)
 	checkDebug:SetVisible(self.visible)
@@ -345,9 +346,9 @@ function Menu:draw()
 		for _,v in pairs(self.debugMenu) do
 			v:SetVisible(self.debugMode)
 		end
-		for _,v in pairs(self.buildingMenu) do
+		--[[for _,v in pairs(self.buildingMenu) do
 			v:SetVisible(self.buildingMode)
-		end
+		end]]--
 
 
 		love.graphics.reset()
@@ -355,7 +356,7 @@ function Menu:draw()
 end
 
 -- building mode placement rectangle
-function Menu:buildingPlacement(map, viewX, viewY)
+--[[function Menu:buildingPlacement(map, viewX, viewY)
 	if self.buildingMode and not(self.b_type == nil) then
 		local t = map.tileSize
 		
@@ -387,7 +388,7 @@ function Menu:buildingPlacement(map, viewX, viewY)
 		love.graphics.setLineWidth(1)
 		love.graphics.rectangle("line", xRect, yRect, xw * t, yw * t)
 	end	
-end
+end]]--
 
 function Menu:delete()
 for _,v in pairs(self.mainMenu) do
@@ -396,9 +397,9 @@ for _,v in pairs(self.mainMenu) do
 	for _,v in pairs(self.debugMenu) do
 		v:Remove()
 	end
-	for _,v in pairs(self.buildingMenu) do
+	--[[for _,v in pairs(self.buildingMenu) do
 		v:Remove()
-	end
+	end]]--
 	
 	textDebug:Remove()
 	checkDebug:Remove()

@@ -40,7 +40,7 @@ function Worker:new(xnew,ynew)
 	controlled = false,
 	onCurrentTile = 0,
 	neighbourTiles = {},
-	animation = SpriteAnimation:new("Units/images/human1.png", 10, 8, 8, 1)
+	animation = SpriteAnimation:new("Units/images/worker1.png", 10, 8, 8, 1)
 	}
 
 	setmetatable(new_object, Worker_mt )				-- add the new_object to metatable of Human
@@ -167,8 +167,8 @@ function Worker:draw(i)
 		love.graphics.print(self.state, self.x, self.y + 15)
 	end
 		love.graphics.setColor(0,255,60, 150, 150)
-		love.graphics.rectangle( "fill", (22) * 54 , (30) * 54 , 54, 54 )
-		love.graphics.rectangle( "fill", (24) * 54 , (30) * 54 , 54, 54 )
+		--love.graphics.rectangle( "fill", (22) * 54 , (30) * 54 , 54, 54 )
+		--love.graphics.rectangle( "fill", (24) * 54 , (30) * 54 , 54, 54 )
 	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
 	playerColor = {0,0,255}
 	love.graphics.setColor(playerColor)
