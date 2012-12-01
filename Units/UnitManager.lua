@@ -245,7 +245,7 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 			workers_selected = workers_selected + 1
 		end
 	end
-	total_units_selected
+	
 end
 
 function UnitManager:deselectUnits()
@@ -291,6 +291,13 @@ function UnitManager:moveTo(xo,yo)
 	for i,v in pairs (human_list) do
 		if v.selected == true then
 			v:moveUnitTo(v.x,v.y,xo,yo)
+		end
+	end
+
+	for i,v in pairs (worker_list) do
+		if v.selected == true then
+			v:moveUnitTo(v.x,v.y,xo,yo)
+			v:sendToWork()
 		end
 	end
 	
@@ -339,13 +346,44 @@ function UnitManager:selectedType()
 	return total_units_selected, uType
 end
 
-function UnitManager:convertUnits(unit)
-	
-	for i = 1, number_of_humans do
-		if human_list[i].selected == true then
-			local angle = Unit:angleToXY(human_list[i].x,human_list[i].y, xo,yo)
-			human_list[i].targetAngle = angle
-			human_list[i].controlled = true
+function UnitManager:convertUnits(convType)
+	if (convType == "Worker") then
+		for i,v in pairs (human_list) do
+			if v.selected == true then
+				local dx = v.x
+				local dy = v.y
+				number_of_workers = number_of_workers + 1
+				newWorker = Worker:new(dx,dy)
+				table.insert(worker_list, newWorker)
+				worker_list[number_of_workers]:setupUnit()
+				worker_tag = worker_tag + 1
+				
+				table.remove(human_list, i)
+				number_of_humans = number_of_humans - 1
+			end
+		end
+	elseif (convType == "Ranger") then
+		for i,v in pairs (ranger_list) do
+			if v.selected == true then
+				local dx = v.x
+				local dy = v.y
+				number_of_rangers = number_of_rangers + 1
+				newRanger = Ranger:new(dx,dy)
+				table.insert(ranger_list, newRanger)
+				ranger_list[number_of_rangers]:setupUnit()
+				ranger_tag = ranger_tag + 1
+				
+				table.remove(human_list, i)
+				number_of_humans = number_of_humans - 1
+			end
+		end
+	end	
+end
+
+function UnitManager:sendWorkers()
+	for i,v in pairs (human_list) do
+		if v.selected == true then
+			v:sendToWork()
 		end
 	end
 end

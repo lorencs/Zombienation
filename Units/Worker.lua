@@ -35,7 +35,10 @@ function Worker:new(xnew,ynew)
 	v2 = Point:new(0,0),
 	v3 = Point:new(0,0),
 	selected = false,
-	--working = 0,
+	working = false,
+	tarXTile = -1,
+	tarYTile = -1,
+	workingTileCount = 0,
 	color = 0,
 	controlled = false,
 	onCurrentTile = 0,
@@ -166,6 +169,14 @@ function Worker:draw(i)
 		-- draw state of unit
 		love.graphics.print(self.state, self.x, self.y + 15)
 	end
+	local j = 0
+	if (self.path ~= nil) then
+		for i = #self.path, 1, -1 do
+			if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
+			love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
+			j = j + 1
+		end
+	end
 		love.graphics.setColor(0,255,60, 150, 150)
 		--love.graphics.rectangle( "fill", (22) * 54 , (30) * 54 , 54, 54 )
 		--love.graphics.rectangle( "fill", (24) * 54 , (30) * 54 , 54, 54 )
@@ -177,7 +188,9 @@ function Worker:draw(i)
 	
 	-- print tag to screen.. for debug !
 	love.graphics.print(self.tag, self.x, self.y + 10)
-
+	love.graphics.print(self.x, self.x, self.y + 20)
+	love.graphics.print(self.y, self.x, self.y + 30)
+	
 	--draw sprite
 	love.graphics.reset()
 	self.animation:draw(self.cx,self.cy)
@@ -220,6 +233,7 @@ end
 			if val == true then										-- if zombie i is in the field of view of this human
 				self.state = "Running from  ".. zombie_list[i].tag
 				self.panicMode = true
+				self.working = false
 				self:runAwayFrom(zombie_list[i].x, zombie_list[i].y)
 
 				-- reset angles if they go over 360 or if they go under 0
@@ -247,23 +261,23 @@ function Worker:update(dt, zi, paused)
 	
 	-- updating neighbours
 	self:updateNeighbours(self)
-	
-	if self.panicMode == false then
-	------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS.. unless it's controlled by penguins !
-		-- after 5 seconds, the zombie should change his direction (x and y)
-		if self.directionTimer > 5 then 
-		
-			-- randomize a degree, 0 to 360
-			self.targetAngle = math.random(360)
+	if self.working == false then			-- don't randomize if the worker is working !
+		if self.panicMode == false then
+		------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS.. unless it's controlled by penguins !
+			-- after 5 seconds, the zombie should change his direction (x and y)
+			if self.directionTimer > 5 then 
 			
-			-- get the angle direction ( positive or negative on axis )
-			self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
-			
-			-- reset directionTimer
-			self.directionTimer = 0						
+				-- randomize a degree, 0 to 360
+				self.targetAngle = math.random(360)
+				
+				-- get the angle direction ( positive or negative on axis )
+				self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+				
+				-- reset directionTimer
+				self.directionTimer = 0						
+			end
 		end
 	end
-	
 	------------------------------- PANIC MODE
 	-- look around for zombies
 	if self.searchTimer > self.searchFreq then
@@ -288,8 +302,6 @@ function Worker:update(dt, zi, paused)
 	else
 		self.speed = self.normalSpeed
 		self.state = "worker !"
-		
-		
 	end
 	
 	------------------------------- UPDATE SELF.ANGLE
@@ -303,6 +315,25 @@ function Worker:update(dt, zi, paused)
 		if self.angle < 0 then
 			self.angle = 360 + self.angle
 		end
+		
+		if self.working == true then
+			print("UPDATE: x:".. math.floor(self.x / map.tileSize).. ",y:"..math.floor(self.y / map.tileSize))
+			if (self.tarXTile == math.floor(self.x / map.tileSize)) and (self.tarYTile == math.floor(self.y / map.tileSize)) then
+				if (#self.path == self.workingTileCount) then
+					print("AT STORE !")
+					self.working = false
+				else
+					self.tarXTile = self.path[#self.path - self.workingTileCount].x 
+					self.tarYTile = self.path[#self.path - self.workingTileCount].y
+					self.workingTileCount = self.workingTileCount + 1
+					self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
+					self.angle = self.targetAngle
+					self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+				end
+			end
+			
+		end
+		
 	else
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
 		if self.dirVec == 0 then				-- positive direction	( opposite of conventional as y increases downwards )
@@ -338,46 +369,48 @@ function Worker:update(dt, zi, paused)
 	-- get direction vector
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	
-	-- checking the tile that the unit is or will be on
-	local next_x = self.cx + (self.radius * self:signOf(self.dirVector.x)) + (dt * self.dirVector.x)
-	local next_y = self.cy + (self.radius * self:signOf(self.dirVector.y)) + (dt * self.dirVector.y)
+	if self.working == false then
+		-- checking the tile that the unit is or will be on
+		local next_x = self.cx + (self.radius * self:signOf(self.dirVector.x)) + (dt * self.dirVector.x)
+		local next_y = self.cy + (self.radius * self:signOf(self.dirVector.y)) + (dt * self.dirVector.y)
+		
+		-- determine the direction of the tile the unit will most likely next collide with
+		local dx = math.floor(next_x/map.tileSize) - math.floor(self.cx/map.tileSize)
+		local dy = math.floor(next_y/map.tileSize) - math.floor(self.cy/map.tileSize)
+		local nextTileDir = ""
+		
+		if 	   (dx == 0) and (dy == -1) then 	nextTileDir = "N"
+		elseif (dx == 1) and (dy == -1) then 	nextTileDir = "NE"
+		elseif (dx == 1) and (dy == 0) then 	nextTileDir = "E"
+		elseif (dx == 1) and (dy == 1) then 	nextTileDir = "SE"
+		elseif (dx == 0) and (dy == 1) then 	nextTileDir = "S"
+		elseif (dx == -1) and (dy == 1) then 	nextTileDir = "SW"
+		elseif (dx == -1) and (dy == 0) then 	nextTileDir = "W"
+		elseif (dx == -1) and (dy == -1) then 	nextTileDir = "NW" end
+		
+		------------------------------- CHECK MAP BOUNDARIES ( # 1 )
+		if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
+			self.state = "WTF"
+			self.directionTimer = self.directionTimer + 5
+			return
+		end	
+		
+		local nextTileType = self:xyToTileType(next_x,next_y)
+		-- check next tile (not in panic mode)
+		if  not (nextTileType == "G" or nextTileType == "R") then
+			self.directionTimer = self.directionTimer + dt
+			--self.state = "STUCK !"
+			self:avoidTile2(self, nextTileDir)
+			return
+		end
 	
-	-- determine the direction of the tile the unit will most likely next collide with
-	local dx = math.floor(next_x/map.tileSize) - math.floor(self.cx/map.tileSize)
-	local dy = math.floor(next_y/map.tileSize) - math.floor(self.cy/map.tileSize)
-	local nextTileDir = ""
-	
-	if 	   (dx == 0) and (dy == -1) then 	nextTileDir = "N"
-	elseif (dx == 1) and (dy == -1) then 	nextTileDir = "NE"
-	elseif (dx == 1) and (dy == 0) then 	nextTileDir = "E"
-	elseif (dx == 1) and (dy == 1) then 	nextTileDir = "SE"
-	elseif (dx == 0) and (dy == 1) then 	nextTileDir = "S"
-	elseif (dx == -1) and (dy == 1) then 	nextTileDir = "SW"
-	elseif (dx == -1) and (dy == 0) then 	nextTileDir = "W"
-	elseif (dx == -1) and (dy == -1) then 	nextTileDir = "NW" end
-	
-	------------------------------- CHECK MAP BOUNDARIES ( # 1 )
-	if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
-		self.state = "WTF"
-		self.directionTimer = self.directionTimer + 5
-		return
-	end	
-	
-	local nextTileType = self:xyToTileType(next_x,next_y)
-	-- check next tile (not in panic mode)
-	if  not (nextTileType == "G" or nextTileType == "R") then
-		self.directionTimer = self.directionTimer + dt
-		--self.state = "STUCK !"
-		self:avoidTile2(self, nextTileDir)
-		return
-	end
-	
-	------------------------------- CHECK MAP BOUNDARIES ( # 2 )						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE																														-- ** IN THE OTHER DIRECTION !
-	local val = self:checkMapBoundaries(next_x,next_y, self.radius)											
-	if val ~= 999 then			-- if it is too close to a boundary..
-		self.angle = val
-		self.targetAngle = val
-		--return
+		------------------------------- CHECK MAP BOUNDARIES ( # 2 )						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE																														-- ** IN THE OTHER DIRECTION !
+		local val = self:checkMapBoundaries(next_x,next_y, self.radius)											
+		if val ~= 999 then			-- if it is too close to a boundary..
+			self.angle = val
+			self.targetAngle = val
+			--return
+		end
 	end
 	
 	-- update worker's movement
@@ -395,3 +428,42 @@ function Worker:update(dt, zi, paused)
 	self.animation:rotate(self.angle)
 	self.animation:update(dt)
  end
+ 
+function Worker:sendToWork()
+	self.working = true
+	print("==========")
+	print("path count:".. (#self.path))
+	--print()
+	self.workingTileCount = 0
+	self.tarXTile = self.path[#self.path - self.workingTileCount].x 
+	self.tarYTile = self.path[#self.path - self.workingTileCount].y
+	self.workingTileCount = self.workingTileCount + 1
+	self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
+	self.angle = self.targetAngle
+	self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+	--print("map tile size:".. map.tileSize)
+	print("target x:"..self.path[#self.path].x* map.tileSize ..",y:"..self.path[#self.path].y* map.tileSize..", i:"..#self.path)
+	print("tar x:".. self.tarXTile..", y:"..self.tarYTile)
+	--table.remove(self.path, #self.path)
+	
+	-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
+	
+		-- get direction vector
+	--[[print("x max:".. self.path[#self.path].x)
+	if (self.path ~= nil) then
+		for i = #self.path, 1, -1 do
+			print("x:".. self.path[i].x..",y:"..self.path[i].y)
+		end
+	end
+	--]]
+	-- get angle from this worker's position to the resources
+	--self.targetAngle = self:angleToXY(self.x,self.y,human_list[h_index].x,human_list[h_index].y)
+	--[[
+	if (self.path ~= nil) then
+		for i = #self.path, 1, -1 do
+			if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
+			love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
+			j = j + 1
+		end
+	end]]
+end

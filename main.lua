@@ -43,9 +43,9 @@ require "Units/shortestPath/Astar"
 -- game settings
 gold = 0
 orig_number_of_zombies = 1			-- zombies are red
-orig_number_of_humans = 150			-- humans are blue
+orig_number_of_humans = 10			-- humans are blue
 orig_number_of_rangers = 1			-- i thought this was a poem
-orig_number_of_workers = 1		-- i wish it was too
+orig_number_of_workers = 150		-- i wish it was too
 
 -- gamestate
 Gamestate = require "utils/gamestate"
