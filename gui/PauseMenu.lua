@@ -22,6 +22,7 @@ function PauseMenu:setup()
 	bRG = love.graphics.newImage("gui/resume.png")
 	bOpt = love.graphics.newImage("gui/options.png")
 	bQt = love.graphics.newImage("gui/quit.png")
+	bR = love.graphics.newImage("gui/restart.png")
 	
 	-- create buttons
 	buttonResumeGame = loveframes.Create("imagebutton")
@@ -45,8 +46,19 @@ function PauseMenu:setup()
 	end
 	
 	-- create buttons
+	buttonRestart = loveframes.Create("imagebutton")
+	buttonRestart:SetPos(self.x, self.y + 70)
+	buttonRestart:SetImage(bR)
+	buttonRestart:SizeToImage() 
+	buttonRestart:SetVisible(false)
+	buttonRestart.OnClick = function(object)
+		gameSTATE:pauseResume()
+		Gamestate.switch(gameSTATE)
+	end
+	
+	-- create buttons
 	buttonQuit = loveframes.Create("imagebutton")
-	buttonQuit:SetPos(self.x, self.y + 70)
+	buttonQuit:SetPos(self.x, self.y + 105)
 	buttonQuit:SetImage(bQt)
 	buttonQuit:SizeToImage() 
 	buttonQuit:SetVisible(false)
@@ -62,6 +74,7 @@ function PauseMenu:showHide()
 	buttonResumeGame:SetVisible(not buttonResumeGame:GetVisible())
 	buttonOptions:SetVisible(not buttonOptions:GetVisible())
 	buttonQuit:SetVisible(not buttonQuit:GetVisible())
+	buttonRestart:SetVisible(not buttonRestart:GetVisible())
 end
 
 function PauseMenu:draw()
@@ -76,4 +89,5 @@ function PauseMenu: delete()
 	buttonResumeGame:Remove()
 	buttonOptions:Remove()
 	buttonQuit:Remove()
+	buttonRestart:Remove()
 end

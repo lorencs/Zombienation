@@ -43,7 +43,7 @@ require "Units/shortestPath/Astar"
 -- game settings
 resources = 0
 
-orig_number_of_zombies = 3			-- zombies are red
+orig_number_of_zombies = 60			-- zombies are red
 orig_number_of_humans = 25			-- humans are blue
 orig_number_of_rangers = 2			-- i thought this was a poem
 orig_number_of_workers = 25		-- i wish it was too
@@ -320,7 +320,7 @@ end
 
 -- callback functions needed by loveframes, we can use them too
 function gameSTATE:mousepressed(x, y, button)
-	if (y < viewHeight) and not menu.debugMode then
+	if (y < viewHeight) and not menu.debugMode and not paused then
 		--unitManager:deselectUnits()
 		if (button == "l") then	
 			if selectPatrol then
