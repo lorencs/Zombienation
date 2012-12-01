@@ -76,8 +76,8 @@ function love:load()
 	--generator:defaultMap()
 	difficulty = 1
 	--generator:randomMap()
-	generator:newMap(75,75)
-	--generator:randomMap(difficulty)
+	--generator:newMap(75,75)
+	generator:randomMap(difficulty)
 	--generator:newMap(75,75)
 
 

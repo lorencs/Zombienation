@@ -113,6 +113,7 @@ function District:createSectors(map)
 		local avgDepth = math.floor(sum / count)
 
 		v.sectorType = self:getTypeFromDepth(avgDepth)
+		v.depthValue = math.floor((avgDepth / 20) % 5)
 	end
 	--
 end
@@ -122,7 +123,7 @@ function District:getTypeFromDepth(depth)
 	local numTypes = 5
 	local depthDivisor = 100 / numTypes
 	
-	local val = (depth / depthDivisor) % numTypes
+	local val = math.floor((depth / depthDivisor) % numTypes)
 	
 	-- val frequency order ~= { 2, 3, 1, 4, 0 }
 	

@@ -69,6 +69,9 @@ function MapGen:randomMap()
 	-- roads
 	print("--dividing city")
 	self:divideCity()	
+	-- buildings
+	print("--placing buildings")
+	self:generateBuildings()
 	
 	print("--updating tile info")
 	-- update tiles
@@ -151,13 +154,19 @@ end
 function MapGen:thinRoads(size)
 	-- find and remove connected components
 	smallRoads = self:findConnectedComponents(0, size, "R")
-	self:removeComponents(smallRoads, "G")		
+	self:removeComponents(smallRoads, "G")	
+	
+	-- remove dead ends
+	while self:removeTiles("R", "R", "G", 2, 4, false) > 0 do end
+	
 end
 
 -- set neighbors (neighborType) of tile (tileType) to resetValue 
 -- if not(minN < #neighbors < maxN)
+--  return number of tiles reset
 function MapGen:removeTiles(tileType, neighborType, resetValue, minN, maxN, eight)
 	local m = self.map 
+	local retVal = 0
 	
 	for x=0,m.width-1 do
 		for y=0,m.height-1 do
@@ -194,10 +203,13 @@ function MapGen:removeTiles(tileType, neighborType, resetValue, minN, maxN, eigh
 				
 				if count < minN or count > maxN then
 					m.tiles[x][y]:setId(resetValue)
+					retVal = retVal + 1
 				end
 			end
 		end
 	end
+	
+	return retVal
 end
 
 function MapGen:findConnectedComponents(minSize, maxSize, tileType)
@@ -330,25 +342,15 @@ function MapGen:generateWater(w, h, p)
 end
 
 -- place random buildings
-function MapGen:generateBuildings(difficulty)
-	-- place halls
-	print("---halls")
-	self:placeBuildings(500, 1000, 66, true)
-	-- place arenas
-	print("---arenas")
-	self:placeBuildings(200, 500, 43, true)
-	-- place barns
-	print("---barns")
-	self:placeBuildings(100, 250, 34, true)
-	-- place garages
-	print("---garages")
-	self:placeBuildings(50, 100, 64, false)
-	-- place scrapers
-	print("---scrapers")
-	self:placeBuildings(30, 60, 35, true)
-	-- place houses
-	print("---houses")
-	self:placeBuildings(0, 20, 33, true)
+function MapGen:generateBuildings()
+	local m = self.map
+	
+	for i,d in pairs(m.districts) do
+		for j,s in pairs(d.sectors) do
+			--print("District "..i..", Sector "..j.."["..s.depthValue.."]: "..s.sectorType)
+			s:placeBuildings(m)
+		end
+	end
 end
 
 function MapGen:placeBuildings(minSize, maxSize, b_type, middle)

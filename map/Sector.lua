@@ -7,7 +7,8 @@ function Sector:new(xa, ya, xb, yb, d)
 		x2 = xb,
 		y2 = yb,
 		sectorType = nil,
-		divide = d		-- orientation of bisector
+		divide = d,		-- orientation of bisector
+		depthValue = nil
 	}
 	setmetatable(object, { __index = Sector })
 	return object
@@ -88,6 +89,35 @@ function Sector:split()
 	end
 	
 	return a,b
+end
+
+-- semi-randomness
+function Sector:placeBuildings(map)
+	if self.sectorType == "residential" then
+		if map.tiles[self.x1+1][self.y1]:getId() == "R" or
+			map.tiles[self.x1][self.y1+1]:getId() == "R" then
+						
+			map:newBuilding(self.x1+1, self.y1+1, 11)
+			local r = math.random()
+			local nx = self.x1 + 2*math.floor(self:xd() / 3)
+			if r < .25 and map.tiles[nx][self.y1+1]:getId() == "G"then
+				map:newBuilding(nx, self.y1+1, 21)
+				
+				local nx = self.x1 + math.floor(self:xd() / 2)
+				if r > 0.1 and 
+					map.tiles[nx][self.y2]:getId() == "R" then
+					
+					map:newBuilding(nx+1, self.y2-1, 21)
+				end
+			elseif r > .75 then
+				map:newBuilding(self.x1+1, self.y1+3, 21)
+				if r < 0.9 and self:yd() > 3 and map.tiles[self.x2][self.y2-3]:getId() == "R" then
+					map:newBuilding(self.x2-1, self.y2-3, 11)
+				end
+			end
+		end
+		
+	end
 end
 
 function outputSectors(sectors)
