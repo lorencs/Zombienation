@@ -39,7 +39,8 @@ function Zombie:new(x_new, y_new)
 	fov_angle = 90,
 	fovStartAngle = 0,
 	fovEndAngle = 0,
-	fol_human = 0,									-- index of the human in human_list that this zombie will follow. if it's 0, then this zombie
+	followingTag = 0,									-- index of the human in human_list that this zombie will follow. if it's 0, then this zombie
+	followingType = "None",
 	selected = false,
 	v1 = Point:new(0,0),							-- vertices for the field of view triangle
 	v2 = Point:new(0,0),
@@ -184,7 +185,7 @@ function Zombie:update(dt, zi, paused)
 	-- if game is paused, do not update any values
 	if paused == true then return end
 	
-	if self.fol_human ~= 0 then			-- if zombie is following a human				
+	if self.followingTag ~= 0 then			-- if zombie is following a human				
 		self:follow_human(dt)			-- zombie is following a human
 		return							-- no need to update anything else here so return
 	else
@@ -288,65 +289,142 @@ function Zombie:update(dt, zi, paused)
  
  function Zombie:lookAround(zi)
  
-	-- fol_human stores the tag of the human to be followed ( if any )
+	-- followingTag stores the tag of the human to be followed ( if any )
 	for i = 1, number_of_humans do
 	
-		if (self.v1.x ~= 0) then									-- initially, v1.x is 0 as it has not been set so this is an exception case.
+		--if (self.v1.x ~= 0) then									-- initially, v1.x is 0 as it has not been set so this is an exception case.
 			
 			local human_point = Point:new(human_list[i].cx, human_list[i].cy)
 			--local val = self:pTriangle(human_point, self.v1, self.v2, self.v3)						-- detect humans in a triangle
 			local val = self:pointInArc(self.x, self.y, human_point.x, human_point.y, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
 			if val == true then										-- if human i is in the field of view of the zombie
-				self.fol_human = human_list[i].tag
-				self.state = "Chasing ".. self.fol_human	
+				self.followingTag = human_list[i].tag
+				self.followingType = "Human"
+				self.state = "Chasing ".. self.followingTag	
 				human_list[i].color = 1
 			end
-		end
+		--end
 		
 		-- zombie found a human to chase; break out of loop
-		if self.fol_human ~= 0 then break end
+		if self.followingTag ~= 0 then break end
 	end
+	
+	
+	-- followingTag stores the tag of the human to be followed ( if any )
+	for i,v in pairs (ranger_list) do
+	
+		--if (self.v1.x ~= 0) then									-- initially, v1.x is 0 as it has not been set so this is an exception case.
+			
+			local ranger_point = Point:new(v.cx, v.cy)
+			local val = self:pointInArc(self.x, self.y, ranger_point.x, ranger_point.y, 
+										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
+			if val == true then										-- if human i is in the field of view of the zombie
+				self.followingTag = ranger_list[i].tag
+				self.followingType = "Ranger"
+				self.state = "Chasing ".. self.followingTag
+			end
+		--end
+		
+		-- zombie found a human to chase; break out of loop
+		if self.followingTag ~= 0 then break end
+	end
+	
+	-- followingTag stores the tag of the worker to be followed ( if any )
+	for i,v in pairs (worker_list) do
+	
+		--if (self.v1.x ~= 0) then									-- initially, v1.x is 0 as it has not been set so this is an exception case.
+			
+			local worker_point = Point:new(v.cx, v.cy)
+			local val = self:pointInArc(self.x, self.y, worker_point.x, worker_point.y, 
+										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
+			if val == true then										-- if human i is in the field of view of the zombie
+				self.followingTag = worker_list[i].tag
+				self.followingType = "Worker"
+				self.state = "Chasing ".. self.followingTag
+			end
+		--end
+		
+		-- zombie found a human to chase; break out of loop
+		if self.followingTag ~= 0 then break end
+	end
+	
+	
  end
  
  function Zombie:follow_human(dt)
-
-	-- find the index (in the 'human_list' array) of the human followed 
-	local h_index = 0
-	for i = 1, number_of_humans do
-		if human_list[i].tag == self.fol_human then
-			h_index = i
-		end
-	end
 	
-	-- if zombie is 'same_location' distance away from unit.. it is attacking the unit !
-	local same_location = 2
+	local h_index = 0
+	local dist = 999
+	if self.followingType == "Human" then
+		-- find the index (in the 'human_list' array) of the human followed 
+		for i = 1, number_of_humans do
+			if human_list[i].tag == self.followingTag then
+				h_index = i
+			end
+		end
+		------------------------------- CALCULATE DISTANCE BETWEEN ZOMBIE AND THE HUMAN IT IS FOLLOWING
+		dist = self:distanceBetweenPoints(self.cx,self.cy,human_list[h_index].cx, human_list[h_index].cy)
+		
+	elseif self.followingType == "Ranger" then
+		for i = 1, number_of_rangers do
+			if ranger_list[i].tag == self.followingTag then
+				h_index = i
+			end
+		end
+		------------------------------- CALCULATE DISTANCE BETWEEN ZOMBIE AND THE RANGER IT IS FOLLOWING
+		dist = self:distanceBetweenPoints(self.cx,self.cy,ranger_list[h_index].cx, ranger_list[h_index].cy)
+	elseif self.followingType == "Worker" then
+		for i = 1, number_of_workers do
+			if worker_list[i].tag == self.followingTag then
+				h_index = i
+			end
+		end
+		------------------------------- CALCULATE DISTANCE BETWEEN ZOMBIE AND THE WORKER IT IS FOLLOWING
+		dist = self:distanceBetweenPoints(self.cx,self.cy,worker_list[h_index].cx, worker_list[h_index].cy)
+	end
 
-	------------------------------- CALCULATE DISTANCE BETWEEN ZOMBIE AND THE HUMAN IT IS FOLLOWING
-	local dist = self:distanceBetweenPoints(self.cx,self.cy,human_list[h_index].cx, human_list[h_index].cy)
+
 	
 	-- if its very close, zombie eats human
 	if dist < (self.radius * 2 + 7) then
 	   
-	   -- set human's attacked state to 1
-		human_list[h_index].attacked = 1
-		
-		if (self.time_kill > 2) then									-- unit with index 'fol_human' should be dead by now !
-			local deadx = human_list[h_index].x
-			local deady = human_list[h_index].y
-			table.remove(human_list, h_index)							-- remove human from human_list array
-			number_of_humans = number_of_humans - 1						-- decrease count of humans alive
+	   -- set followed unit's attacked state to 1
+	   if self.followingType == "Human" then human_list[h_index].attacked = 1
+	   elseif self.followingType == "Ranger" then ranger_list[h_index].attacked = 1
+	   elseif self.followingType == "Worker" then worker_list[h_index].attacked = 1 end
+	   
+		if (self.time_kill > 2) then									-- unit with index 'followingTag' should be dead by now !
+			local deadx = 99
+			local deady = 99
+			if self.followingType == "Human" then 
+				deadx = human_list[h_index].x
+				deady = human_list[h_index].y
+				table.remove(human_list, h_index)							-- remove human from human_list array
+				number_of_humans = number_of_humans - 1						-- decrease count of humans alive
+			elseif self.followingType == "Ranger" then 
+				deadx = ranger_list[h_index].x
+				deady = ranger_list[h_index].y
+				table.remove(ranger_list, h_index)							-- remove human from human_list array
+				number_of_rangers = number_of_rangers - 1						-- decrease count of humans alive
+			elseif self.followingType == "Worker" then 
+				deadx = worker_list[h_index].x
+				deady = worker_list[h_index].y
+				table.remove(worker_list, h_index)							-- remove human from human_list array
+				number_of_workers = number_of_workers - 1						-- decrease count of humans alive
+			end
 			
 			number_of_zombies = number_of_zombies + 1					-- increase count of zombies alive
 			zombie_list[number_of_zombies] = Zombie:new(deadx, deady)	-- create new zombie at the location of this zombie
 			zombie_list[number_of_zombies]:setupUnit()					-- setup zombie
 			
-			-- tell all zombies that human with tag 'self.fol_human' is dead
-			self:tellZombies(self.fol_human)		
+			-- tell all zombies that human with tag 'self.followingTag' is dead
+			self:tellZombies(self.followingTag)		
 			
 			-- reset timer for time to kill a unit
 			self.time_kill = 0										
-			self.fol_human = 0				-- reset fol_human as the zombie is not following any units anymore
+			self.followingTag = 0				-- reset followingTag as the zombie is not following any units anymore
+			self.followingType = "None"
 			self.state = "Looking around"
 			return
 		end
@@ -354,7 +432,7 @@ function Zombie:update(dt, zi, paused)
 		self.time_kill = self.time_kill + dt
 		return								-- no need to follow the human unit anymore
 	elseif	dist > 120 then					-- if zombie is too far, abandon the follow
-		self.fol_human = 0					-- unset follow
+		self.followingTag = 0					-- unset follow
 		self.state = "Looking around"
 		human_list[h_index].panicMode = false		-- the human is not in panicMode anymore as it is not being followed anymore
 	end
@@ -362,8 +440,14 @@ function Zombie:update(dt, zi, paused)
 	
 	------------------------------- FOLLOWING THE HUMAN
 	
-	-- get angle from this zombie's position to the human's position
-	self.targetAngle = self:angleToXY(self.x,self.y,human_list[h_index].x,human_list[h_index].y)
+	-- get angle from this zombie's position to the followed unit's position
+	if self.followingType == "Human" then
+		self.targetAngle = self:angleToXY(self.x,self.y,human_list[h_index].x,human_list[h_index].y)
+	elseif self.followingType == "Ranger" then
+		self.targetAngle = self:angleToXY(self.x,self.y,ranger_list[h_index].x,ranger_list[h_index].y)
+	elseif self.followingType == "Worker" then
+		self.targetAngle = self:angleToXY(self.x,self.y,worker_list[h_index].x,worker_list[h_index].y)
+	end
 	
 	-- check map boundaries
 	local val = self:checkMapBoundaries(self.x,self.y, self.radius)
@@ -419,11 +503,11 @@ function Zombie:update(dt, zi, paused)
  end
  
  -- alerting all zombies that human with tag 'human_tag' is dead
- function Zombie:tellZombies(human_tag)
-	-- if zombie i is following human with index fol_human, it should stop as that human is dead
+ function Zombie:tellZombies(unit_tag)
+	-- if zombie i is following human with index followingTag, it should stop as that human is dead
 	for i = 1, number_of_zombies do
-		if zombie_list[i].fol_human == human_tag then		
-			zombie_list[i].fol_human = 0
+		if zombie_list[i].followingTag == unit_tag then		
+			zombie_list[i].followingTag = 0
 			zombie_list[i].time_kill = 0
 			zombie_list[i].state = "Looking around"
 		end
@@ -437,7 +521,7 @@ function Zombie:die()
 	-- just saved a reference to the human you're following as a self var like i did with rangers
 	local h_index = -1
 	for i = 1, number_of_humans do
-		if human_list[i].tag == self.fol_human then
+		if human_list[i].tag == self.followingTag then
 			h_index = i
 			break
 		end

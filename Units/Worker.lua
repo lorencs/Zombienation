@@ -317,6 +317,12 @@ function Worker:update(dt, zi, paused)
 			self.angle = 360 + self.angle
 		end
 		
+		if self.turnFast == true then
+			print("turn fast is TRUE")
+		else
+			print("turn fast is FALSE")
+		end
+		
 		if self.working == true then
 			print("UPDATE: x:".. math.floor(self.x / map.tileSize).. ",y:"..math.floor(self.y / map.tileSize))
 			if (self.tarXTile == math.floor(self.x / map.tileSize)) and (self.tarYTile == math.floor(self.y / map.tileSize)) then
