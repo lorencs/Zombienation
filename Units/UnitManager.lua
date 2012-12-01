@@ -307,4 +307,13 @@ function UnitManager:moveTo(xo,yo)
 	--]]
 end
 
-function UnitManager:convertUnit()
+function UnitManager:convertUnit(unit)
+	for i = 1, number_of_humans do
+		if human_list[i].selected == true then
+			local angle = Unit:angleToXY(human_list[i].x,human_list[i].y, xo,yo)
+			human_list[i].targetAngle = angle
+			human_list[i].controlled = true
+		end
+	end
+end
+
