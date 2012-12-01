@@ -94,6 +94,7 @@ function Astar:findPath(startX, startY, endX, endY)
 			for xx = -1, 1 do
 				local newX = currentX + xx
 				if not ((yy == 0) and (xx == 0)) then
+				--if (not ((xx == 1) and (yy == 1))) and (not (xx == 0) and (yy == 0)) then
 					-- checking bounds:
 					if (newX>=0) and (newY>=0) and (newX < map.width) and (newY < map.height) then
 						-- if node isn't in open list
@@ -104,15 +105,17 @@ function Astar:findPath(startX, startY, endX, endY)
 							if self.closedVec[newX][newY] ~= self.gc then
 							--print("newX:"..newX..",newY:"..newY)
 								if (map.tiles[newX][newY].id == "G") or (map.tiles[newX][newY].id == "R") then
-									local aNode = Node:new()
-									aNode.nodeX = newX
-									aNode.nodeY = newY
-									aNode.parentNode = currentNode
-									aNode.cost = currentNode.cost + 1
-									aNode.cost = aNode.cost + math.abs(newX - endX) + math.abs(newY - endY)
-									--table.insert(openList, aNode)
-									openList:push(aNode, aNode.cost)
-									self.openVec[newX][newY] = self.gc
+									if not ((xx ~= 0) and (yy ~= 0)) then	-- check for diagonal movement and don't allow it !
+										local aNode = Node:new()
+										aNode.nodeX = newX
+										aNode.nodeY = newY
+										aNode.parentNode = currentNode
+										aNode.cost = currentNode.cost + 1
+										aNode.cost = aNode.cost + math.abs(newX - endX) + math.abs(newY - endY)
+										--table.insert(openList, aNode)
+										openList:push(aNode, aNode.cost)
+										self.openVec[newX][newY] = self.gc
+									end
 								end
 							end
 						end
