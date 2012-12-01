@@ -18,8 +18,8 @@ function Menu:new(baseX, w, h)
 		buttonWidth = 100,
 		buttonHeight = 30,
 		
-		backColor = {20,20,20,100},
-		lineColor = {0,0,100,100},
+		background = love.graphics.newImage("gui/gamemenubg.png"),
+		lineColor = {0,0,0,100},
 		
 		debugMode = false,
 		--buildingMode = false,
@@ -51,27 +51,10 @@ function Menu:setMainMenu()
 	local xn = self.xs
 	local yn = self.ys + bh
 
-	-- gold coins
-	
-	-- create buttons ----dont need these anymore, theyre in the esc (pause) menu
-	--[[buttonNewGame = loveframes.Create("imagebutton")
-	buttonNewGame:SetSize(self.width, bh)
-	buttonNewGame:SetPos(xn, yn)
-	buttonNewGame:SetImage(love.graphics.newImage("gui/restartgame.png"))
-	buttonNewGame.OnClick = function(object)
-		Gamestate.switch(gameSTATE)
-	end
-	
-	-- create buttons
-	buttonPause = loveframes.Create("imagebutton")
-	buttonPause:SetSize(self.width, bh)
-	buttonPause:SetPos(xn, yn + 35)
-	buttonPause:SetImage(love.graphics.newImage("gui/pausegame.png"))
-	buttonPause.OnClick = function(object)
-		game:pauseResume()
-	end
-	
-	table.insert(self.mainMenu, buttonNewGame)]]--
+	-- selection text
+	selectText = loveframes.Create("text")
+	selectText:SetPos(91, height - menuWidth + 15)
+	selectText:SetText({{0,0,0,150}, "No units selected"})
 end
 
 
@@ -79,14 +62,21 @@ end
 function Menu:setDebugMenu()
 	-- debug text
 	textDebug = loveframes.Create("text")
-	textDebug:SetPos(width-menuWidth + 31, height - 25)
+	textDebug:SetPos(0 + 31, height - menuWidth + 15)
 	textDebug:SetMaxWidth(100)
 	textDebug:SetText("Debug")
+	
+	-- select text
+	selectDebug = loveframes.Create("text")
+	selectDebug:SetPos(0 + 11, height - menuWidth + 31)
+	selectDebug:SetMaxWidth(100)
+	selectDebug:SetText("Select Tile")
+	selectDebug:SetVisible(false)
 	
 	-- button to select road tile draw
 	roadButton = loveframes.Create("imagebutton")
 	roadButton:SetSize(25, 25)
-	roadButton:SetPos(width-menuWidth + 8, height-58)		
+	roadButton:SetPos(15, height-69)		
 	roadButton:SetImage(love.graphics.newImage("gui/roadBtnSelect.png"))
 	roadButton:SetVisible(false)
 	roadButton.OnClick = function(object)
@@ -99,7 +89,7 @@ function Menu:setDebugMenu()
 	-- button to select water tile draw
 	waterButton = loveframes.Create("imagebutton")
 	waterButton:SetSize(25, 25)
-	waterButton:SetPos(width- menuWidth + 38, height-58)		
+	waterButton:SetPos(45, height-69)		
 	waterButton:SetImage(love.graphics.newImage("gui/waterBtn.png"))
 	waterButton:SetVisible(false)
 	waterButton.OnClick = function(object)
@@ -112,7 +102,7 @@ function Menu:setDebugMenu()
 	-- button to select ground tile draw
 	groundButton = loveframes.Create("imagebutton")
 	groundButton:SetSize(25, 25)
-	groundButton:SetPos(width- menuWidth + 68, height-58)		
+	groundButton:SetPos(15, height-37)		
 	groundButton:SetImage(love.graphics.newImage("gui/groundBtn.png"))
 	groundButton:SetVisible(false)
 	groundButton.OnClick = function(object)
@@ -142,7 +132,7 @@ function Menu:setDebugMenu()
 		
 	-- checkbox to enable Debug
 	checkDebug = loveframes.Create("checkbox")
-	checkDebug:SetPos(width- menuWidth + 8, height - 28)
+	checkDebug:SetPos(10, height - menuWidth + 10)
 	checkDebug.OnChanged = function(object)
 		--[[DEBUG = not DEBUG
 		roadButton:SetVisible(not roadButton:GetVisible())
@@ -321,36 +311,45 @@ function Menu:showHide(bool)
 	
 	textDebug:SetVisible(self.visible)
 	checkDebug:SetVisible(self.visible)
+	selectDebug:SetVisible(self.visible)
 end
 
+function Menu:update(dt)
+	for _,v in pairs(self.mainMenu) do
+		v:SetVisible(not(self.debugMode))
+	end
+	for _,v in pairs(self.debugMenu) do
+		v:SetVisible(self.debugMode)
+	end
+	
+	selectDebug:SetVisible(self.debugMode)
+	
+	--[[local count, local uType = unitManager:selectedType()
+	if (count > 0) then
+		local text = {{0,0,0,255}, count.." "..uType.." selected}
+	end]]--
+end
 
 -- draw the menu
 function Menu:draw()
 	if self.visible then
-		-- background
-		love.graphics.setColor(self.backColor)
-		love.graphics.rectangle("fill", self.xs, self.ys, self.xe, self.ye)
+		love.graphics.draw(self.background, 0, height-menuWidth)
 			
-		-- outline
+		--[[ outline
 		love.graphics.setColor(self.lineColor)
-		love.graphics.rectangle("line", self.xs+0.5, self.ys+0.5, self.xe-0.5, self.ye-0.5)
+		--love.graphics.rectangle("line", self.xs+0.5, self.ys+0.5, self.xe-0.5, self.ye-0.5)
+		love.graphics.rectangle("line", 0.5, height-menuWidth+0.5, width-0.5, menuWidth-0.5)]]--
 
 		--[[ draw the buttons
 		for _,v in pairs(self.buttons) do
 			v:draw()
 		end
 		--]]
-		for _,v in pairs(self.mainMenu) do
-			v:SetVisible(not(self.debugMode))
-		end
-		for _,v in pairs(self.debugMenu) do
-			v:SetVisible(self.debugMode)
-		end
+		
 		--[[for _,v in pairs(self.buildingMenu) do
 			v:SetVisible(self.buildingMode)
-		end]]--
-
-
+		end]]--		
+		
 		love.graphics.reset()
 	end
 end

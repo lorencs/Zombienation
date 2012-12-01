@@ -1,18 +1,18 @@
 View = {}
 
-function View:new(w, map)
+function View:new(h, map)
 	local object = {
 		speed = 1000,
-		width = w,
+		height = h,
 		--x = love.graphics.getWidth() / 2,
 		--y = love.graphics.getHeight() / 2,
 		x = 0,
 		y = 0,
 		
 		xmin = 0,
-		xmax = (map.width * map.tileSize) - w,
+		xmax = (map.width * map.tileSize) - love.graphics.getWidth(),
 		ymin = 0,
-		ymax = (map.height * map.tileSize) - love.graphics.getHeight() 	
+		ymax = (map.height * map.tileSize) -  h 	
 	}
 	setmetatable(object, { __index = View })
 	return object

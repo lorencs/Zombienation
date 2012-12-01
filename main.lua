@@ -76,7 +76,7 @@ function love:load()
 	--generator:randomMap()
 	--generator:newMap(100,100)
 	--generator:randomMap(difficulty)
-	generator:newMap(75,75)
+	generator:newMap(100,100)
 
 
 	-- get the map	
@@ -94,18 +94,18 @@ function love:load()
 	width = love.graphics.getWidth()
 	height = love.graphics.getHeight()
 	menuWidth = 115
-	viewWidth = width - menuWidth
+	viewHeight = height - menuWidth
 	
 	-- viewpoint
-	view = View:new(viewWidth, map)
+	view = View:new(viewHeight, map)
 	
 	-- minimap
-	minimap = Minimap:new(map, view, unitManager, width - menuWidth + 8, height - map.height - 65, width, height)
+	minimap = Minimap:new(map, view, unitManager, width - map.width - 7, height - map.height - 8, width, height)
 	minimap:init()
 	map:setMinimap(minimap)
 		
 	-- restrict camera
-	camera:setBounds(0, 0, map.width * map.tileSize - viewWidth, map.height * map.tileSize - height)
+	camera:setBounds(0, 0, map.width * map.tileSize - width, map.height * map.tileSize - viewHeight)
 		
 	-- cursor
 	love.mouse.setVisible(false)
@@ -163,7 +163,7 @@ end
 -- put any resetting code in here
 function gameSTATE:enter()
 	-- init menu
-	menu = Menu:new(viewWidth, menuWidth, height)
+	menu = Menu:new(0, width, 115)
 	menu:setup()
 	
 	-- pause menu
@@ -196,8 +196,8 @@ end
 
 function gameSTATE:update(dt)
 	-- restrict drag select
-	if dragSelect and (love.mouse.getX() >= viewWidth) then
-		love.mouse.setPosition(viewWidth - (love.mouse.getX() - viewWidth), love.mouse.getY())
+	if dragSelect and (love.mouse.getY() >= viewHeight) then
+		love.mouse.setPosition(love.mouse.getX(), height - menuWidth)
 	end
 
 	-- viewpoint movement - arrow keys
@@ -205,6 +205,9 @@ function gameSTATE:update(dt)
 	
 	-- update unit positions
 	unitManager:update(dt)
+	
+	-- update menu
+	menu:update(dt)
 	
 	-- current mouse position
 	xpos = math.floor((love.mouse.getX() + view.x) / map.tileSize)
@@ -224,7 +227,7 @@ function gameSTATE:update(dt)
 		end
 	else]]--
 	if menu.debugMode then
-		if love.mouse.isDown("l") and (love.mouse.getX() < viewWidth) and  not minimap.moving then
+		if love.mouse.isDown("l") and (love.mouse.getY() < viewHeight) and  not minimap.moving then
 			if (xpos > -1) and (ypos > -1) and (xpos < map.width) and (ypos < map.height) then
 				--map.tiles[map:index(xpos,ypos)]:setId(drawTile)
 				map.tiles[xpos][ypos]:setId(drawTile);
@@ -249,9 +252,9 @@ function gameSTATE:draw()
 	local my = love.mouse.getY()
 
 -- restrict drag select
-	if dragSelect and (mx >= viewWidth) then
+	--[[if dragSelect and (mx >= viewWidth) then
 		love.mouse.setPosition(viewWidth - (mx - viewWidth), my)
-	end	
+	end	]]--
 	-- gotta set font to default because loveframes imagebutton messes it up for some reason
 	love.graphics.setFont(defaultFont)
 	-- set camera
@@ -310,7 +313,7 @@ end
 
 -- callback functions needed by loveframes, we can use them too
 function gameSTATE:mousepressed(x, y, button)
-	if (x < viewWidth) and not menu.debugMode then
+	if (y < viewHeight) and not menu.debugMode then
 		--unitManager:deselectUnits()
 		if (button == "l") then		
 			dragSelect = true
@@ -333,7 +336,7 @@ function gameSTATE:mousereleased(x, y, button)
 	
 	minimap:mousereleased()
 	
-	if (button == "l") and not menu.debugMode and (x < viewWidth) and dragSelect then
+	if (button == "l") and not menu.debugMode and (y < viewHeight) and dragSelect then
 		dragSelect = false
 		unitManager:selectUnits(dragx+view.x, dragy+view.y, x+view.x, y+view.y)
 	end	
