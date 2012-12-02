@@ -98,9 +98,9 @@ function UnitManager:initUnits()
 	self.baseTilePos = map.baseTilePt
 	self.storeTilePos = map.storeTilePt
 	
-	self.storeToBasePath = self:getShortestP(self.storeTilePos.x, self.storeTilePos.y, self.baseTilePos.x, self.baseTilePos.y)
-	self.baseToStorePath = self:getShortestP(self.baseTilePos.x, self.baseTilePos.y, self.storeTilePos.x, self.storeTilePos.y)
-	
+	-- get shortest paths from store to base and from base to store and store the 2 lists
+	self.storeToBasePath = astar:findPath(self.storeTilePos.x, self.storeTilePos.y, self.baseTilePos.x, self.baseTilePos.y)
+	self.baseToStorePath = astar:findPath(self.baseTilePos.x, self.baseTilePos.y, self.storeTilePos.x, self.storeTilePos.y)
 	--[[
 	for i = 1, number_of_cars do
 		car_list[i] = Car:new()
@@ -116,8 +116,7 @@ function UnitManager:getShortestP(x1,y1,x2,y2)
 	local x2tile = math.floor(x2 / map.tileSize)
 	local y2tile = math.floor(y2 / map.tileSize)
 	
-	list = astar:findPath(x1tile,y1tile,x2tile,y2tile)
-	return list
+	return astar:findPath(x1tile,y1tile,x2tile,y2tile)
 end
 
 function UnitManager:resetUnits()
