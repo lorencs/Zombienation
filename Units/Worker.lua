@@ -91,27 +91,7 @@ function Worker:setupUnit()
 	self.directionTimer = 0
 	
 	self.animation:load()
-	self.animation:switch(1,8,120)
-	
-	--star = Astar:new()
-	--star:findPath(22,30, 24,30)
-	--Astar:findPath(22,30,24,30)
-	--[[
-	some = {}
-	some[1] = 5
-	some[2] = 84
-	some[3] = 56
-	some[4] = 3
-	some[5] = 65
-	some[6] = 15
-	some[7] = 9
-	
-	table.remove(some, 1)
-	table.insert(some,99)
-	for i,v in pairs(some) do
-		print("value:"..v)
-	end]]
-	
+	self.animation:switch(1,8,120)	
 end
 
 function Worker:draw(i)
