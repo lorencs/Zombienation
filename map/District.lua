@@ -17,7 +17,9 @@ function District:new(xa, ya, xb, yb, d)
 		sectorCount_commercial = 0,
 		sectorCount_rural = 0,
 		sectorCount_industrial = 0,
-		sectorCount_park = 0
+		sectorCount_park = 0,
+		
+		isBase = false
 	}
 	setmetatable(object, { __index = District })
 	return object
@@ -45,20 +47,46 @@ function getDistricts(width, height)
 	
 	local depth = 3
 	local splitChance = 0.85
+	
+	local minArea = (width * height) - 1
+	local secondMinArea = width * height
 
 	for d=0,depth do
 		cycle = {}	-- reset cycle
 		for i,v in pairs(districts) do
 			if math.random() < splitChance then
 				a,b = v:split()				
-				if not(a == nil) then table.insert(cycle, a) end
-				if not(b == nil) then table.insert(cycle, b) end				
+				if not(a == nil) then 
+					local aa = a:area()
+					if aa < minArea then minArea = aa 
+					elseif aa > minArea and aa < secondMinArea then secondMinArea = aa
+					end
+					table.insert(cycle, a) 
+				end
+				if not(b == nil) then 
+					local ba = b:area()
+					if ba < minArea then minArea = ba 
+					elseif ba > minArea and ba < secondMinArea then secondMinArea = ba
+					end
+					table.insert(cycle, b) 
+				end				
 			else
+				local va = v:area()
+				if va < minArea then minArea = va 
+				elseif va > minArea and va < secondMinArea then secondMinArea = va
+				end
 				table.insert(cycle, v)
 			end
 		end
 
 		districts = cycle
+	end
+	
+	-- set baseDistrict
+	for _,d in pairs(districts) do
+		if d:area() == secondMinArea then
+			d.isBase = true
+		end
 	end
 	
 	return districts

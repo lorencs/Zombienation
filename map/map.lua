@@ -8,8 +8,10 @@ function Map:new()
 		tiles = {},
 		buildings = {},
 		districts = {},
+		baseTilePt = nil,
+		storeTilePt = nil,
 		canvas = 0,
-		minimap = nil	,
+		minimap = nil,
 		bloodImg = love.graphics.newImage("Map/blood1.png")
 	}
 	setmetatable(object, { __index = Map })

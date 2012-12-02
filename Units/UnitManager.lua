@@ -26,8 +26,8 @@ function UnitManager:new()
     local new_object = {
 	paused = false,
 	RangerCost = 10,
-	baseTilePos = Point:new(),
-	storeTilePos = Point:new(),
+	baseTilePos = nil,
+	storeTilePos = nil,
 	storeToBasePath = {},
 	baseToStorePath = {}
     }
@@ -94,11 +94,9 @@ function UnitManager:initUnits()
 		unitTag = unitTag + 1
 		--worker_tag = worker_tag + 1
 	end
+	
 	self.baseTilePos = map.baseTilePt
 	self.storeTilePos = map.storeTilePt
-	
-	--storeToBasePath = Unit:getShortestPath(v.x,v.y,xo,yo)
-	--baseToStorePath = 
 	
 	--[[
 	for i = 1, number_of_cars do
@@ -204,6 +202,12 @@ function UnitManager:draw()
 	for i = 1, number_of_workers do
 		worker_list[i]:draw(i)
 	end
+	
+	love.graphics.setColor(255,0,0)
+	love.graphics.rectangle("fill", self.baseTilePos.x*54, self.baseTilePos.y*54, 54, 54)
+	love.graphics.setColor(0,255,0)
+	love.graphics.rectangle("fill", self.baseTilePos.x*54, self.baseTilePos.y*54, 54, 54)
+
 end
 
 function UnitManager:selectUnits(x1,y1,x2,y2)
@@ -316,7 +320,7 @@ function UnitManager:moveTo(xo,yo)
 
 	for i,v in pairs (worker_list) do
 		if v.selected == true then
-			--v:getShortestPath(v.x,v.y,xo,yo)
+			v:getShortestPath(v.x,v.y,xo,yo)
 			v:sendToWork()
 		end
 	end

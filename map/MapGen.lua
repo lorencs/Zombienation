@@ -109,39 +109,44 @@ function MapGen:divideCity()
 			self:addRoad(v.x2, v.y1, v.x2, v.y2)				
 		end
 		
-		-- split district into sectors
-		v:createSectors(m)
 		
-		
-		-- add roads to divide sectors
-		local roadChance = 0.8
-		for _,s in pairs(v.sectors) do
-			if math.random() < roadChance and 
-				not(s.y1 == v.y1+1) and not(s.y1 == 0) then
-				self:addRoad(s.x1, s.y1, s.x2, s.y1)
+		-- don't touch base district
+		if not(v.isBase) then
+			-- split district into sectors
+			v:createSectors(m)		
+			
+			-- add roads to divide sectors
+			local roadChance = 0.8
+			for _,s in pairs(v.sectors) do
+				if math.random() < roadChance and 
+					not(s.y1 == v.y1+1) and not(s.y1 == 0) then
+					self:addRoad(s.x1, s.y1, s.x2, s.y1)
+				end
+				if math.random() < roadChance and 
+					not(s.x1 == v.x1+1) and not(s.x1 == 0) then
+					self:addRoad(s.x1, s.y1, s.x1, s.y2)
+				end
+				if math.random() < roadChance and 
+					not(s.y2 == v.y2-1) and not(s.y2 == m.height-1) then
+					self:addRoad(s.x1, s.y2, s.x2, s.y2)
+				end
+				if math.random() < roadChance and 
+					not(s.x2 == v.x2-1) and not(s.x2 == m.width-1) then
+					self:addRoad(s.x2, s.y1, s.x2, s.y2)
+				end
 			end
-			if math.random() < roadChance and 
-				not(s.x1 == v.x1+1) and not(s.x1 == 0) then
-				self:addRoad(s.x1, s.y1, s.x1, s.y2)
-			end
-			if math.random() < roadChance and 
-				not(s.y2 == v.y2-1) and not(s.y2 == m.height-1) then
-				self:addRoad(s.x1, s.y2, s.x2, s.y2)
-			end
-			if math.random() < roadChance and 
-				not(s.x2 == v.x2-1) and not(s.x2 == m.width-1) then
-				self:addRoad(s.x2, s.y1, s.x2, s.y2)
-			end
-		end
 
-		
-		-- generate water for each district
-		local waterChance = 0.75
-		if math.random() < waterChance then
-			-- water never touches the district separating roads...easy to change
-			self:generateWater(v:xd()-6, v:yd()-6, Point:new(v.x1+3, v.y1+3))
+			
+			-- generate water for each district
+			local waterChance = 0.75
+			if math.random() < waterChance then
+				-- water never touches the district separating roads...easy to change
+				self:generateWater(v:xd()-6, v:yd()-6, Point:new(v.x1+3, v.y1+3))
+			end
+		else -- set the base and store 
+			m.baseTilePt = Point:new(v.x1+1,v.y1+1)
+			m.storeTilePt = Point:new(v.x2-1,v.y2-1)
 		end
-		--]]
 	end
 	
 	-- remove roads to nowhere

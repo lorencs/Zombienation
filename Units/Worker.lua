@@ -7,14 +7,14 @@ Worker_mt = { __index = Worker }
 -- Constructor
 function Worker:new(xnew,ynew)
 
-    local new_object = {					-- define our parameters here
-	tag = 0,								-- tag of unit
+    local new_object = {						-- define our parameters here
+	tag = 0,									-- tag of unit
     x = xnew,									-- x and y coordinates ( by default, left top )
     y = ynew,
-	cx = 0,									-- centered x and y coordinates of the unit
+	cx = 0,										-- centered x and y coordinates of the unit
 	cy = 0,
 	radius = 4,
-	angle = math.random(360),				-- randomize initial angles
+	angle = math.random(360),					-- randomize initial angles
 	targetAngle = math.random(360),
     state = "",
 	speed = 0,
@@ -323,12 +323,11 @@ function Worker:update(dt, zi, paused)
 		if self.working == true then
 			if self.workingTileCount > 0 then self.turnFast = false end
 			if (self.tarXTile == math.floor(self.x / map.tileSize)) and (self.tarYTile == math.floor(self.y / map.tileSize)) then
-			
 				if (#self.path == self.workingTileCount) then
 					self.working = false						-- the path of the worker should be finished by now, so the worker should be at a set location
 					self:checkLocation()						-- check location and set next path of this worker
 				else
-					self.tarXTile = self.path[#self.path - self.workingTileCount].x 		-- else worker is still on path to a destination..
+					self.tarXTile = self.path[#self.path - self.workingTileCount].x -- else worker is still on path to a destination..
 					self.tarYTile = self.path[#self.path - self.workingTileCount].y
 					self.workingTileCount = self.workingTileCount + 1
 					self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
@@ -442,7 +441,7 @@ function Worker:update(dt, zi, paused)
 	self.animation:update(dt)
  end
  
- function Worker:checkLocation()
+function Worker:checkLocation()
 	--baseTilePos = Point:new(),
 	--storeTilePos = Point:new(),
 	if ( (unitManager.baseTilePos.x == math.floor(self.x / map.tileSize) ) and (unitManager.baseTilePos.y == math.floor(self.y / map.tileSize) ) ) then
@@ -458,20 +457,21 @@ function Worker:update(dt, zi, paused)
 	else
 		self.atLocation = "Transit"
 	end	
- end
- 
- -- if atLocation is at Base, self.path will be set to baseToStorePath
+end
+  -- if atLocation is at Base, self.path will be set to baseToStorePath
  -- if at... 			store ...					   storeToBasePath
  -- if at ..			Transit, then it is following a path, don't interrupt
  -- if at ..			Lost, then it needs to check if its carrying package. if it is, send to base, else send to store !
  
+
+ 
 function Worker:sendToWork()
-	self:checkLocation()
 	
+	self:checkLocation()
 	if (self.path ~= nil) then
 		self.working = true
 		self.workingTileCount = 0
-		self.tarXTile = self.path[#self.path - self.workingTileCount].x
+		self.tarXTile = self.path[#self.path - self.workingTileCount].x 
 		self.tarYTile = self.path[#self.path - self.workingTileCount].y
 		self.workingTileCount = self.workingTileCount + 1
 		self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )

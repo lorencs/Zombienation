@@ -1,11 +1,4 @@
 Building = {}
-													  -- b_type	
-b6x6 = love.graphics.newImage("map/buildings/b1.png") -- 66	- hall
-b4x3 = love.graphics.newImage("map/buildings/b2.png") -- 43 - arena
-b3x5 = love.graphics.newImage("map/buildings/b3.png") -- 35 - scraper
---b3x3 = love.graphics.newImage("map/buildings/b4.png") -- 33 - house
-b3x4 = love.graphics.newImage("map/buildings/b5.png") -- 34 - barn
---b6x4 = love.graphics.newImage("map/buildings/b6.png") -- 64 - garage
 
 -- new b_type
 houseN = love.graphics.newImage("map/buildings/houseN.png") -- 1x1
