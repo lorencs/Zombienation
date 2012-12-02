@@ -41,7 +41,7 @@ require "Units/shortestPath/Astar"
 ]]--
 
 -- game settings
-resources = 0
+supplies = 0
 
 orig_number_of_zombies = 60			-- zombies are red
 orig_number_of_humans = 25			-- humans are blue

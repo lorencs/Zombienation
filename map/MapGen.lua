@@ -39,12 +39,12 @@ function MapGen:newMap(w, h)
 	self:addRoad(21, 10, 23, 10)
 	
 	-- a couple random buildings
-	self:addBuilding(5, 5, 66)
+	--[[self:addBuilding(5, 5, 66)
 	self:addBuilding(27, 28, 43)
 	self:addBuilding(33, 48, 35)
 	self:addBuilding(55, 92, 33)
 	self:addBuilding(78, 12, 34)
-	self:addBuilding(12, 84, 64)
+	self:addBuilding(12, 84, 64)]]--
 	
 	-- save info on each tile's neighbor
 	for x=0,self.width-1 do
