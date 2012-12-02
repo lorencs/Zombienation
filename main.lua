@@ -367,7 +367,6 @@ function gameSTATE:mousereleased(x, y, button)
 		if dragSelect then
 			dragSelect = false
 			unitManager:selectUnits(dragx+view.x, dragy+view.y, x+view.x, y+view.y)
-			infoText:addText("selected units")
 		end		
 	end	
 	
