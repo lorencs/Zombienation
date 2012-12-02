@@ -119,17 +119,25 @@ function UnitManager:getClosestIdleWorker()
 		if v.working == false then
 			local distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
 			if i == 1 then 
-				unitRet = v 
-				closestDist = distance
+				if distance ~= nil then
+					unitRet = v 
+					closestDist = distance
+				end
 			end
-			if distance < closestDist then
-				closestDist = distance
-				unitRet = v
+			if distance ~= nil then
+				if distance < closestDist then
+					closestDist = distance
+					unitRet = v
+				end
 			end
 		end
 	end
-	local pt = Point:new(unitRet.x, unitRet.y)
-	return pt
+
+	if unitRet ~= nil then
+		local pt = Point:new(unitRet.x, unitRet.y)
+	else
+		return Point:new(view.x - width / 2, view.y - height / 2)
+	end
 end
 
 -- gets the ranger (if any) that is the closest to your current screen view
@@ -140,17 +148,24 @@ function UnitManager:getClosestRanger()
 	for i,v in pairs(ranger_list) do
 		local distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
 		if i == 1 then 
-			unitRet = v 
-			closestDist = distance
+			if distance ~= nil then
+				unitRet = v 
+				closestDist = distance
+			end
 		end
-		if distance < closestDist then
-			closestDist = distance
-			unitRet = v
+		if distance ~= nil then
+			if distance < closestDist then
+				closestDist = distance
+				unitRet = v
+			end
 		end
 	end
 	
-	local pt = Point:new(unitRet.x, unitRet.y)
-	return pt
+	if unitRet ~= nil then
+		local pt = Point:new(unitRet.x, unitRet.y)
+	else
+		return Point:new(view.x - width / 2, view.y - height / 2)
+	end
 end
 
 -- gets the human (if any) that is the closest to your current screen view
@@ -161,17 +176,25 @@ function UnitManager:getClosestHuman()
 	for i,v in pairs(human_list) do
 		local distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
 		if i == 1 then 
-			unitRet = v 
-			closestDist = distance
+			if distance ~= nil then
+				unitRet = v 
+				closestDist = distance
+			end
 		end
-		if distance < closestDist then
-			closestDist = distance
-			unitRet = v
+		
+		if distance ~= nil then
+			if distance < closestDist then
+				closestDist = distance
+				unitRet = v
+			end
 		end
 	end
 	
-	local pt = Point:new(unitRet.x, unitRet.y)
-	return pt
+	if unitRet ~= nil then
+		local pt = Point:new(unitRet.x, unitRet.y)
+	else
+		return Point:new(view.x - width / 2, view.y - height / 2)
+	end
 end
 
 function UnitManager:resetUnits()
