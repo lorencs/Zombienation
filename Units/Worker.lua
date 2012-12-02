@@ -456,9 +456,8 @@ function Worker:checkLocation()
 	if ( (unitManager.baseTilePos.x == math.floor(self.x / map.tileSize) ) and (unitManager.baseTilePos.y == math.floor(self.y / map.tileSize) ) ) then
 		print("Arrived at the base ! Heading to the store..")
 		if (self.carryingResource == 1) then
-																	-- INCREASE GOLD ! **************************
+			supplies = supplies + 1				-- increase resources
 		end
-		
 		self.atLocation = "Base"
 		self.path = unitManager.baseToStorePath
 		self.carryingResource = 0
