@@ -43,11 +43,11 @@ H
 ]]--
 
 -- game settings
-supplies = 0
+supplies = 7
 
 orig_number_of_zombies = 2			-- zombies are red
-orig_number_of_humans = 25			-- humans are blue
-orig_number_of_rangers = 2			-- i thought this was a poem
+orig_number_of_humans = 100			-- humans are blue
+orig_number_of_rangers = 3			-- i thought this was a poem
 orig_number_of_workers = 3			-- i wish it was too
 orig_number_of_cars = 5
 

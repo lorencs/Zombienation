@@ -555,7 +555,7 @@ function Zombie:die()
 		end
 		if h_index ~= -1 then ranger_list[h_index].panicMode = false end
 	end
-	
+	infoText:addText("A zombie has been killed !")
 	-- mark this zombie for deletion (unitManager's update method will delete it on next update)
 	self.delete = true	
 end

@@ -6,7 +6,7 @@ function Text:new(_data)
 	local object = {
 		lifeTime = 0,
 		alpha = 255,
-		fadeAt = 1,
+		fadeAt = 2.5,
 		fadeSpeed = 100,
 		data = _data
 	}

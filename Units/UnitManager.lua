@@ -13,6 +13,7 @@ zombies_selected = 0
 rangers_selected = 0
 workers_selected = 0
 
+
 	--[[ 
 
 	-> each unit has a unique tag. When zombies chase a unit, they chase them by the tag (eg. human_tag)
@@ -30,14 +31,15 @@ function UnitManager:new()
 	storeTilePos = nil,
 	storeToBasePath = {},
 	baseToStorePath = {},
-	idleWorkers = 0
+	idleWorkers = 0,
+	supplyTimer = 0
     }
     setmetatable(new_object, UnitManager_mt )
     return new_object
 end
 
 function UnitManager:initUnits()
-
+	infoText:addText("Initiating units.. ")
 	--[[for i = 0, map.width - 1 do
 		for j = 0, map.height - 1 do
 			print(map.tiles[i][j].id.." ")
@@ -196,7 +198,6 @@ function UnitManager:getClosestHuman()
 end
 
 function UnitManager:resetUnits()
-
 	print("RESETTING UNITS !")
 	-- remove all units from tables
 	for k in pairs (zombie_list) do
@@ -223,7 +224,6 @@ function UnitManager:resetUnits()
 	unitTag = 1
 	-- re init units
 	self:initUnits()
-	
 	--print("humans".. #human_list)
 	--print("zombies".. #zombie_list)
 end
@@ -231,14 +231,25 @@ end
 function UnitManager:pauseGame()
 	if self.paused == true then
 		self.paused = false
+		infoText:addText("Game Resumed")
 	else
 		self.paused = true
+		infoText:addText("Game Paused")
 	end
 end
 
 -- Update function
 function UnitManager:update(dt, gravity)
-    -- update the unit's position
+
+	-- every minute, the user receives 1 supply
+	if self.supplyTimer > 60 then
+		supplies = supplies + 1
+		infoText:addText("Additional supply has arrived ( + 1 )")
+		self.supplyTimer = 0
+	else
+		self.supplyTimer = self.supplyTimer + dt
+    end
+	-- update the unit's position
 	
 	-- update zombies
 	for i = 1, number_of_zombies do
@@ -452,41 +463,67 @@ end
 
 function UnitManager:convertUnits(convType)
 	if (convType == "Worker") then
+		local selectedU = 0
 		for i,v in pairs (human_list) do
 			if v.selected == true then
-				if supplies >= 2 then
-					local dx = v.x
-					local dy = v.y
-					number_of_workers = number_of_workers + 1
-					newWorker = Worker:new(dx,dy)
-					table.insert(worker_list, newWorker)
-					worker_list[number_of_workers]:setupUnit()
-					unitTag = unitTag + 1
-					--worker_tag = worker_tag + 1
-					
-					table.remove(human_list, i)
-					number_of_humans = number_of_humans - 1
-					supplies = supplies - 2
+				selectedU = selectedU + 1
+			end
+		end
+		local suppliesNeeded = selectedU * 2
+		
+		if supplies >= suppliesNeeded then
+			for i,v in pairs (human_list) do
+				if v.selected == true then
+					if supplies >= 2 then
+						local dx = v.x
+						local dy = v.y
+						number_of_workers = number_of_workers + 1
+						newWorker = Worker:new(dx,dy)
+						table.insert(worker_list, newWorker)
+						worker_list[number_of_workers]:setupUnit()
+						unitTag = unitTag + 1
+						--worker_tag = worker_tag + 1
+						table.remove(human_list, i)
+						number_of_humans = number_of_humans - 1
+						supplies = supplies - 2
+					end
 				end
+			end
+			if selectedU > 1 then
+				infoText:addText(selectedU.." civilians have been recruited to Workers")
+			else
+				infoText:addText(selectedU.." civilian has been recruited to a Worker")
 			end
 		end
 	elseif (convType == "Ranger") then
+		local selectedU = 0
 		for i,v in pairs (human_list) do
 			if v.selected == true then
-				if supplies >= 3 then
-					local dx = v.x
-					local dy = v.y
-					number_of_rangers = number_of_rangers + 1
-					newRanger = Ranger:new(dx,dy)
-					table.insert(ranger_list, newRanger)
-					ranger_list[number_of_rangers]:setupUnit()
-					--ranger_tag = ranger_tag + 1
-					unitTag = unitTag + 1
-					
-					table.remove(human_list, i)
-					number_of_humans = number_of_humans - 1
-					supplies = supplies - 3
+				selectedU = selectedU + 1
+			end
+		end
+		local suppliesNeeded = selectedU * 3
+		
+		if supplies >= suppliesNeeded then
+			supplies = supplies - suppliesNeeded
+			for i,v in pairs (human_list) do
+				if v.selected == true then
+						local dx = v.x
+						local dy = v.y
+						number_of_rangers = number_of_rangers + 1
+						newRanger = Ranger:new(dx,dy)
+						table.insert(ranger_list, newRanger)
+						ranger_list[number_of_rangers]:setupUnit()
+						--ranger_tag = ranger_tag + 1
+						unitTag = unitTag + 1
+						table.remove(human_list, i)
+						number_of_humans = number_of_humans - 1
 				end
+			end
+			if selectedU > 1 then
+				infoText:addText(selectedU.." civilians have been recruited to Rangers")
+			else
+				infoText:addText(selectedU.." civilian has been recruited to a Ranger")
 			end
 		end
 	end	
