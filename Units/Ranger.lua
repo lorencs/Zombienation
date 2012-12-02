@@ -193,7 +193,7 @@ function Ranger:hunt(zom_x, zom_y)
 	end
 end
 
- -- look around for zombies; hunt dat bitch if one is around !
+ -- look around for zombies; hunt if one is around !
  function Ranger:lookAround()
 	local distToHuntee = 9999
 	if not(self.huntee == nil) then distToHuntee = self:distanceBetweenPoints(self.cx,self.cy,self.huntee.cx, self.huntee.cy) end

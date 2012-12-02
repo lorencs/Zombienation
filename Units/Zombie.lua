@@ -403,16 +403,22 @@ function Zombie:update(dt, zi, paused)
 				deady = human_list[h_index].y
 				table.remove(human_list, h_index)							-- remove human from human_list array
 				number_of_humans = number_of_humans - 1						-- decrease count of humans alive
+				infoText:addText("A civilian has been killed by a zombie !")
 			elseif self.followingType == "Ranger" then 
 				deadx = ranger_list[h_index].x
 				deady = ranger_list[h_index].y
 				table.remove(ranger_list, h_index)							-- remove human from human_list array
 				number_of_rangers = number_of_rangers - 1						-- decrease count of humans alive
+				infoText:addText("A ranger has been killed by a zombie !")
 			elseif self.followingType == "Worker" then 
 				deadx = worker_list[h_index].x
 				deady = worker_list[h_index].y
+				if worker_list[h_index].working == false then
+					unitManager.idleWorkers = unitManager.idleWorkers - 1
+				end
 				table.remove(worker_list, h_index)							-- remove human from human_list array
 				number_of_workers = number_of_workers - 1						-- decrease count of humans alive
+				infoText:addText("A worker has been killed by a zombie !")
 			end
 			
 			number_of_zombies = number_of_zombies + 1					-- increase count of zombies alive

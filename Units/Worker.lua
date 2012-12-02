@@ -435,7 +435,8 @@ function Worker:update(dt, zi, paused)
 function Worker:checkLocation()
 
 	if ( (unitManager.baseTilePos.x == math.floor(self.x / map.tileSize) ) and (unitManager.baseTilePos.y == math.floor(self.y / map.tileSize) ) ) then
-		print("Arrived at the base ! Heading to the store..")
+		--print("Arrived at the base ! Heading to the store..")
+		infoText:addText("Gathered 1 supply")
 		if (self.carryingResource == true) then
 			supplies = supplies + 1				-- increase resources
 		end
@@ -443,7 +444,8 @@ function Worker:checkLocation()
 		self.path = unitManager.baseToStorePath
 		self.carryingResource = false
 	elseif ( (unitManager.storeTilePos.x == math.floor(self.x / map.tileSize) ) and (unitManager.storeTilePos.y == math.floor(self.y / map.tileSize) ) ) then
-		print("Arrived at the store ! Heading to the base..")
+		--print("Arrived at the store ! Heading to the base..")
+		infoText:addText("Picked up 1 supply")
 		self.atLocation = "Store"
 		self.path = unitManager.storeToBasePath
 		self.carryingResource = true
