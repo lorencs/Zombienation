@@ -32,7 +32,7 @@ function Astar:init()
 end
 
 function Astar:findPath(startX, startY, endX, endY)
-	if not(map.tiles[endX][endY].id == "G") and not (map.tiles[endX][endY].id == "R") then
+	if not(map.tiles[endX][endY].id == "G") and not (map.tiles[endX][endY].id == "R") and not (map.tiles[endX][endY].id == "F") then
 		print("No Path Found !")
 		return nil
 	end
@@ -115,9 +115,11 @@ function Astar:findPath(startX, startY, endX, endY)
 						--if self.openVec[newX][newY] ~= self.gc then
 							--if not (self:nodeInArray(closedList, newX, newY)) then
 							if self.closedVec[newX][newY] ~= self.gc then
-							--print("newX:"..newX..",newY:"..newY)
-								if (map.tiles[newX][newY].id == "G") or (map.tiles[newX][newY].id == "R") then
-									if (map.tiles[currentX+xx][currentY].id=="R" or map.tiles[currentX+xx][currentY].id=="G") and (map.tiles[currentX][currentY+yy].id=="R" or map.tiles[currentX][currentY+yy].id=="G") then	
+								local tid = map.tiles[newX][newY].id
+								if (tid == "G") or (tid == "R") or (tid == "F") then
+									local id1 = map.tiles[currentX+xx][currentY].id
+									local id2 = map.tiles[currentX][currentY+yy].id
+									if (id1=="R" or id1=="G" or id1 == "F") and (id2=="R" or id2=="G" or id2 == "F") then	
 										if self.nodeVec[newX][newY] == nil then
 											newNode = Node:new(newX,newY)
 											--newNode.gcost,newNode.fcost = 0

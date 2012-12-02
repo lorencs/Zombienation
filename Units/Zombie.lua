@@ -73,7 +73,7 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	
 	self.onCurrentTile = self:xyToTileType(self.x, self.y)
 	
-	while not (self.onCurrentTile == "R" or self.onCurrentTile == "G") do
+	while not (self.onCurrentTile == "R" or self.onCurrentTile == "G" or self.onCurrentTile == "F") do
 		self.x = math.random(self.radius * 3, map_w - self.radius * 3)
 		self.y = math.random(self.radius * 3, map_h - self.radius * 3)
 		self.onCurrentTile = self:xyToTileType(self.x, self.y)
@@ -92,7 +92,7 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	self.cx = self.x + self.radius
 	self.cy = self.y - self.radius
 	
-	self.speed = 18
+	self.speed = 20
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	self.x_direction = 0
 	self.y_direction = 0
@@ -254,7 +254,7 @@ function Zombie:update(dt, zi, paused)
 	
 	local nextTileType = self:xyToTileType(next_x,next_y)
 	-- check next tile (not in panic mode)
-	if  not (nextTileType == "G" or nextTileType == "R") then
+	if  not (nextTileType == "G" or nextTileType == "R" or nextTileType == "F") then
 		self.directionTimer = self.directionTimer + dt
 		self.state = "STUCK !"
 		self:avoidTile2(self,nextTileDir)
@@ -494,7 +494,7 @@ function Zombie:update(dt, zi, paused)
 	
 	local nextTileType = self:xyToTileType(next_x,next_y)
 	-- check next tile (not in panic mode)
-	if  not (nextTileType == "G" or nextTileType == "R") then
+	if  not (nextTileType == "G" or nextTileType == "R" or nextTileType == "F") then
 		self.directionTimer = self.directionTimer + dt
 		--self.state = "STUCK !"
 		self:avoidTile(self)

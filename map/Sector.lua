@@ -97,6 +97,8 @@ function Sector:placeBuildings(map)
 		self:residential(map)
 	elseif self.sectorType == "park" then
 		self:park(map)
+	elseif self.sectorType == "rural" then
+		self:rural(map)
 	end
 end
 
@@ -168,6 +170,21 @@ end
 -- place commercial buildings
 function Sector:commercial(map)
 	
+end
+
+-- place crops
+function Sector:rural(map)
+	-- self ref
+	local x1,y1,x2,y2 = self.x1, self.y1, self.x2, self.y2
+	
+	local orientation = math.random(0,1)
+	print("new farm, orienation: "..orientation)
+	for x=x1+1, x2-1 do
+		for y = y1+1, y2-1 do
+			print("--"..orientation)
+			map:newFarm(x,y,orientation)
+		end
+	end
 end
 
 -- place a park

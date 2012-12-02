@@ -12,6 +12,8 @@ waterMM = love.graphics.newImage("map/waterMM.png")
 fenceMM = love.graphics.newImage("map/fenceMM.png")
 blockedMM = love.graphics.newImage("map/blockedMM.png")
 
+farm1 = love.graphics.newImage("map/farm1.png")
+
 function Map:new()
 	local object = {
 		width = 0,
@@ -487,6 +489,14 @@ end
 
 function Map:newFence(x, y)
 	self.tiles[x][y]:setId("P")
+end
+
+function Map:newFarm(x, y, o)
+	local tile = self.tiles[x][y]
+	w = self.tileSize
+	tile:setId("F")
+	tile.img = farm1
+	tile.sprite = love.graphics.newQuad(0, 0, w, w, tile:getImg():getWidth(), tile:getImg():getHeight())
 end
 
 function Map:addBoundary()
