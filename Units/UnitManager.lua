@@ -135,7 +135,7 @@ function UnitManager:getClosestIdleWorker()
 		local pt = Point:new(unitRet.x, unitRet.y)
 		return pt
 	else
-		return Point:new(view.x, view.y)
+		return Point:new(view.x + width / 2, view.y + height / 2)
 	end
 end
 
