@@ -28,7 +28,8 @@ function Menu:new(baseX, w, h)
 		
 		mainMenu = {},
 		debugMenu = {},
-		--buildingMenu = {},
+		
+		normalTextColor = {200,200,200,255},
 		
 		visible = true
 	}	
@@ -69,7 +70,7 @@ function Menu:setMainMenu()
 	
 	workerText = loveframes.Create("text")
 	workerText:SetPos(120, height - menuWidth + 38)
-	workerText:SetText("Upgrade to Worker")
+	workerText:SetText({self.normalTextColor, "Upgrade to Worker"})
 	workerText:SetVisible(false)
 	
 	upgradeRangerBtn = loveframes.Create("imagebutton")
@@ -84,7 +85,7 @@ function Menu:setMainMenu()
 	
 	rangerText = loveframes.Create("text")
 	rangerText:SetPos(120, height - menuWidth + 68)
-	rangerText:SetText("Upgrade to Ranger")
+	rangerText:SetText({self.normalTextColor, "Upgrade to Ranger"})
 	rangerText:SetVisible(false)
 	
 	-- supplies BTN
@@ -99,7 +100,7 @@ function Menu:setMainMenu()
 	
 	suppliesText = loveframes.Create("text")
 	suppliesText:SetPos(120, height - menuWidth + 38)
-	suppliesText:SetText("Gather Supplies")
+	suppliesText:SetText({self.normalTextColor, "Gather Supplies"})
 	suppliesText:SetVisible(false)
 	
 	-- PATROL BTN
@@ -114,22 +115,22 @@ function Menu:setMainMenu()
 	
 	patrolText = loveframes.Create("text")
 	patrolText:SetPos(120, height - menuWidth + 38)
-	patrolText:SetText("Patrol Area")
+	patrolText:SetText({self.normalTextColor, "Patrol Area"})
 	patrolText:SetVisible(false)
 	
 	suppliesLabelText = loveframes.Create("text")
 	suppliesLabelText:SetPos(400 - 80, height - menuWidth + 10)
-	suppliesLabelText:SetText("Current Supplies: ")
+	suppliesLabelText:SetText({self.normalTextColor, "Current Supplies: "})
 	suppliesLabelText:SetVisible(false)
 	
 	currSuppliesText = loveframes.Create("text")
 	currSuppliesText:SetPos(400 + 30, height - menuWidth + 10)
-	currSuppliesText:SetText(supplies)
+	currSuppliesText:SetText({self.normalTextColor, supplies})
 	currSuppliesText:SetVisible(false)
 	
 	goToNearest = loveframes.Create("text")
 	goToNearest:SetPos(451, height - menuWidth + 10)
-	goToNearest:SetText("Go to nearest:")
+	goToNearest:SetText({self.normalTextColor, "Go to nearest:"})
 	goToNearest:SetVisible(false)
 	
 	-- closest worker
@@ -170,17 +171,17 @@ function Menu:setMainMenu()
 	
 	workerCount = loveframes.Create("text")
 	workerCount:SetPos(478, height - menuWidth + 32)
-	workerCount:SetText("("..unitManager.idleWorkers.."/"..number_of_workers.." Working/Idle Workers)")
+	workerCount:SetText({self.normalTextColor, "("..unitManager.idleWorkers.."/"..number_of_workers.." Working/Idle Workers)"})
 	workerCount:SetVisible(false)
 	
 	rangerCount = loveframes.Create("text")
 	rangerCount:SetPos(478, height - menuWidth + 59)
-	rangerCount:SetText("("..number_of_rangers.." Rangers)")
+	rangerCount:SetText({self.normalTextColor, "("..number_of_rangers.." Rangers)"})
 	rangerCount:SetVisible(false)
 	
 	humanCount = loveframes.Create("text")
 	humanCount:SetPos(478, height - menuWidth + 86)
-	humanCount:SetText("("..number_of_humans.." Humans)")
+	humanCount:SetText({self.normalTextColor, "("..number_of_humans.." Humans)"})
 	humanCount:SetVisible(false)
 	
 	table.insert(self.mainMenu, upgradeWorkerBtn)
@@ -324,9 +325,9 @@ function Menu:update(dt)
 	local text = {{0,0,0,150}, "No units selected"}
 	if (count > 0) then	
 		if not (uType == "Mixed") then		
-			text = {{0,0,0,255}, count.." "..uType.." Selected"}
+			text = {self.normalTextColor, count.." "..uType.." Selected"}
 		elseif (uType == "Mixed") then
-			text = {{0,0,0,255}, count.." "..uType.." Units Selected"}
+			text = {self.normalTextColor, count.." "..uType.." Units Selected"}
 		end
 		
 		if uType == "Humans" then
@@ -343,9 +344,9 @@ function Menu:update(dt)
 		end
 	end
 		
-	workerCount:SetText("("..unitManager.idleWorkers.."/"..number_of_workers.." Working/Idle Workers)")
-	rangerCount:SetText("("..number_of_rangers.." Rangers)")
-	humanCount:SetText("("..number_of_humans.." Humans)")
+	workerCount:SetText({self.normalTextColor, "("..unitManager.idleWorkers.."/"..number_of_workers.." Working/Idle Workers)"})
+	rangerCount:SetText({self.normalTextColor, "("..number_of_rangers.." Rangers)"})
+	humanCount:SetText({self.normalTextColor, "("..number_of_humans.." Humans)"})
 	
 	workerCount:SetVisible(self.visible)
 	rangerCount:SetVisible(self.visible)
@@ -356,7 +357,7 @@ function Menu:update(dt)
 	closestHumanBtn:SetVisible(self.visible)
 	suppliesLabelText:SetVisible(self.visible)
 	currSuppliesText:SetVisible(self.visible)
-	currSuppliesText:SetText(supplies)
+	currSuppliesText:SetText({self.normalTextColor, supplies})
 	
 	selectText:SetText(text)
 end
@@ -364,61 +365,11 @@ end
 -- draw the menu
 function Menu:draw()
 	if self.visible then
-		love.graphics.draw(self.background, 0, height-menuWidth)
-			
-		--[[ outline
-		love.graphics.setColor(self.lineColor)
-		--love.graphics.rectangle("line", self.xs+0.5, self.ys+0.5, self.xe-0.5, self.ye-0.5)
-		love.graphics.rectangle("line", 0.5, height-menuWidth+0.5, width-0.5, menuWidth-0.5)]]--
-
-		--[[ draw the buttons
-		for _,v in pairs(self.buttons) do
-			v:draw()
-		end
-		--]]
-		
-		--[[for _,v in pairs(self.buildingMenu) do
-			v:SetVisible(self.buildingMode)
-		end]]--		
+		love.graphics.draw(self.background, 0, height-menuWidth)	
 		
 		love.graphics.reset()
 	end
 end
-
--- building mode placement rectangle
---[[function Menu:buildingPlacement(map, viewX, viewY)
-	if self.buildingMode and not(self.b_type == nil) then
-		local t = map.tileSize
-		
-		local xw = math.floor(self.b_type / 10)
-		local yw = (self.b_type % 10)
-		
-		local x = love.mouse.getX() + viewX
-		local xRect = x - (x % t)  		-- snap to tiles
-		local xMap = math.floor(x / t)
-		local xMapEnd = xMap + xw - 1
-		
-		local y = love.mouse.getY() + viewY
-		local yRect = y - (y % t)
-		local yMap = math.floor(y / t)
-		local yMapEnd = yMap + yw - 1
-		
-		-- check possible placement to set color
-		if (xMapEnd >= map.width) or (yMapEnd >= map.height) or
-			not(map:findBuilding(xMap, yMap) == nil) or
-			not(map:findBuilding(xMap, yMapEnd) == nil) or
-			not(map:findBuilding(xMapEnd, yMap) == nil) or
-			not(map:findBuilding(xMapEnd, yMapEnd) == nil) then
-			
-			love.graphics.setColor(255, 0, 0)
-		else
-			love.graphics.setColor(0,200,100)
-		end
-		
-		love.graphics.setLineWidth(1)
-		love.graphics.rectangle("line", xRect, yRect, xw * t, yw * t)
-	end	
-end]]--
 
 function Menu:delete()
 for _,v in pairs(self.mainMenu) do

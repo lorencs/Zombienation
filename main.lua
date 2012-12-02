@@ -3,6 +3,7 @@ require "gui/Menu"
 require "gui/StartMenu"
 require "gui/PauseMenu"
 require "gui/View"
+require "gui/InfoText"
 require "camera"
 require "units/UnitManager"
 require "loveframes/init"
@@ -101,6 +102,9 @@ function love:load()
 	
 	-- viewpoint
 	view = View:new(viewHeight, map)
+	
+	-- info text
+	infoText = InfoText:new(0,height - menuWidth - 17)
 	
 	-- minimap
 	minimap = Minimap:new(map, view, unitManager, width - map.width - 7, height - map.height - 8, width, height)
@@ -250,6 +254,9 @@ function gameSTATE:update(dt)
 	
 	-- loveframes
 	loveframes.update(dt)
+	
+	--update infotext
+	infoText:update(dt)
 end
 
 function gameSTATE:draw()
@@ -309,6 +316,9 @@ function gameSTATE:draw()
 	-- loveframes
 	loveframes.draw()
 	
+	-- infotext
+	infoText:draw()
+	
 	-- cursor
 	love.graphics.reset()	
 	if not selectPatrol then
@@ -326,8 +336,8 @@ function gameSTATE:mousepressed(x, y, button)
 		--unitManager:deselectUnits()
 		if (button == "l") then	
 			if selectPatrol then
-						selectPatrol = false
-						unitManager:patrol(x+view.x, y+view.y)
+				selectPatrol = false
+				unitManager:patrol(x+view.x, y+view.y)
 			else
 				dragSelect = true
 				dragx, dragy = x, y
@@ -357,6 +367,7 @@ function gameSTATE:mousereleased(x, y, button)
 		if dragSelect then
 			dragSelect = false
 			unitManager:selectUnits(dragx+view.x, dragy+view.y, x+view.x, y+view.y)
+			infoText:addText("selected units")
 		end		
 	end	
 	
