@@ -358,7 +358,7 @@ function MapGen:generateBuildings()
 		end
 	end
 end
-
+--[[
 function MapGen:placeBuildings(minSize, maxSize, b_type, middle)
 	local chance = 0.05
 	build = self:findConnectedComponents(minSize, maxSize, "G")
@@ -390,7 +390,7 @@ function MapGen:findMiddle(component)
 	
 	return Point:new(xn, yn)
 end
-
+--]]
 -- load default map
 function MapGen:defaultMap()
 	-- load default map if it exists

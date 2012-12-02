@@ -155,10 +155,10 @@ function District:getTypeFromDepth(depth)
 	elseif val == 3 then
 		self.sectorCount_commercial = self.sectorCount_commercial + 1
 		return "commercial"
-	elseif val == 1 then
+	elseif val == 4 then
 		self.sectorCount_rural = self.sectorCount_rural + 1
 		return "rural"
-	elseif val == 4 then
+	elseif val == 1 then
 		self.sectorCount_park = self.sectorCount_park + 1
 		return "park"
 	elseif val == 0 then
