@@ -135,8 +135,8 @@ function Menu:setMainMenu()
 	closestWorkerBtn:SetVisible(false)
 	closestWorkerBtn.OnClick = function(object)
 		workerPoint = unitManager:getClosestIdleWorker()
-		view.x = workerPoint.x
-		view.y = workerPoint.y
+		view.x = workerPoint.x - width/2
+		view.y = workerPoint.y - height/2
 	end
 	
 	-- closest worker
@@ -147,8 +147,8 @@ function Menu:setMainMenu()
 	closestRangerBtn:SetVisible(false)
 	closestRangerBtn.OnClick = function(object)
 		rangerPoint = unitManager:getClosestRanger()
-		view.x = rangerPoint.x
-		view.y = rangerPoint.y
+		view.x = rangerPoint.x - width/2
+		view.y = rangerPoint.y - height/2
 	end
 	
 	-- closest worker
@@ -159,8 +159,8 @@ function Menu:setMainMenu()
 	closestHumanBtn:SetVisible(false)
 	closestHumanBtn.OnClick = function(object)
 		humanPoint = unitManager:getClosestHuman()
-		view.x = humanPoint.x
-		view.y = humanPoint.y
+		view.x = humanPoint.x - width/2
+		view.y = humanPoint.y - height/2
 	end
 	
 	table.insert(self.mainMenu, upgradeWorkerBtn)
