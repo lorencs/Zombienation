@@ -238,7 +238,7 @@ end
 				self.state = "Running from  ".. zombie_list[i].tag
 				self.panicMode = true
 				self.working = false								-- the worker is getting chased, so he is not working anymore
-				self.carryingResource = 0							-- whether the unit was or was not carrying a resource, they drop it in order to run !
+				self.carryingResource = false							-- whether the unit was or was not carrying a resource, they drop it in order to run !
 				self:runAwayFrom(zombie_list[i].x, zombie_list[i].y)
 
 				-- reset angles if they go over 360 or if they go under 0
@@ -455,17 +455,17 @@ function Worker:checkLocation()
 
 	if ( (unitManager.baseTilePos.x == math.floor(self.x / map.tileSize) ) and (unitManager.baseTilePos.y == math.floor(self.y / map.tileSize) ) ) then
 		print("Arrived at the base ! Heading to the store..")
-		if (self.carryingResource == 1) then
+		if (self.carryingResource == true) then
 			supplies = supplies + 1				-- increase resources
 		end
 		self.atLocation = "Base"
 		self.path = unitManager.baseToStorePath
-		self.carryingResource = 0
+		self.carryingResource = false
 	elseif ( (unitManager.storeTilePos.x == math.floor(self.x / map.tileSize) ) and (unitManager.storeTilePos.y == math.floor(self.y / map.tileSize) ) ) then
 		print("Arrived at the store ! Heading to the base..")
 		self.atLocation = "Store"
 		self.path = unitManager.storeToBasePath
-		self.carryingResource = 1
+		self.carryingResource = true
 	else
 		print("In transit or lost ?")
 		self.atLocation = "Other"
