@@ -144,6 +144,7 @@ function MapGen:divideCity()
 				self:generateWater(v:xd()-6, v:yd()-6, Point:new(v.x1+3, v.y1+3))
 			end
 		else -- set the base and store 
+			-- ACCOUNT FOR BUILDING SIZE
 			m.baseTilePt = Point:new(v.x1+1,v.y1+1)
 			m.storeTilePt = Point:new(v.x2-1,v.y2-1)
 		end
