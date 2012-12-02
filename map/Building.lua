@@ -1,5 +1,7 @@
 Building = {}
 
+tempblock = love.graphics.newImage("map/buildings/house.png")
+
 -- brun hice
 houseN = love.graphics.newImage("map/buildings/houseN.png") -- 1x1
 houseW = love.graphics.newImage("map/buildings/houseW.png")
@@ -56,7 +58,9 @@ function Building:set(x, y, b_type, dir, style)
 	end
 	
 	-- get direction
-	selector = selector..dir
+	if not(dir == nil) then
+		selector = selector..dir
+	end
 	
 	-- get style
 	if not(style == nil) then
@@ -85,6 +89,10 @@ function Building:getImg(selector)
 		return houseS2
 	elseif selector == "houseE2" then
 		return houseE2
+		
+	elseif selector == "house" then
+		return tempblock
+		
 	-- garages
 	elseif selector == "garageN" then
 		return garageN
