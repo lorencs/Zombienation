@@ -184,6 +184,7 @@ function Sector:park(map)
 	local x1,y1,x2,y2 = self.x1, self.y1, self.x2, self.y2
 	
 	-- local vars
+	--  NO RANDOM GATES
 	local gapSide = math.floor(math.random() * 4)
 	local xmid = x1 + math.floor(self:xd() / 2) + 1
 	local ymid = y1 + math.floor(self:yd() / 2) + 1	
@@ -216,8 +217,8 @@ function Sector:park(map)
 		--end
 	end
 	-- south road
-	local yn = y2
-	for x=x1+1,x2 do		
+	local yn = y2-1
+	for x=x1+1,x2-1 do		
 		--if tileHere(map,x,yn,"G") then
 			if gapSide == 2 then
 				if not(x == xmid) then
@@ -229,8 +230,8 @@ function Sector:park(map)
 		--end
 	end
 	-- east road
-	local xn = x2
-	for y=y1+1,y2 do
+	local xn = x2-1
+	for y=y1+1,y2-1 do
 		--if tileHere(map,xn,y,"G") then
 			if gapSide == 3 then
 				if not(y == ymid) then
@@ -244,8 +245,8 @@ function Sector:park(map)
 end
 
 function Sector:fillWithGrass(map)
-	for x=self.x1+1,self.x2 do
-		for y=self.y1+1,self.y2 do
+	for x=self.x1+1,self.x2-1 do
+		for y=self.y1+1,self.y2-1 do
 			map.tiles[x][y]:setId("G")
 		end
 	end
