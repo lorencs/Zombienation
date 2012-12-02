@@ -23,7 +23,7 @@ function Human:new(xnew,ynew)
 	searchTimer = 0,							-- timer, whenc it reachers searchFreq, human looksAround
 	searchFreq = 0.25,							-- intervals at which to lookAround
 	initial_direction = 1,
-	fov_radius = 90,
+	fov_radius = 130,
 	fov_angle = 140,
 	fovStartAngle = 0,
 	fovEndAngle = 0,
@@ -74,8 +74,8 @@ function Human:setupUnit()
 	self.cx = self.x + self.radius
 	self.cy = self.y + self.radius
 	
-	self.fovStartAngle = self.angle - 45
-	self.fovEndAngle = self.angle + 45
+	self.fovStartAngle = self.angle - self.angle/2
+	self.fovEndAngle = self.angle + self.angle/2
 	
 	self.state = "Chilling"
 	self.speed = self.normalSpeed
@@ -95,8 +95,8 @@ function Human:draw(i)
 	--self.v2 = Point:new(self.x + math.cos( (self.angle - 70) * (math.pi/180) )*180 + self.radius, self.y + math.sin( (self.angle - 70) * (math.pi/180) )*180 + self.radius)
 	--self.v3 = Point:new(self.x + math.cos( (self.angle + 70 ) * (math.pi/180) )*180 + self.radius, self.y + math.sin( (self.angle + 70) * (math.pi/180) )*180 + self.radius)
 	-- for arc:
-	self.fovStartAngle = self.angle - 45
-	self.fovEndAngle = self.angle + 45
+	self.fovStartAngle = self.angle - self.angle/2
+	self.fovEndAngle = self.angle + self.angle/2
 	------------------------------- IF UNIT IS SELECTED.. DRAW:
 	if self.selected then
 		love.graphics.setColor(0,0,255,125)

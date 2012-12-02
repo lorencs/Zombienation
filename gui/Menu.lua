@@ -128,18 +128,18 @@ function Menu:setMainMenu()
 	currSuppliesText:SetVisible(false)
 	
 	goToNearest = loveframes.Create("text")
-	goToNearest:SetPos(400 + 30, height - menuWidth + 10)
-	goToNearest:SetText(supplies)
+	goToNearest:SetPos(451, height - menuWidth + 10)
+	goToNearest:SetText("Go to nearest:")
 	goToNearest:SetVisible(false)
 	
 	-- closest worker
 	closestWorkerBtn = loveframes.Create("imagebutton")
 	closestWorkerBtn:SetSize(23,23)
-	closestWorkerBtn:SetPos(500, height - menuWidth + 34)		
+	closestWorkerBtn:SetPos(451, height - menuWidth + 27)		
 	closestWorkerBtn:SetImage(love.graphics.newImage("gui/workerbutton.png"))
 	closestWorkerBtn:SetVisible(false)
 	closestWorkerBtn.OnClick = function(object)
-		unitManager:getClosestIdleWorker()
+		workerPoint = unitManager:getClosestIdleWorker()
 		view.x = workerPoint.x - width/2
 		view.y = workerPoint.y - height/2
 	end
@@ -147,7 +147,7 @@ function Menu:setMainMenu()
 	-- closest worker
 	closestRangerBtn = loveframes.Create("imagebutton")
 	closestRangerBtn:SetSize(23,23)
-	closestRangerBtn:SetPos(500, height - menuWidth + 60)		
+	closestRangerBtn:SetPos(451, height - menuWidth + 54)		
 	closestRangerBtn:SetImage(love.graphics.newImage("gui/rangerbutton.png"))
 	closestRangerBtn:SetVisible(false)
 	closestRangerBtn.OnClick = function(object)
@@ -159,14 +159,29 @@ function Menu:setMainMenu()
 	-- closest worker
 	closestHumanBtn = loveframes.Create("imagebutton")
 	closestHumanBtn:SetSize(23,23)
-	closestHumanBtn:SetPos(500, height - menuWidth + 87)		
-	closestHumanBtn:SetImage(love.graphics.newImage("gui/workerbutton.png"))
+	closestHumanBtn:SetPos(451, height - menuWidth + 81)		
+	closestHumanBtn:SetImage(love.graphics.newImage("gui/humanbutton.png"))
 	closestHumanBtn:SetVisible(false)
 	closestHumanBtn.OnClick = function(object)
 		humanPoint = unitManager:getClosestHuman()
 		view.x = humanPoint.x - width/2
 		view.y = humanPoint.y - height/2
 	end
+	
+	workerCount = loveframes.Create("text")
+	workerCount:SetPos(478, height - menuWidth + 32)
+	workerCount:SetText("("..number_of_workers.." Workers)")
+	workerCount:SetVisible(false)
+	
+	rangerCount = loveframes.Create("text")
+	rangerCount:SetPos(478, height - menuWidth + 59)
+	rangerCount:SetText("("..number_of_rangers.." Rangers)")
+	rangerCount:SetVisible(false)
+	
+	humanCount = loveframes.Create("text")
+	humanCount:SetPos(478, height - menuWidth + 86)
+	humanCount:SetText("("..number_of_humans.." Humans)")
+	humanCount:SetVisible(false)
 	
 	table.insert(self.mainMenu, upgradeWorkerBtn)
 	table.insert(self.mainMenu, workerText)
@@ -181,6 +196,9 @@ function Menu:setMainMenu()
 	table.insert(self.mainMenu, patrolText)
 	table.insert(self.mainMenu, currSuppliesText)
 	table.insert(self.mainMenu, suppliesLabelText)
+	table.insert(self.mainMenu, workerCount)
+	table.insert(self.mainMenu, rangerCount)
+	table.insert(self.mainMenu, humanCount)
 end
 
 
@@ -325,6 +343,10 @@ function Menu:update(dt)
 		end
 	end
 		
+	workerCount:SetVisible(self.visible)
+	rangerCount:SetVisible(self.visible)
+	humanCount:SetVisible(self.visible)
+	goToNearest:SetVisible(self.visible)
 	closestWorkerBtn:SetVisible(self.visible)
 	closestRangerBtn:SetVisible(self.visible)
 	closestHumanBtn:SetVisible(self.visible)
