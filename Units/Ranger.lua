@@ -152,8 +152,8 @@ function Ranger:draw(i)
 	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
 	playerColor = {0,255,0}
 	love.graphics.setColor(playerColor)
-	if self.color == 1 then love.graphics.setColor(255,255,23, 150) end
-	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
+	--if self.color == 1 then love.graphics.setColor(255,255,23, 150) end
+	--love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
 	
 	-- print tag to screen.. for debug !
 	love.graphics.print(self.tag, self.x, self.y + 10)
