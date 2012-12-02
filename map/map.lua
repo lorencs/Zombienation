@@ -4,7 +4,7 @@ Map = {}
 road = love.graphics.newImage("map/roadSprites.png")
 grass = love.graphics.newImage("map/grassSprites.png")
 water = love.graphics.newImage("map/waterSprites.png")
-fence = love.graphics.newImage("map/fenceSprites.png")
+fence = love.graphics.newImage("map/tree tile.png")
 blocked = love.graphics.newImage("map/blocked.png")
 roadMM = love.graphics.newImage("map/roadMM.png")
 grassMM = love.graphics.newImage("map/grassMM.png")
@@ -356,7 +356,7 @@ end
 
 function Map:selectFenceSprite(tile)
 	local w = self.tileSize
-	spritei = {1,1,1,1,1,1}
+	--[[spritei = {1,1,1,1,1,1}
 
 	-- eliminate sprites based on neighbor info
 	if (N == 1) then
@@ -372,9 +372,10 @@ function Map:selectFenceSprite(tile)
 		spritei[1], spritei[3], spritei[6] = 0,0,0 else
 		spritei[4], spritei[5] = 0,0 end
 	
-	local i = self:findi(spritei)
+	local i = self:findi(spritei)]]--
 	
-	tile.sprite = love.graphics.newQuad((i-1)*w, 0, w, w, tile:getImg():getWidth(), tile:getImg():getHeight())
+	--tile.sprite = love.graphics.newQuad((i-1)*w, 0, w, w, tile:getImg():getWidth(), tile:getImg():getHeight())
+	tile.sprite = love.graphics.newQuad(0, 0, w, w, tile:getImg():getWidth(), tile:getImg():getHeight())
 end
 
 function Map:selectGroundSprite(tile)
