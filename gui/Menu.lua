@@ -118,14 +118,19 @@ function Menu:setMainMenu()
 	patrolText:SetVisible(false)
 	
 	suppliesLabelText = loveframes.Create("text")
-	suppliesLabelText:SetPos(400 - 80, height - menuWidth + 7)
+	suppliesLabelText:SetPos(400 - 80, height - menuWidth + 10)
 	suppliesLabelText:SetText("Current Supplies: ")
 	suppliesLabelText:SetVisible(false)
 	
 	currSuppliesText = loveframes.Create("text")
-	currSuppliesText:SetPos(400 + 30, height - menuWidth + 7)
+	currSuppliesText:SetPos(400 + 30, height - menuWidth + 10)
 	currSuppliesText:SetText(supplies)
 	currSuppliesText:SetVisible(false)
+	
+	goToNearest = loveframes.Create("text")
+	goToNearest:SetPos(400 + 30, height - menuWidth + 10)
+	goToNearest:SetText(supplies)
+	goToNearest:SetVisible(false)
 	
 	-- closest worker
 	closestWorkerBtn = loveframes.Create("imagebutton")
@@ -134,7 +139,7 @@ function Menu:setMainMenu()
 	closestWorkerBtn:SetImage(love.graphics.newImage("gui/workerbutton.png"))
 	closestWorkerBtn:SetVisible(false)
 	closestWorkerBtn.OnClick = function(object)
-		workerPoint = unitManager:getClosestIdleWorker()
+		unitManager:getClosestIdleWorker()
 		view.x = workerPoint.x - width/2
 		view.y = workerPoint.y - height/2
 	end

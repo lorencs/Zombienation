@@ -36,4 +36,7 @@ function View:update(dt)
 		self.y = math.clamp(self.y + dt*self.speed, 
 			self.ymin, self.ymax)
 	end
+	
+	self.x = math.clamp(self.x, self.xmin, self.xmax)
+	self.y = math.clamp(self.y, self.ymin, self.ymax)
 end
