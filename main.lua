@@ -11,6 +11,7 @@ require "Units/Point"
 require "Units/shortestPath/Astar"
 
 --[[ 
+H
 	write little messages here so changes arent confusing ? if i do modify something and it still needs to be changed,
 	i put a comment with a tag *change* right by the line
 	
