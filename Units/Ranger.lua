@@ -288,7 +288,7 @@ function Ranger:update(dt, zi, paused)
 			self.statestr = "shooting " ..self.huntee.tag
 			self.animation:stop()
 		else 
-			self:hunt(self.huntee.x, self.huntee.y)
+			self:hunt(self.huntee.cx, self.huntee.cy)
 			-- change speed to huntingSpeed
 			self.speed = self.huntingSpeed
 				
@@ -452,7 +452,7 @@ function Ranger:update(dt, zi, paused)
 			self.statestr = "hunting " ..self.huntee.tag
 			self.animation:start()
 		else
-			self:hunt(self.huntee.x, self.huntee.y)
+			self:hunt(self.huntee.cx, self.huntee.cy)
 			if self.shootingTimer > 2 then
 				self:shoot()
 				self.shootingTimer = 0

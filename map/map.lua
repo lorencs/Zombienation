@@ -1,5 +1,17 @@
 Map = {}
 
+-- tile images
+road = love.graphics.newImage("map/roadSprites.png")
+grass = love.graphics.newImage("map/grassSprites.png")
+water = love.graphics.newImage("map/waterSprites.png")
+fence = love.graphics.newImage("map/fenceSprites.png")
+blocked = love.graphics.newImage("map/blocked.png")
+roadMM = love.graphics.newImage("map/roadMM.png")
+grassMM = love.graphics.newImage("map/grassMM.png")
+waterMM = love.graphics.newImage("map/waterMM.png")
+fenceMM = love.graphics.newImage("map/fenceMM.png")
+blockedMM = love.graphics.newImage("map/blockedMM.png")
+
 function Map:new()
 	local object = {
 		width = 0,
@@ -201,6 +213,8 @@ function Map:getNeighborInfo(x,y)
 		self:selectGroundSprite(tile)
 	elseif (tile.id == "D") then	-- builDing tile
 		self:selectBuildingSprite(tile, x, y)
+	elseif (tile.id == "P") then	-- fence tile (p for park, f might be for farm)
+		self:selectFenceSprite(tile)	
 	end
 	
 	--self.canvas:renderTo(function()
@@ -340,6 +354,29 @@ function Map:selectWaterSprite(tile)
 	tile.sprite = love.graphics.newQuad(j*w, (i-1)*w, w, w, tile:getImg():getWidth(), tile:getImg():getHeight())
 end
 
+function Map:selectFenceSprite(tile)
+	local w = self.tileSize
+	spritei = {1,1,1,1,1,1}
+
+	-- eliminate sprites based on neighbor info
+	if (N == 1) then
+		spritei[2], spritei[3], spritei[4] = 0,0,0 else 
+		spritei[5], spritei[6] = 0,0 end
+	if (E == 1) then
+		spritei[1], spritei[4], spritei[5] = 0,0,0 else
+		spritei[3], spritei[6] = 0,0 end
+	if (S == 1) then
+		spritei[2], spritei[5], spritei[6] = 0,0,0 else
+		spritei[3], spritei[4] = 0,0 end
+	if (W == 1) then
+		spritei[1], spritei[3], spritei[6] = 0,0,0 else
+		spritei[4], spritei[5] = 0,0 end
+	
+	local i = self:findi(spritei)
+	
+	tile.sprite = love.graphics.newQuad((i-1)*w, 0, w, w, tile:getImg():getWidth(), tile:getImg():getHeight())
+end
+
 function Map:selectGroundSprite(tile)
 	local w = self.tileSize
 
@@ -445,6 +482,10 @@ function Map:newBuilding(x, y, b_type, dir, style)
 	
 	-- success
 	return true
+end
+
+function Map:newFence(x, y)
+	self.tiles[x][y]:setId("P")
 end
 
 function Map:addBoundary()

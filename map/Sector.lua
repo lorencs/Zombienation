@@ -196,10 +196,12 @@ function Sector:park(map)
 		--if tileHere(map,x,yn,"G") then						
 			if gapSide == 0 then
 				if not(x == xmid) then
-					map:newBuilding(x,yn,11,dir,style)
+					--map:newBuilding(x,yn,11,dir,style)
+					map:newFence(x,yn)
 				end
 			else
-				map:newBuilding(x,yn,11,dir,style)
+				--map:newBuilding(x,yn,11,dir,style)
+				map:newFence(x,yn)
 			end
 		--end
 	end
@@ -209,10 +211,12 @@ function Sector:park(map)
 		--if tileHere(map,xn,y,"G") then
 			if gapSide == 1 then
 				if not(y == ymid) then
-					map:newBuilding(xn,y,11,dir,style)
+					--map:newBuilding(xn,y,11,dir,style)
+					map:newFence(xn,y)
 				end
 			else
-				map:newBuilding(xn,y,11,dir,style)
+				--map:newBuilding(xn,y,11,dir,style)
+				map:newFence(xn,y)
 			end
 		--end
 	end
@@ -222,10 +226,12 @@ function Sector:park(map)
 		--if tileHere(map,x,yn,"G") then
 			if gapSide == 2 then
 				if not(x == xmid) then
-					map:newBuilding(x,yn,11,dir,style)
+					--map:newBuilding(x,yn,11,dir,style)
+					map:newFence(x,yn)
 				end
 			else 
-				map:newBuilding(x,yn,11,dir,style)
+				--map:newBuilding(x,yn,11,dir,style)
+				map:newFence(x,yn)
 			end
 		--end
 	end
@@ -235,10 +241,12 @@ function Sector:park(map)
 		--if tileHere(map,xn,y,"G") then
 			if gapSide == 3 then
 				if not(y == ymid) then
-					map:newBuilding(xn,y,11,dir,style)
+					--map:newBuilding(xn,y,11,dir,style)
+					map:newFence(xn,y)
 				end
 			else
-				map:newBuilding(xn,y,11,dir,style)
+				--map:newBuilding(xn,y,11,dir,style)
+				map:newFence(xn,y)
 			end
 		--end
 	end	

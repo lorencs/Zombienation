@@ -143,6 +143,7 @@ function Menu:setMainMenu()
 		workerPoint = unitManager:getClosestIdleWorker()
 		view.x = workerPoint.x - width/2
 		view.y = workerPoint.y - height/2
+		unitManger:deselectUnits()
 	end
 	
 	-- closest worker
@@ -155,6 +156,7 @@ function Menu:setMainMenu()
 		rangerPoint = unitManager:getClosestRanger()
 		view.x = rangerPoint.x - width/2
 		view.y = rangerPoint.y - height/2
+		unitManger:deselectUnits()
 	end
 	
 	-- closest worker
@@ -167,6 +169,7 @@ function Menu:setMainMenu()
 		humanPoint = unitManager:getClosestHuman()
 		view.x = humanPoint.x - width/2
 		view.y = humanPoint.y - height/2
+		unitManger:deselectUnits()
 	end
 	
 	workerCount = loveframes.Create("text")

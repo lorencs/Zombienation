@@ -1,15 +1,5 @@
 Tile = {}
 
--- tile images
-road = love.graphics.newImage("map/roadSprites.png")
-grass = love.graphics.newImage("map/grassSprites.png")
-water = love.graphics.newImage("map/waterSprites.png")
-blocked = love.graphics.newImage("map/blocked.png")
-roadMM = love.graphics.newImage("map/roadMM.png")
-grassMM = love.graphics.newImage("map/grassMM.png")
-waterMM = love.graphics.newImage("map/waterMM.png")
-blockedMM = love.graphics.newImage("map/blockedMM.png")
-
 -- constructor
 function Tile:new(_id, ts)
 	local object = {
@@ -54,6 +44,9 @@ function Tile:resetImg()
 	elseif self.id == "D" then
 		--self.img = building
 		self.mm = blockedMM
+	elseif self.id == "P" then
+		self.img = fence
+		self.mm = fenceMM
 	end
 end
 function Tile:getImg()
