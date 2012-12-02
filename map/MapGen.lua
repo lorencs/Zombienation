@@ -60,8 +60,8 @@ end
 function MapGen:randomMap()
 	print("generating random map")
 	-- init new map
-	self.width = 100 -- / random number
-	self.height = 100 -- / rand
+	self.width = mapW -- / random number
+	self.height = mapH -- / rand
 	self.map = Map:new()
 	self.map:initMap(self.width, self.height)
 	

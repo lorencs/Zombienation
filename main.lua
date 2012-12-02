@@ -51,6 +51,10 @@ orig_number_of_rangers = 2			-- i thought this was a poem
 orig_number_of_workers = 3			-- i wish it was too
 orig_number_of_cars = 5
 
+-- map size
+mapW = 75
+mapH = 75
+
 -- gamestate
 Gamestate = require "utils/gamestate"
 Timer = require "utils/timer"
