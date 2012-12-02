@@ -39,7 +39,7 @@ function UnitManager:new()
 end
 
 function UnitManager:initUnits()
-	infoText:addText("Initiating units.. ")
+	--infoText:addText("Initiating units.. ")
 	--[[for i = 0, map.width - 1 do
 		for j = 0, map.height - 1 do
 			print(map.tiles[i][j].id.." ")
@@ -240,7 +240,21 @@ end
 
 -- Update function
 function UnitManager:update(dt, gravity)
-
+	--[[
+	-- if there are no humans left, or zombies, end game
+	local humans = number_of_humans + number_of_rangers + number_of_workers
+	if humans < 1 and number_of_zombies > 0 then
+		infoText:addText("Game Over ! Zombies Win !")
+		self:pauseGame()
+	elseif number_of_zombies < 1 and humans > 0 then
+		infoText:addText("Game Over ! Humans Win !")
+		self:pauseGame()
+	else
+		infoText:addText("Game Over ! It's a tie !")
+		self:pauseGame()
+	end
+	--]]
+	
 	-- every minute, the user receives 1 supply
 	if self.supplyTimer > 60 then
 		supplies = supplies + 1
