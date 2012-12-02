@@ -127,6 +127,42 @@ function Menu:setMainMenu()
 	currSuppliesText:SetText(supplies)
 	currSuppliesText:SetVisible(false)
 	
+	-- closest worker
+	closestWorkerBtn = loveframes.Create("imagebutton")
+	closestWorkerBtn:SetSize(23,23)
+	closestWorkerBtn:SetPos(500, height - menuWidth + 34)		
+	closestWorkerBtn:SetImage(love.graphics.newImage("gui/workerbutton.png"))
+	closestWorkerBtn:SetVisible(false)
+	closestWorkerBtn.OnClick = function(object)
+		workerPoint = unitManager:getClosestIdleWorker()
+		view.x = workerPoint.x
+		view.y = workerPoint.y
+	end
+	
+	-- closest worker
+	closestRangerBtn = loveframes.Create("imagebutton")
+	closestRangerBtn:SetSize(23,23)
+	closestRangerBtn:SetPos(500, height - menuWidth + 60)		
+	closestRangerBtn:SetImage(love.graphics.newImage("gui/rangerbutton.png"))
+	closestRangerBtn:SetVisible(false)
+	closestRangerBtn.OnClick = function(object)
+		rangerPoint = unitManager:getClosestRanger()
+		view.x = rangerPoint.x
+		view.y = rangerPoint.y
+	end
+	
+	-- closest worker
+	closestHumanBtn = loveframes.Create("imagebutton")
+	closestHumanBtn:SetSize(23,23)
+	closestHumanBtn:SetPos(500, height - menuWidth + 87)		
+	closestHumanBtn:SetImage(love.graphics.newImage("gui/workerbutton.png"))
+	closestHumanBtn:SetVisible(false)
+	closestHumanBtn.OnClick = function(object)
+		humanPoint = unitManager:getClosestHuman()
+		view.x = humanPoint.x
+		view.y = humanPoint.y
+	end
+	
 	table.insert(self.mainMenu, upgradeWorkerBtn)
 	table.insert(self.mainMenu, workerText)
 	table.insert(self.mainMenu, upgradeRangerBtn)
@@ -134,6 +170,9 @@ function Menu:setMainMenu()
 	table.insert(self.mainMenu, suppliesButton)
 	table.insert(self.mainMenu, suppliesText)
 	table.insert(self.mainMenu, patrolButton)
+	table.insert(self.mainMenu, closestWorkerBtn)
+	table.insert(self.mainMenu, closestRangerBtn)
+	table.insert(self.mainMenu, closestHumanBtn)
 	table.insert(self.mainMenu, patrolText)
 	table.insert(self.mainMenu, currSuppliesText)
 	table.insert(self.mainMenu, suppliesLabelText)
@@ -281,6 +320,9 @@ function Menu:update(dt)
 		end
 	end
 		
+	closestWorkerBtn:SetVisible(self.visible)
+	closestRangerBtn:SetVisible(self.visible)
+	closestHumanBtn:SetVisible(self.visible)
 	suppliesLabelText:SetVisible(self.visible)
 	currSuppliesText:SetVisible(self.visible)
 	currSuppliesText:SetText(supplies)
