@@ -118,12 +118,12 @@ function Menu:setMainMenu()
 	patrolText:SetVisible(false)
 	
 	suppliesLabelText = loveframes.Create("text")
-	suppliesLabelText:SetPos(400 - 80, height - menuWidth + 5)
+	suppliesLabelText:SetPos(400 - 80, height - menuWidth + 7)
 	suppliesLabelText:SetText("Current Supplies: ")
 	suppliesLabelText:SetVisible(false)
 	
 	currSuppliesText = loveframes.Create("text")
-	currSuppliesText:SetPos(400 + 30, height - menuWidth + 5)
+	currSuppliesText:SetPos(400 + 30, height - menuWidth + 7)
 	currSuppliesText:SetText(supplies)
 	currSuppliesText:SetVisible(false)
 	
