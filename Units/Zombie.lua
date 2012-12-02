@@ -35,8 +35,8 @@ function Zombie:new(x_new, y_new)
 	initial_direction = 1,
 	x_direction = math.random(-1,1),
 	y_direction = math.random(-1,1),
-	fov_radius = 75,
-	fov_angle = 90,
+	fov_radius = 120,
+	fov_angle = 95,
 	fovStartAngle = 0,
 	fovEndAngle = 0,
 	followingTag = 0,									-- index of the human in human_list that this zombie will follow. if it's 0, then this zombie
@@ -119,8 +119,8 @@ function Zombie:draw(i)
 	self.v2 = Point:new(self.x + math.cos( (self.angle - 40) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle - 40) * (math.pi/180) )*90 + self.radius)
 	self.v3 = Point:new(self.x + math.cos( (self.angle + 40 ) * (math.pi/180) )*90 + self.radius, self.y + math.sin( (self.angle + 40) * (math.pi/180) )*90 + self.radius)
 	-- for arc:
-	self.fovStartAngle = self.angle - 45
-	self.fovEndAngle = self.angle + 45
+	self.fovStartAngle = self.angle - self.angle/2
+	self.fovEndAngle = self.angle + self.angle/2
 	
 	------------------------------- IF UNIT IS SELECTED.. DRAW:
 	if self.selected then	
