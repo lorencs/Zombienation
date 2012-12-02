@@ -494,7 +494,7 @@ end
 
 function UnitManager:sendWorkers()
 	for i,v in pairs (worker_list) do
-		if v.selected == true then
+		if v.selected == true and v.working == false then
 			self.idleWorkers = self.idleWorkers - 1
 			v:sendToWork()
 		end
