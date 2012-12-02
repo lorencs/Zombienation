@@ -103,16 +103,21 @@ function Sector:residential(map)
 	local r = math.random()
 	local x1,y1,x2,y2 = self.x1, self.y1, self.x2, self.y2
 		
+	-- choose sector color
+	local style = nil
+	if math.random() < 0.5 then
+		style = "2"
+	end
+		
 	-- north road
 	local yn = y1+1 -- building placement y 
 	for x=x1+1,x2-1 do		
 		if tileHere(map,x,y1,"R") and tileHere(map,x,yn,"G") then						
 			if math.random() < 0.7 then
 				if math.random() < 0.5 then
-					map:newBuilding(x,yn,11,"N")
-				elseif tileHere(map,x+1,yn,"G") then
-					map:newBuilding(x,yn,21,"N")
-					x = x + 1				
+					map:newBuilding(x,yn,11,"N",style)
+				elseif tileHere(map,x,yn+1,"G") then
+					map:newBuilding(x,yn,12,"N",style)				
 				end
 			end
 		end
@@ -123,10 +128,9 @@ function Sector:residential(map)
 		if tileHere(map,x1,y,"R") and tileHere(map,xn,y,"G") then
 			if math.random() < 0.7 then
 				if math.random() < 0.5 then
-					map:newBuilding(xn,y,11,"W")
-				elseif tileHere(map,xn,y+1,"G") then
-					map:newBuilding(xn,y,12,"W")
-					y = y + 1
+					map:newBuilding(xn,y,11,"W",style)
+				elseif tileHere(map,xn+1,y,"G") then
+					map:newBuilding(xn,y,21,"W",style)					
 				end
 			end
 		end
@@ -137,10 +141,9 @@ function Sector:residential(map)
 		if tileHere(map,x,y2,"R") and tileHere(map,x,yn,"G") then
 			if math.random() < 0.7 then
 				if math.random() < 0.5 then
-					map:newBuilding(x,yn,11,"S")
-				elseif tileHere(map,x+1,yn,"G") then
-					map:newBuilding(x,yn,21,"S")
-					x = x + 1
+					map:newBuilding(x,yn,11,"S",style)
+				elseif tileHere(map,x,yn-1,"G") then
+					map:newBuilding(x,yn-1,12,"S",style)
 				end
 			end
 		end
@@ -151,10 +154,9 @@ function Sector:residential(map)
 		if tileHere(map,x2,y,"R") and tileHere(map,xn,y,"G") then
 			if math.random() < 0.7 then
 				if math.random() < 0.5 then
-					map:newBuilding(xn,y,11,"E")
-				elseif tileHere(map,xn,y+1,"G") then
-					map:newBuilding(xn,y,12,"E")
-					y = y + 1
+					map:newBuilding(xn,y,11,"E",style)
+				elseif tileHere(map,xn-1,y,"G") then
+					map:newBuilding(xn-1,y,21,"E",style)
 				end
 			end
 		end
