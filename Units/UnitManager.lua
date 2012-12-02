@@ -135,6 +135,7 @@ function UnitManager:getClosestIdleWorker()
 
 	if unitRet ~= nil then
 		local pt = Point:new(unitRet.x, unitRet.y)
+		return pt
 	else
 		return Point:new(view.x - width / 2, view.y - height / 2)
 	end
@@ -163,6 +164,7 @@ function UnitManager:getClosestRanger()
 	
 	if unitRet ~= nil then
 		local pt = Point:new(unitRet.x, unitRet.y)
+		return pt
 	else
 		return Point:new(view.x - width / 2, view.y - height / 2)
 	end
@@ -192,6 +194,7 @@ function UnitManager:getClosestHuman()
 	
 	if unitRet ~= nil then
 		local pt = Point:new(unitRet.x, unitRet.y)
+		return pt
 	else
 		return Point:new(view.x - width / 2, view.y - height / 2)
 	end
