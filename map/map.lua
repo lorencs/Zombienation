@@ -413,10 +413,10 @@ end
 
 -- add building from here rather than MapGen
 -- return success as boolean
-function Map:newBuilding(x, y, b_type, dir)
+function Map:newBuilding(x, y, b_type, dir, style)
 	-- add building to list
 	local b = Building:new()
-	b:set(x, y, b_type, dir)
+	b:set(x, y, b_type, dir, style)
 	
 	-- building out of bounds
 	if (b.xend >= self.width) or (b.yend >= self.height) then

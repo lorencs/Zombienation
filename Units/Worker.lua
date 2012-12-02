@@ -238,6 +238,7 @@ end
 				self.state = "Running from  ".. zombie_list[i].tag
 				self.panicMode = true
 				self.working = false								-- the worker is getting chased, so he is not working anymore
+				self.carryingResource = 0							-- whether the unit was or was not carrying a resource, they drop it in order to run !
 				self:runAwayFrom(zombie_list[i].x, zombie_list[i].y)
 
 				-- reset angles if they go over 360 or if they go under 0
@@ -324,8 +325,17 @@ function Worker:update(dt, zi, paused)
 			if self.workingTileCount > 0 then self.turnFast = false end
 			if (self.tarXTile == math.floor(self.x / map.tileSize)) and (self.tarYTile == math.floor(self.y / map.tileSize)) then
 				if (#self.path == self.workingTileCount) then
-					self.working = false						-- the path of the worker should be finished by now, so the worker should be at a set location
+					--self.working = false						-- the path of the worker should be finished by now, so the worker should be at a set location
 					self:checkLocation()						-- check location and set next path of this worker
+					self.working = true							-- time for worker to go to the next location.. either base or store
+					self.workingTileCount = 0
+					self.tarXTile = self.path[#self.path - self.workingTileCount].x 
+					self.tarYTile = self.path[#self.path - self.workingTileCount].y
+					self.workingTileCount = self.workingTileCount + 1
+					self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
+					--self.angle = self.targetAngle
+					self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+					self.turnFast = true
 				else
 					self.tarXTile = self.path[#self.path - self.workingTileCount].x -- else worker is still on path to a destination..
 					self.tarYTile = self.path[#self.path - self.workingTileCount].y
@@ -445,6 +455,9 @@ function Worker:checkLocation()
 
 	if ( (unitManager.baseTilePos.x == math.floor(self.x / map.tileSize) ) and (unitManager.baseTilePos.y == math.floor(self.y / map.tileSize) ) ) then
 		print("Arrived at the base ! Heading to the store..")
+		if (self.carryingResource == 1) then
+			supplies = supplies + 1				-- increase resources
+		end
 		self.atLocation = "Base"
 		self.path = unitManager.baseToStorePath
 		self.carryingResource = 0
@@ -471,10 +484,10 @@ function Worker:sendToWork()			-- this gets called when user presses the 'gather
 		print("Time to Work !")
 		if self.carryingResource == true then
 			print("Got resource, going to Base !")
-			self:getShortestPath(self.x,self.y,unitManager.baseTilePos.x, unitManager.baseTilePos.y)
+			self:getShortestPath(self.x,self.y,unitManager.baseTilePos.x * map.tileSize, unitManager.baseTilePos.y * map.tileSize)
 		else
 			print("Got NO resource, going to Store !")
-			self:getShortestPath(self.x, self.y, unitManager.storeTilePos.x, unitManager.storeTilePos.y)
+			self:getShortestPath(self.x, self.y, unitManager.storeTilePos.x * map.tileSize, unitManager.storeTilePos.y * map.tileSize)
 		end
 		
 		if (self.path ~= nil) then

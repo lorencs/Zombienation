@@ -98,9 +98,9 @@ function UnitManager:initUnits()
 	self.baseTilePos = map.baseTilePt
 	self.storeTilePos = map.storeTilePt
 	
-	self.storeToBasePath = self:getShortestP(self.storeTilePos.x, self.storeTilePos.y, self.baseTilePos.x, self.baseTilePos.y)
-	self.baseToStorePath = self:getShortestP(self.baseTilePos.x, self.baseTilePos.y, self.storeTilePos.x, self.storeTilePos.y)
-	
+	-- get shortest paths from store to base and from base to store and store the 2 lists
+	self.storeToBasePath = astar:findPath(self.storeTilePos.x, self.storeTilePos.y, self.baseTilePos.x, self.baseTilePos.y)
+	self.baseToStorePath = astar:findPath(self.baseTilePos.x, self.baseTilePos.y, self.storeTilePos.x, self.storeTilePos.y)
 	--[[
 	for i = 1, number_of_cars do
 		car_list[i] = Car:new()
@@ -110,14 +110,47 @@ function UnitManager:initUnits()
 	
 end
 
-function UnitManager:getShortestP(x1,y1,x2,y2)
-	local x1tile = math.floor(x1 / map.tileSize)
-	local y1tile = math.floor(y1 / map.tileSize)
-	local x2tile = math.floor(x2 / map.tileSize)
-	local y2tile = math.floor(y2 / map.tileSize)
+-- gets the idle worker (if any) that is the closest to your current screen view
+function UnitManager:getClosestIdleWorker()
+	local unitRet = nil
+	local closestDist = nil
 	
-	list = astar:findPath(x1tile,y1tile,x2tile,y2tile)
-	return list
+	for i,v in pairs(worker_list) do
+		if v.working == false then
+			local distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
+			if i == 1 then 
+				unitRet = v 
+				closestDist = distance
+			end
+			if distance < closestDist then
+				closestDist = distance
+				unitRet = v
+			end
+		end
+	end
+	local pt = Point:new(unitRet.x, unitRet.y)
+	return pt
+end
+
+-- gets the ranger (if any) that is the closest to your current screen view
+function UnitManager:getClosestRanger()
+	local unitRet = nil
+	local closestDist = nil
+	
+	for i,v in pairs(ranger_list) do
+		local distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
+		if i == 1 then 
+			unitRet = v 
+			closestDist = distance
+		end
+		if distance < closestDist then
+			closestDist = distance
+			unitRet = v
+		end
+	end
+	
+	local pt = Point:new(unitRet.x, unitRet.y)
+	return pt
 end
 
 function UnitManager:resetUnits()
