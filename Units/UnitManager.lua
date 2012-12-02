@@ -98,6 +98,9 @@ function UnitManager:initUnits()
 	self.baseTilePos = map.baseTilePt
 	self.storeTilePos = map.storeTilePt
 	
+	self.storeToBasePath = self:getShortestP(self.storeTilePos.x, self.storeTilePos.y, self.baseTilePos.x, self.baseTilePos.y)
+	self.baseToStorePath = self:getShortestP(self.baseTilePos.x, self.baseTilePos.y, self.storeTilePos.x, self.storeTilePos.y)
+	
 	--[[
 	for i = 1, number_of_cars do
 		car_list[i] = Car:new()
@@ -105,6 +108,16 @@ function UnitManager:initUnits()
 		worker_tag = worker_tag + 1
 	end]]
 	
+end
+
+function UnitManager:getShortestP(x1,y1,x2,y2)
+	local x1tile = math.floor(x1 / map.tileSize)
+	local y1tile = math.floor(y1 / map.tileSize)
+	local x2tile = math.floor(x2 / map.tileSize)
+	local y2tile = math.floor(y2 / map.tileSize)
+	
+	list = astar:findPath(x1tile,y1tile,x2tile,y2tile)
+	return list
 end
 
 function UnitManager:resetUnits()
@@ -203,10 +216,9 @@ function UnitManager:draw()
 		worker_list[i]:draw(i)
 	end
 	
-	love.graphics.setColor(255,0,0)
-	love.graphics.rectangle("fill", self.baseTilePos.x*54, self.baseTilePos.y*54, 54, 54)
 	love.graphics.setColor(0,255,0)
 	love.graphics.rectangle("fill", self.baseTilePos.x*54, self.baseTilePos.y*54, 54, 54)
+	love.graphics.rectangle("fill", self.storeTilePos.x*54, self.storeTilePos.y*54, 54, 54)
 
 end
 
@@ -320,7 +332,8 @@ function UnitManager:moveTo(xo,yo)
 
 	for i,v in pairs (worker_list) do
 		if v.selected == true then
-			v:getShortestPath(v.x,v.y,xo,yo)
+			--v:getShortestPath(v.x,v.y,xo,yo)
+			print("HIIIII")
 			v:sendToWork()
 		end
 	end
@@ -399,7 +412,7 @@ function UnitManager:convertUnits(convType)
 end
 
 function UnitManager:sendWorkers()
-	for i,v in pairs (human_list) do
+	for i,v in pairs (worker_list) do
 		if v.selected == true then
 			v:sendToWork()
 		end
