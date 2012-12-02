@@ -94,7 +94,7 @@ function Menu:setMainMenu()
 	suppliesButton:SetImage(love.graphics.newImage("gui/suppliesbutton.png"))
 	suppliesButton:SetVisible(false)
 	suppliesButton.OnClick = function(object)
-		
+		unitManager:sendWorkers()		
 	end
 	
 	suppliesText = loveframes.Create("text")
