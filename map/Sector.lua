@@ -95,6 +95,8 @@ end
 function Sector:placeBuildings(map)
 	if self.sectorType == "residential" then
 		self:residential(map)
+	elseif self.sectorType == "park" then
+		self:park(map)
 	end
 end
 
@@ -166,6 +168,87 @@ end
 -- place commercial buildings
 function Sector:commercial(map)
 	
+end
+
+-- place a park
+function Sector:park(map)
+	-- no tiny parks
+	if self:xd() < 6 or self:yd() < 6 or self:area() < 50 then
+		return
+	end
+	
+	-- change sector into grass
+	self:fillWithGrass(map)
+	
+	-- self ref
+	local x1,y1,x2,y2 = self.x1, self.y1, self.x2, self.y2
+	
+	-- local vars
+	local gapSide = math.floor(math.random() * 4)
+	local xmid = x1 + math.floor(self:xd() / 2) + 1
+	local ymid = y1 + math.floor(self:yd() / 2) + 1	
+	local dir,style = nil,nil
+	
+	-- north side
+	local yn = y1+1 -- building placement y 
+	for x=x1+1,x2-1 do		
+		--if tileHere(map,x,yn,"G") then						
+			if gapSide == 0 then
+				if not(x == xmid) then
+					map:newBuilding(x,yn,11,dir,style)
+				end
+			else
+				map:newBuilding(x,yn,11,dir,style)
+			end
+		--end
+	end
+	-- west road
+	local xn = x1+1
+	for y=y1+1,y2-1 do		
+		--if tileHere(map,xn,y,"G") then
+			if gapSide == 1 then
+				if not(y == ymid) then
+					map:newBuilding(xn,y,11,dir,style)
+				end
+			else
+				map:newBuilding(xn,y,11,dir,style)
+			end
+		--end
+	end
+	-- south road
+	local yn = y2
+	for x=x1+1,x2 do		
+		--if tileHere(map,x,yn,"G") then
+			if gapSide == 2 then
+				if not(x == xmid) then
+					map:newBuilding(x,yn,11,dir,style)
+				end
+			else 
+				map:newBuilding(x,yn,11,dir,style)
+			end
+		--end
+	end
+	-- east road
+	local xn = x2
+	for y=y1+1,y2 do
+		--if tileHere(map,xn,y,"G") then
+			if gapSide == 3 then
+				if not(y == ymid) then
+					map:newBuilding(xn,y,11,dir,style)
+				end
+			else
+				map:newBuilding(xn,y,11,dir,style)
+			end
+		--end
+	end	
+end
+
+function Sector:fillWithGrass(map)
+	for x=self.x1+1,self.x2 do
+		for y=self.y1+1,self.y2 do
+			map.tiles[x][y]:setId("G")
+		end
+	end
 end
 
 function tileHere(map,x,y,t)
