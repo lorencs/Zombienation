@@ -518,16 +518,37 @@ end
 function Zombie:die()
 	-- tell the human you're following not to panic, its all good now brah
 
-	-- copying and pastng your own code here, but this could have been made much easier if you 
-	-- just saved a reference to the human you're following as a self var like i did with rangers
+				--self.followingTag = 0				-- reset followingTag as the zombie is not following any units anymore
+			--self.followingType = "None"
 	local h_index = -1
-	for i = 1, number_of_humans do
-		if human_list[i].tag == self.followingTag then
-			h_index = i
-			break
+	if self.followingType == "Human" then
+		-- copying and pastng your own code here, but this could have been made much easier if you 
+		-- just saved a reference to the human you're following as a self var like i did with rangers
+		
+		for i = 1, number_of_humans do
+			if human_list[i].tag == self.followingTag then
+				h_index = i
+				break
+			end
 		end
+		if h_index ~= -1 then human_list[h_index].panicMode = false end
+	elseif self.followingType == "Worker" then
+		for i = 1, number_of_workers do
+			if worker_list[i].tag == self.followingTag then
+				h_index = i
+				break
+			end
+		end
+		if h_index ~= -1 then worker_list[h_index].panicMode = false end
+	elseif self.followingType == "Ranger" then
+		for i = 1, number_of_rangers do
+			if ranger_list[i].tag == self.followingTag then
+				h_index = i
+				break
+			end
+		end
+		if h_index ~= -1 then ranger_list[h_index].panicMode = false end
 	end
-	if h_index ~= -1 then human_list[h_index].panicMode = false end
 	
 	-- mark this zombie for deletion (unitManager's update method will delete it on next update)
 	self.delete = true	

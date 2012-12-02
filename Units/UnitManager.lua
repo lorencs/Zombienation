@@ -29,7 +29,8 @@ function UnitManager:new()
 	baseTilePos = nil,
 	storeTilePos = nil,
 	storeToBasePath = {},
-	baseToStorePath = {}
+	baseToStorePath = {},
+	idleWorkers = 0
     }
     setmetatable(new_object, UnitManager_mt )
     return new_object
@@ -62,6 +63,7 @@ function UnitManager:initUnits()
 	number_of_humans = orig_number_of_humans			-- humans are blue
 	number_of_rangers = orig_number_of_rangers			-- humans are blue
 	number_of_workers = orig_number_of_workers			-- 
+	self.idleWorkers = number_of_workers
 	number_of_cars = orig_number_of_cars
 	
 	-- set up zombies
@@ -358,7 +360,7 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 end
 
 function UnitManager:deselectUnits()
-print("deselect")
+	print("deselect")
 	for i = 1, number_of_humans do
 		human_list[i].selected = false	-- deselect all humans 
 	end
@@ -452,33 +454,39 @@ function UnitManager:convertUnits(convType)
 	if (convType == "Worker") then
 		for i,v in pairs (human_list) do
 			if v.selected == true then
-				local dx = v.x
-				local dy = v.y
-				number_of_workers = number_of_workers + 1
-				newWorker = Worker:new(dx,dy)
-				table.insert(worker_list, newWorker)
-				worker_list[number_of_workers]:setupUnit()
-				unitTag = unitTag + 1
-				--worker_tag = worker_tag + 1
-				
-				table.remove(human_list, i)
-				number_of_humans = number_of_humans - 1
+				if supplies >= 2 then
+					local dx = v.x
+					local dy = v.y
+					number_of_workers = number_of_workers + 1
+					newWorker = Worker:new(dx,dy)
+					table.insert(worker_list, newWorker)
+					worker_list[number_of_workers]:setupUnit()
+					unitTag = unitTag + 1
+					--worker_tag = worker_tag + 1
+					
+					table.remove(human_list, i)
+					number_of_humans = number_of_humans - 1
+					supplies = supplies - 2
+				end
 			end
 		end
 	elseif (convType == "Ranger") then
 		for i,v in pairs (human_list) do
 			if v.selected == true then
-				local dx = v.x
-				local dy = v.y
-				number_of_rangers = number_of_rangers + 1
-				newRanger = Ranger:new(dx,dy)
-				table.insert(ranger_list, newRanger)
-				ranger_list[number_of_rangers]:setupUnit()
-				--ranger_tag = ranger_tag + 1
-				unitTag = unitTag + 1
-				
-				table.remove(human_list, i)
-				number_of_humans = number_of_humans - 1
+				if supplies >= 3 then
+					local dx = v.x
+					local dy = v.y
+					number_of_rangers = number_of_rangers + 1
+					newRanger = Ranger:new(dx,dy)
+					table.insert(ranger_list, newRanger)
+					ranger_list[number_of_rangers]:setupUnit()
+					--ranger_tag = ranger_tag + 1
+					unitTag = unitTag + 1
+					
+					table.remove(human_list, i)
+					number_of_humans = number_of_humans - 1
+					supplies = supplies - 3
+				end
 			end
 		end
 	end	
@@ -487,6 +495,7 @@ end
 function UnitManager:sendWorkers()
 	for i,v in pairs (worker_list) do
 		if v.selected == true then
+			self.idleWorkers = self.idleWorkers - 1
 			v:sendToWork()
 		end
 	end

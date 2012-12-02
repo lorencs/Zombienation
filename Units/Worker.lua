@@ -217,7 +217,8 @@ end
 			if val == true then										-- if zombie i is in the field of view of this human
 				self.state = "Running from  ".. zombie_list[i].tag
 				self.panicMode = true
-				self.working = false								-- the worker is getting chased, so he is not working anymore
+				self.working = false									-- the worker is getting chased, so he is not working anymore
+				unitManager.idleWorkers = unitManager.idleWorkers + 1
 				self.carryingResource = false							-- whether the unit was or was not carrying a resource, they drop it in order to run !
 				self:runAwayFrom(zombie_list[i].x, zombie_list[i].y)
 
