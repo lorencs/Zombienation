@@ -117,7 +117,7 @@ function UnitManager:getClosestIdleWorker()
 	
 	for i,v in pairs(worker_list) do
 		if v.working == false then
-			local distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
+			local distance = Unit:distanceBetweenPoints( (view.x), (view.y), v.x, v.y )
 			if i == 1 then 
 				unitRet = v 
 				closestDist = distance
@@ -138,7 +138,7 @@ function UnitManager:getClosestRanger()
 	local closestDist = nil
 	
 	for i,v in pairs(ranger_list) do
-		local distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
+		local distance = Unit:distanceBetweenPoints( (view.x), (view.y), v.x, v.y )
 		if i == 1 then 
 			unitRet = v 
 			closestDist = distance
