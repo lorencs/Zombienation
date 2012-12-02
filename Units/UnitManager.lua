@@ -118,13 +118,11 @@ function UnitManager:getClosestIdleWorker()
 	for i,v in pairs(worker_list) do
 		if v.working == false then
 			local distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
-			if i == 1 then 
-				if distance ~= nil then
-					unitRet = v 
-					closestDist = distance
-				end
-			end
 			if distance ~= nil then
+				if closestDist == nil then 
+						unitRet = v 
+						closestDist = distance
+				end
 				if distance < closestDist then
 					closestDist = distance
 					unitRet = v
@@ -137,7 +135,7 @@ function UnitManager:getClosestIdleWorker()
 		local pt = Point:new(unitRet.x, unitRet.y)
 		return pt
 	else
-		return Point:new(view.x - width / 2, view.y - height / 2)
+		return Point:new(view.x, view.y)
 	end
 end
 
@@ -148,13 +146,11 @@ function UnitManager:getClosestRanger()
 	
 	for i,v in pairs(ranger_list) do
 		local distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
-		if i == 1 then 
-			if distance ~= nil then
-				unitRet = v 
-				closestDist = distance
-			end
-		end
 		if distance ~= nil then
+			if closestDist == nil then 
+					unitRet = v 
+					closestDist = distance
+			end
 			if distance < closestDist then
 				closestDist = distance
 				unitRet = v
@@ -166,7 +162,7 @@ function UnitManager:getClosestRanger()
 		local pt = Point:new(unitRet.x, unitRet.y)
 		return pt
 	else
-		return Point:new(view.x - width / 2, view.y - height / 2)
+		return Point:new(view.x, view.y)
 	end
 end
 
@@ -177,14 +173,11 @@ function UnitManager:getClosestHuman()
 	
 	for i,v in pairs(human_list) do
 		local distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
-		if i == 1 then 
-			if distance ~= nil then
-				unitRet = v 
-				closestDist = distance
-			end
-		end
-		
 		if distance ~= nil then
+			if closestDist == nil then 
+					unitRet = v 
+					closestDist = distance
+			end
 			if distance < closestDist then
 				closestDist = distance
 				unitRet = v
@@ -196,7 +189,7 @@ function UnitManager:getClosestHuman()
 		local pt = Point:new(unitRet.x, unitRet.y)
 		return pt
 	else
-		return Point:new(view.x - width / 2, view.y - height / 2)
+		return Point:new(view.x, view.y)
 	end
 end
 
