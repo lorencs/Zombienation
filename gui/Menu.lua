@@ -174,7 +174,7 @@ function Menu:setMainMenu()
 	
 	workerCount = loveframes.Create("text")
 	workerCount:SetPos(478, height - menuWidth + 32)
-	workerCount:SetText({self.normalTextColor, "("..unitManager.idleWorkers.."/"..number_of_workers.." Working/Idle Workers)"})
+	workerCount:SetText({self.normalTextColor, "("..unitManager.idleWorkers.."/"..number_of_workers.." Idle/Total Workers)"})
 	workerCount:SetVisible(false)
 	
 	rangerCount = loveframes.Create("text")
@@ -184,7 +184,7 @@ function Menu:setMainMenu()
 	
 	humanCount = loveframes.Create("text")
 	humanCount:SetPos(478, height - menuWidth + 86)
-	humanCount:SetText({self.normalTextColor, "("..number_of_humans.." Humans)"})
+	humanCount:SetText({self.normalTextColor, "("..number_of_humans.." Civilians)"})
 	humanCount:SetVisible(false)
 	
 	table.insert(self.mainMenu, upgradeWorkerBtn)
@@ -347,9 +347,9 @@ function Menu:update(dt)
 		end
 	end
 		
-	workerCount:SetText({self.normalTextColor, "("..unitManager.idleWorkers.."/"..number_of_workers.." Working/Idle Workers)"})
+	workerCount:SetText({self.normalTextColor, "("..unitManager.idleWorkers.."/"..number_of_workers.." Idle/Total Workers)"})
 	rangerCount:SetText({self.normalTextColor, "("..number_of_rangers.." Rangers)"})
-	humanCount:SetText({self.normalTextColor, "("..number_of_humans.." Humans)"})
+	humanCount:SetText({self.normalTextColor, "("..number_of_humans.." Civilians)"})
 	
 	workerCount:SetVisible(self.visible)
 	rangerCount:SetVisible(self.visible)
