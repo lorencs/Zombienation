@@ -9,7 +9,8 @@ function Astar:new()
     local new_object = {
 		openVec = {},
 		closedVec = {},
-		gc = 1
+		gc = 1,
+		nodeVec = {}
     --nodeX = 0,
     --nodeY = 0,
 	--cost = 0,
@@ -35,6 +36,15 @@ function Astar:findPath(startX, startY, endX, endY)
 		print("No Path Found !")
 		return nil
 	end
+	
+	-- initialize nodeVec
+	for i = 0, map.width-1 do
+		self.nodeVec[i] = {}
+		for j = 0, map.height-1 do
+			self.nodeVec[i][j] = nil
+		end
+	end
+	
 	self.gc = self.gc + 1
 	--local openLCount = 1
 	--local closedLCount = 1
@@ -43,12 +53,14 @@ function Astar:findPath(startX, startY, endX, endY)
 	--local closedList = {}
 	if (startX == endX) and (startY == endY) then return end	-- already at the target
 	
-	currentNode = Node:new()
+	local currentNode = nil--Node:new()
 	
 	
 	startNode = Node:new(startX, startY)
+	startNode.gcost = 0
+	startNode.fcost = startNode.gcost + math.sqrt(math.pow((startX - endX),2) + math.pow((startY - endY),2))
 	--openList[1] = startNode
-	openList:push(startNode, startNode.cost)
+	openList:push(startNode, startNode.fcost)
 	self.openVec[startX][startY] = self.gc
 	
 	--local n = 0
@@ -81,7 +93,7 @@ function Astar:findPath(startX, startY, endX, endY)
 		
 		--table.insert(closedList, currentNode)
 		self.closedVec[currentNode.nodeX][currentNode.nodeY] = self.gc
-		local ind = self:indexOfNode(openList,currentNode)
+		--local ind = self:indexOfNode(openList,currentNode)
 		--table.remove(openList, ind)
 		--self.openVec[currentNode.nodeX][currentNode.nodeY] = 0
 		
@@ -100,25 +112,38 @@ function Astar:findPath(startX, startY, endX, endY)
 						-- if node isn't in open list
 						
 						--if not (self:nodeInArray(openList, newX, newY)) then
-						if self.openVec[newX][newY] ~= self.gc then
+						--if self.openVec[newX][newY] ~= self.gc then
 							--if not (self:nodeInArray(closedList, newX, newY)) then
 							if self.closedVec[newX][newY] ~= self.gc then
 							--print("newX:"..newX..",newY:"..newY)
 								if (map.tiles[newX][newY].id == "G") or (map.tiles[newX][newY].id == "R") then
 									if (map.tiles[currentX+xx][currentY].id=="R" or map.tiles[currentX+xx][currentY].id=="G") and (map.tiles[currentX][currentY+yy].id=="R" or map.tiles[currentX][currentY+yy].id=="G") then	
-										local aNode = Node:new()
-										aNode.nodeX = newX
-										aNode.nodeY = newY
-										aNode.parentNode = currentNode
-										aNode.cost = currentNode.cost + 1
-										aNode.cost = aNode.cost + math.abs(newX - endX) + math.abs(newY - endY)
-										--table.insert(openList, aNode)
-										openList:push(aNode, aNode.cost)
-										self.openVec[newX][newY] = self.gc
+										if self.nodeVec[newX][newY] == nil then
+											newNode = Node:new(newX,newY)
+											--newNode.gcost,newNode.fcost = 0
+											self.nodeVec[newX][newY] = newNode
+										end
+										
+										local tentative_g = 0
+										if (xx ~= 0) and (yy ~= 0) then tentative_g = currentNode.gcost + 1.414 else
+																	    tentative_g = currentNode.gcost + 1 end
+										
+										if (self.openVec[newX][newY] ~= self.gc) or (self:costLessThan(tentative_g, newX, newY)) then	
+											
+											
+											local aNode = self.nodeVec[newX][newY]
+											aNode.parentNode = currentNode
+											aNode.gcost = tentative_g
+											aNode.fcost = aNode.gcost + math.sqrt(math.pow((newX - endX),2) + math.pow((newY - endY),2))
+											if self.openVec[newX][newY] ~= self.gc then
+												openList:push(aNode, aNode.fcost)
+												self.openVec[newX][newY] = self.gc
+											end
+										end
 									end
 								end
 							end
-						end
+						--end
 					end
 				end
 			end
@@ -135,6 +160,14 @@ function Astar:indexOfNode(list, node)
 		end
 	end
 	return nil
+end
+
+function Astar:costLessThan(cost, nodeX, nodeY)
+	if self.nodeVec[nodeX][nodeY] == nil then
+		return false
+	end
+	
+	return cost <= self.nodeVec[nodeX][nodeY].gcost
 end
 
 function Astar:lowestCostNodeInArray(list)

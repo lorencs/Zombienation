@@ -6,7 +6,8 @@ function Node:new(x_a, y_a)
     local new_object = {
     nodeX = x_a,
     nodeY = y_a,
-	cost = 0,
+	gcost = 0,
+	fcost = 0,
 	parentNode = nil
     }
     setmetatable(new_object, Node_mt )
