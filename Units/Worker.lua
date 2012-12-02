@@ -40,7 +40,7 @@ function Worker:new(xnew,ynew)
 	tarYTile = -1,
 	turnFast = false,
 	workingTileCount = 0,
-	atLocation = "None",
+	atLocation = "Other",
 	carryingResource = false,
 	color = 0,
 	controlled = false,
@@ -442,8 +442,7 @@ function Worker:update(dt, zi, paused)
  end
  
 function Worker:checkLocation()
-	--baseTilePos = Point:new(),
-	--storeTilePos = Point:new(),
+
 	if ( (unitManager.baseTilePos.x == math.floor(self.x / map.tileSize) ) and (unitManager.baseTilePos.y == math.floor(self.y / map.tileSize) ) ) then
 		print("Arrived at the base ! Heading to the store..")
 		self.atLocation = "Base"
@@ -455,28 +454,39 @@ function Worker:checkLocation()
 		self.path = unitManager.storeToBasePath
 		self.carryingResource = 1
 	else
-		self.atLocation = "Transit"
+		print("In transit or lost ?")
+		self.atLocation = "Other"
 	end	
+	
 end
-  -- if atLocation is at Base, self.path will be set to baseToStorePath
+ -- if atLocation is at Base, self.path will be set to baseToStorePath
  -- if at... 			store ...					   storeToBasePath
  -- if at ..			Transit, then it is following a path, don't interrupt
  -- if at ..			Lost, then it needs to check if its carrying package. if it is, send to base, else send to store !
- 
-
- 
-function Worker:sendToWork()
+  
+function Worker:sendToWork()			-- this gets called when user presses the 'gather resources' button
 	
 	self:checkLocation()
-	if (self.path ~= nil) then
-		self.working = true
-		self.workingTileCount = 0
-		self.tarXTile = self.path[#self.path - self.workingTileCount].x 
-		self.tarYTile = self.path[#self.path - self.workingTileCount].y
-		self.workingTileCount = self.workingTileCount + 1
-		self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
-		--self.angle = self.targetAngle
-		self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
-		self.turnFast = true
-	end
+	if self.atLocation == "Other" then
+		print("Time to Work !")
+		if self.carryingResource == true then
+			print("Got resource, going to Base !")
+			self:getShortestPath(self.x,self.y,unitManager.baseTilePos.x, unitManager.baseTilePos.y)
+		else
+			print("Got NO resource, going to Store !")
+			self:getShortestPath(self.x, self.y, unitManager.storeTilePos.x, unitManager.storeTilePos.y)
+		end
+		
+		if (self.path ~= nil) then
+			self.working = true
+			self.workingTileCount = 0
+			self.tarXTile = self.path[#self.path - self.workingTileCount].x 
+			self.tarYTile = self.path[#self.path - self.workingTileCount].y
+			self.workingTileCount = self.workingTileCount + 1
+			self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
+			--self.angle = self.targetAngle
+			self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+			self.turnFast = true
+		end
+	end				-- else the path is set in the self:checkLocation() function
 end
