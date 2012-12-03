@@ -161,7 +161,16 @@ function District:setType(map, sector, id)
 			sector.sectorType = "residential"
 		end
 	elseif id == 1 then
-		sector.sectorType = "park"
+		local qx = math.floor(map.width / 4)
+		local qy = math.floor(map.height / 4)
+		
+		if sector.x1 < qx or sector.y1 < qy or 
+			sector.x2 > (3*qx) or sector.y2 > (3*qy) then
+			
+			sector.sectorType = "park"
+		else
+			sector.sectorType = "commercial"	 
+		end
 	end	
 end
 
