@@ -24,6 +24,9 @@ garageW2 = love.graphics.newImage("map/buildings/garageW2.png")
 garageS2 = love.graphics.newImage("map/buildings/garageS2.png")
 garageE2 = love.graphics.newImage("map/buildings/garageE2.png")
 
+-- base
+base = love.graphics.newImage("map/buildings/base.png") -- 3x2
+
 -- need minimap images
 
 function Building:new()
@@ -55,7 +58,10 @@ function Building:set(x, y, b_type, dir, style)
 		selector = selector.."house"
 	elseif b_type == 21 or b_type == 12 then
 		selector = selector.."garage"
+	elseif b_type == 32 then
+		selector = selector.."base"
 	end
+	
 	
 	-- get direction
 	if not(dir == nil) then
@@ -110,6 +116,11 @@ function Building:getImg(selector)
 		return garageS2
 	elseif selector == "garageE2" then
 		return garageE2
+	
+	
+	-- base
+	elseif selector == "base" then
+		return base
 	end
 end
 

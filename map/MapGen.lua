@@ -134,6 +134,9 @@ end
 -- split city to districts, split districts to sectors
 function MapGen:divideCity()
 	local m = self.map
+	-- surround map with road
+	self:roadBoundary()
+	
 	-- split city into districts
 	m.districts = getDistricts(m.width, m.height)
 	
@@ -188,7 +191,9 @@ function MapGen:divideCity()
 			end
 		else -- set the base and store 
 			-- ACCOUNT FOR BUILDING SIZE
-			m.baseTilePt = Point:new(v.x1+1,v.y1+1)
+			--m:newBuilding(v.x1+1, v.y1+1, 32, nil, nil)
+			m.baseTilePt = Point:new(v.x1+4,v.y1+3)
+			--m.baseTilePt = Point:new(v.x1+1,v.y1+1)
 			m.storeTilePt = Point:new(v.x2-1,v.y2-1)
 		end
 	end
@@ -464,24 +469,24 @@ function MapGen:getMap()
 end
 
 -- outline map with blocked tiles
-function MapGen:blockBoundary()
+function MapGen:roadBoundary()
 	m = self.map
 	maxy = self.height - 1
 	maxx = self.width - 1
 	
 	-- top/bottom tiles
 	for i=0,maxx do
-		m.tiles[i][0]:setId("B")
+		m.tiles[i][0]:setId("R")
 		--index = m:index(i, maxy)
-		m.tiles[i][maxy]:setId("B")
+		m.tiles[i][maxy]:setId("R")
 	end
 	
 	-- left/right tiles
 	for i=0,maxy do
 		--index = m:index(0,i)
-		m.tiles[0][i]:setId("B")
+		m.tiles[0][i]:setId("R")
 		--index = m:index(maxx, i)
-		m.tiles[maxx][i]:setId("B")
+		m.tiles[maxx][i]:setId("R")
 	end	
 
 end
