@@ -196,7 +196,6 @@ function Sector:commercial(map)
 		-- 2x2 buildings
 		if (bType == 4) then
 			if not(self:areaClear(map,x,y1+1,x+1,y1+2)) then
-				print ("2x2 too big at "..x..","..y+1)
 				bType = math.random(1,3)						-- try smaller size
 			else
 				local bRand = math.random(1,4)
@@ -210,9 +209,8 @@ function Sector:commercial(map)
 			end
 		end
 		--2x1 buildings
-		--[[if (bType == 3) then
+		if (bType == 3) then
 			if not self:areaClear(map,x,y1+1,x+1,y1+1) then
-				print ("2x1 too big at "..x..","..y+1)
 				bType = math.random(1,2)						-- try smaller size
 			else
 				local bRand = math.random(1,6)
@@ -222,7 +220,20 @@ function Sector:commercial(map)
 				map.tiles[x][y1+1].sprite = love.graphics.newQuad(0,0, map.tileSize*2, map.tileSize, b2x1[bRand]:getWidth(), b2x1[bRand]:getHeight())
 				map.tiles[x+1][y1+1]:setId("D")	map.tiles[x+1][y1+1]:setDraw(false)
 			end
-		end]]--
+		end
+		--1x2 buildings
+		if (bType == 2) then
+			if not self:areaClear(map,x,y1+1,x,y1+2) then
+				bType = 1										-- try smaller size
+			else
+				local bRand = math.random(1,6)
+				map.tiles[x][y1+1]:setId("D")
+				map.tiles[x][y1+1]:resetImg()
+				map.tiles[x][y1+1].img = b1x2[bRand]
+				map.tiles[x][y1+1].sprite = love.graphics.newQuad(0,0, map.tileSize, map.tileSize*2, b1x2[bRand]:getWidth(), b1x2[bRand]:getHeight())
+				map.tiles[x][y1+2]:setId("D")	map.tiles[x][y1+1]:setDraw(false)
+			end
+		end
 		
 		if (bType == 1) and self:areaClear(map,x,y1+1,x,y1+1) then
 			local bRand = math.random(1,20)
@@ -423,10 +434,9 @@ end
 function Sector:areaClear(map,x1,y1,x2,y2)
 	for xx = x1, x2+1 do
 		for yy = y1, y2+1 do
-			if (map.tiles[xx][yy] == "R") or (map.tiles[xx][yy] == "D") then
+			if (map.tiles[xx][yy].id == "R") or (map.tiles[xx][yy].id == "D") then
 				return false
 			end
-			print (xx..","..yy.." is good")
 		end
 	end
 	
