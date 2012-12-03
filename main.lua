@@ -45,11 +45,11 @@ H
 -- game settings
 supplies = 7
 
+orig_number_of_zombies = 50			-- zombies are red
+orig_number_of_humans = 100			-- humans are blue
+orig_number_of_rangers = 50			-- i thought this was a poem
+orig_number_of_workers = 100			-- i wish it was too
 
-orig_number_of_zombies = 111			-- zombies are red
-orig_number_of_humans = 10			-- humans are blue
-orig_number_of_rangers = 3			-- i thought this was a poem
-orig_number_of_workers = 50			-- i wish it was too
 orig_number_of_cars = 5
 
 -- map size
@@ -73,7 +73,7 @@ function love:load()
 	defaultFont = love.graphics.newFont(12)
 	
 	-- music
-	-- music = love.audio.newSource("/units/fellowship.mp3") 
+	music = love.audio.newSource("/units/fellowship.mp3") 
 	
 	-- seeding randomizer
 	randomizer = math.random(30,60)				
@@ -398,7 +398,9 @@ function gameSTATE:keyreleased(key)
 		camera:scale(1/1.3,1/1.3)
 	elseif key == "["  then
 		camera:scale(1.3,1.3)
-	end	
+	elseif key == "m" then
+		love.audio.play(music)
+	end
 	
 	--loveframes
 	loveframes.keyreleased(key)

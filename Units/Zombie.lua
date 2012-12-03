@@ -220,7 +220,7 @@ function Zombie:update(dt, zi, paused)
 		end
 	end
 	
-	if self.followingSP == false then
+	if self.followingSP == false and self.followingTag == 0 then
 		------------------------------- CHECK SNIFF TIMER AND IF ZOMBIE NEEDS TO MOVE TO ANOTHER HUMAN LOCATION
 		-- increase zombieSniffTimer // look around in one area // go to nearest human
 		if self.zombieSniffTimer > self.hangAroundAreaTimer then
@@ -229,13 +229,13 @@ function Zombie:update(dt, zi, paused)
 			local hUnit = unitManager:getClosestHuman(zposition)
 			if hUnit ~= nil then
 				--print("zombie: "..self.tag.." is moving towards human: "..hUnit.tag)
-				self.followingTileCount = 0
-				self.followingSP = true
 				-- this should set self.path
 				self:getShortestPath(self.x, self.y, hUnit.x, hUnit.y)
 				
 				-- if self.path is set ..
 				if (self.path ~= nil) then
+					self.followingTileCount = 0
+					self.followingSP = true
 					self.tarXTile = self.path[#self.path - self.followingTileCount].x 
 					self.tarYTile = self.path[#self.path - self.followingTileCount].y
 					self.followingTileCount = self.followingTileCount + 1
@@ -253,7 +253,7 @@ function Zombie:update(dt, zi, paused)
 		end
 	end
 	
-	if self.followingSP == false then			-- randomize direction only if the zombie is not in motion to another human location
+	if self.followingSP == false and self.followingTag == 0 then			-- randomize direction only if the zombie is not in motion to another human location
 		------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS
 		if self.directionTimer > self.randomDirectionTimer then
 			-- randomize a degree, 0 to 360
@@ -273,7 +273,7 @@ function Zombie:update(dt, zi, paused)
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then		-- targetAngle reached
 	
 		------------------------------- IF THE ZOMBIE IS FOLLOWING SHORTEST PATH....
-		if self.followingSP == true then
+		if self.followingSP == true and self.followingTag == 0 then
 			if (self.tarXTile == math.floor(self.x / map.tileSize)) and (self.tarYTile == math.floor(self.y / map.tileSize)) then
 				if (#self.path == self.followingTileCount) then
 					self.followingSP = false
@@ -326,7 +326,7 @@ function Zombie:update(dt, zi, paused)
 	-- get direction vector
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	
-	if self.followingSP == false then
+	--if self.followingSP == false then
 		-- checking the tile that the unit is or will be on
 		local next_x = self.x + (self.radius * self:signOf(self.dirVector.x)) + (dt * self.dirVector.x)
 		local next_y = self.y + (self.radius * self:signOf(self.dirVector.y)) + (dt * self.dirVector.y)
@@ -367,7 +367,7 @@ function Zombie:update(dt, zi, paused)
 			self.targetAngle = val
 			--return
 		end
-	end
+	--end
 	
 	-- update zombie's movement
 	self.x = self.x + (dt * self.dirVector.x)
@@ -399,7 +399,7 @@ function Zombie:update(dt, zi, paused)
 				-- disable following shortest path as the zombie is now chasing a human
 				self.followingSP = false
 				self.path = nil
-				self.zombieSniffTimer = 0
+				--self.zombieSniffTimer = 0
 			end
 		
 		-- zombie found a human to chase; break out of loop
@@ -420,7 +420,7 @@ function Zombie:update(dt, zi, paused)
 				-- disable following shortest path as the zombie is now chasing a human
 				self.followingSP = false
 				self.path = nil
-				self.zombieSniffTimer = 0
+				--self.zombieSniffTimer = 0
 			end
 		
 		-- zombie found a human to chase; break out of loop
@@ -441,7 +441,7 @@ function Zombie:update(dt, zi, paused)
 				-- disable following shortest path as the zombie is now chasing a human
 				self.followingSP = false
 				self.path = nil
-				self.zombieSniffTimer = 0
+				--self.zombieSniffTimer = 0
 			end
 		
 		-- zombie found a human to chase; break out of loop
@@ -454,6 +454,7 @@ function Zombie:update(dt, zi, paused)
 	
 	local h_index = 0
 	local dist = 999
+			
 	if self.followingType == "Human" then
 		-- find the index (in the 'human_list' array) of the human followed 
 		for i = 1, number_of_humans do
@@ -518,11 +519,6 @@ function Zombie:update(dt, zi, paused)
 				number_of_workers = number_of_workers - 1						-- decrease count of humans alive
 			end
 			
-			-- disable following shortest path as the zombie is now chasing a human
-			self.followingSP = false
-			self.path = nil
-			self.zombieSniffTimer = 0
-			
 			number_of_zombies = number_of_zombies + 1					-- increase count of zombies alive
 			zombie_list[number_of_zombies] = Zombie:new(deadx, deady)	-- create new zombie at the location of this zombie
 			zombie_list[number_of_zombies]:setupUnit()					-- setup zombie
@@ -551,6 +547,7 @@ function Zombie:update(dt, zi, paused)
 			worker_list[h_index].panicMode = false
 		end
 	end
+	
 	
 	------------------------------- FOLLOWING THE HUMAN
 	

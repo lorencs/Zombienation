@@ -458,7 +458,7 @@ function Worker:checkLocation()
 		self.path = unitManager.storeToBasePath
 		self.carryingResource = true
 	else
-		print("In transit or lost ?")
+		--print("In transit or lost ?")
 		self.atLocation = "Other"
 	end	
 	
@@ -472,12 +472,12 @@ function Worker:sendToWork()			-- this gets called when user presses the 'gather
 	
 	self:checkLocation()
 	if self.atLocation == "Other" then
-		print("Time to Work !")
+		--print("Time to Work !")
 		if self.carryingResource == true then
-			print("Got resource, going to Base !")
+			--print("Got resource, going to Base !")
 			self:getShortestPath(self.x,self.y,unitManager.baseTilePos.x * map.tileSize, unitManager.baseTilePos.y * map.tileSize)
 		else
-			print("Got NO resource, going to Store !")
+			--print("Got NO resource, going to Store !")
 			self:getShortestPath(self.x, self.y, unitManager.storeTilePos.x * map.tileSize, unitManager.storeTilePos.y * map.tileSize)
 		end
 		
