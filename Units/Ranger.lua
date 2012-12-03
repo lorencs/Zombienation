@@ -306,6 +306,7 @@ function Ranger:update(dt, zi, paused)
 		if (self:distanceBetweenPoints(self.cx,self.cy,self.huntee.cx,self.huntee.cy) < self.fov_radius *4/5) then 
 			self.state = "shooting"
 			self.statestr = "shooting " ..self.huntee.tag
+			self.shootingTimer = 1.5
 			self.animation:stop()
 		else 
 			self:hunt(self.huntee.cx, self.huntee.cy)

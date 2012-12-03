@@ -405,7 +405,6 @@ function UnitManager:draw()
 end
 
 function UnitManager:selectUnits(x1,y1,x2,y2)
-	print("select")
 	-- get the max y and x coords
 	--if not x1
 	self:deselectUnits()
@@ -467,7 +466,6 @@ function UnitManager:selectUnits(x1,y1,x2,y2)
 end
 
 function UnitManager:deselectUnits()
-	print("deselect")
 	for i = 1, number_of_humans do
 		human_list[i].selected = false	-- deselect all humans 
 	end

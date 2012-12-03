@@ -189,6 +189,32 @@ function Sector:commercial(map)
 		if not(self.boundE) then map.tiles[x2][y]:setId("R") end
 	end
 	
+	-- check road islands
+	if self:roadIsland(map,x1,y1,x2,y2) then 
+		print("--road island detected at "..x1..","..y1)
+		-- randomize start of the road
+		local startX = 0
+		local startY = 0
+		local dirX = 0
+		local dirY = 0
+		if math.random() < 0.5 then
+			startX = math.random(x1,x2)
+			if math.random() < 0.5 then startY = y1 dirY = -1 else startY = y2 dirY = 1 end
+		else
+			startY = math.random(y1,y2)
+			if math.random() < 0.5 then startX = x1 dirX = -1 else startX = x2 dirX = 1 end
+		end
+		
+		-- shoot a road out until it hits another road
+		local xx = startX+dirX local yy = startY+dirY
+		while(not(map.tiles[xx][yy].id == "R")) do
+			print("tracing: "..xx..","..yy)
+			map.tiles[xx][yy]:setId("R")
+			xx = xx + dirX
+			yy = yy + dirY
+		end
+	end
+	
 	-- place buildings along north and south edges
 	for x=x1+1, x2-1 do
 	------NORTH
@@ -561,6 +587,20 @@ function Sector:areaClear(map,x1,y1,x2,y2)
 				return false
 			end
 		end
+	end
+	
+	return true
+end
+
+function Sector:roadIsland(map, x1,y1,x2,y2)
+	for x = x1-1, x2+1 do
+		if (x > -1) and (x < map.width) and (y1-1 > -1) and (y1-1 < map.height) and (map.tiles[x][y1-1].id == "R") then return false end
+		if (x > -1) and (x < map.width) and (y2+1 > -1) and (y2+1 < map.height) and (map.tiles[x][y2+1].id == "R") then return false end
+	end
+	
+	for y = y1-1, y2+1 do
+		if (x1-1 > -1) and (x1-1 < map.width) and (y > -1) and (y < map.height) and (map.tiles[x1-1][y].id == "R") then return false end
+		if (x2+1 > -1) and (x2+1 < map.width) and (y > -1) and (y < map.height) and (map.tiles[x2+1][y].id == "R") then return false end
 	end
 	
 	return true
