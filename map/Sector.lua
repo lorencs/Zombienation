@@ -169,7 +169,23 @@ end
 
 -- place commercial buildings
 function Sector:commercial(map)
-	
+	local numSizes = 3
+
+	-- place random buildings on all commercial tiles
+	for x=x1+1,x2-1 do
+		for y=y1+1,x2-2 do
+			local size = math.floor(math.random() * numSizes)
+			
+			-- choose sprite of correct size
+			if size == 0 then
+			
+			elseif size == 1 then
+			
+			elseif size == 2 then
+			
+			end
+		end	
+	end
 end
 
 -- place crops
