@@ -11,7 +11,8 @@ function Tile:new(_id, ts)
 		NE = false,
 		SE = false,
 		SW = false,
-		NW = false
+		NW = false,
+		draw = true
 	}
 	
 	setmetatable(object, { __index = Tile })
@@ -52,6 +53,11 @@ function Tile:resetImg()
 		self.mm = farmMM
 	end
 end
+
 function Tile:getImg()
 	return self.img
+end
+
+function Tile:setDraw(bool)
+	self.draw = false
 end

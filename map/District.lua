@@ -178,8 +178,13 @@ function District:getTypeFromDepth(depth)
 		self.sectorCount_park = self.sectorCount_park + 1
 		return "park"
 	elseif val == 0 then
-		self.sectorCount_industrial = self.sectorCount_industrial + 1
-		return "industrial"
+		if math.random() > 0.5 then
+			self.sectorCount_residential = self.sectorCount_residential + 1
+			return "residential"
+		else
+			self.sectorCount_commercial = self.sectorCount_commercial + 1
+			return "commercial"
+		end
 	else
 		return "undefined"
 	end

@@ -107,17 +107,18 @@ function Map:drawMap()
 			yb = y * self.tileSize
 
 			tile = self.tiles[x][y]
-				
-			love.graphics.setCanvas(self.canvas)
-				love.graphics.drawq(tile:getImg(), tile.sprite, xb, yb)
-				if (tile.id == "W") then
-					if tile.NE then love.graphics.drawq(tile:getImg(), NEcorner, xb, yb) end
-					if tile.SE then love.graphics.drawq(tile:getImg(), SEcorner, xb, yb) end
-					if tile.SW then love.graphics.drawq(tile:getImg(), SWcorner, xb, yb) end
-					if tile.NW then love.graphics.drawq(tile:getImg(), NWcorner, xb, yb) end
-				end
-			love.graphics.setCanvas()
-			--end)
+			
+			if tile.draw then				
+				love.graphics.setCanvas(self.canvas)
+					love.graphics.drawq(tile:getImg(), tile.sprite, xb, yb)
+					if (tile.id == "W") then
+						if tile.NE then love.graphics.drawq(tile:getImg(), NEcorner, xb, yb) end
+						if tile.SE then love.graphics.drawq(tile:getImg(), SEcorner, xb, yb) end
+						if tile.SW then love.graphics.drawq(tile:getImg(), SWcorner, xb, yb) end
+						if tile.NW then love.graphics.drawq(tile:getImg(), NWcorner, xb, yb) end
+					end
+				love.graphics.setCanvas()
+			end
 		end
 	end
 end

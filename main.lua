@@ -341,7 +341,7 @@ function gameSTATE:mousepressed(x, y, button)
 	if (y < viewHeight) and not menu.debugMode and not paused then
 		--unitManager:deselectUnits()
 		if (button == "l") then	
-			--print(map.tiles[math.floor((x+view.x)/map.tileSize)][math.floor((y+view.y)/map.tileSize)].id)
+			print(map.tiles[math.floor((x+view.x)/map.tileSize)][math.floor((y+view.y)/map.tileSize)].id)
 			if selectPatrol then
 				selectPatrol = false
 				unitManager:patrol(x+view.x, y+view.y)
