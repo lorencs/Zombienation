@@ -195,9 +195,7 @@ function MapGen:divideCity()
 			end
 		else -- set the base and store 
 			-- ACCOUNT FOR BUILDING SIZE
-			if not(m:newBuilding(v.x1+1, v.y1+1, 32, nil, nil)) then
-				print("FUCK YOU")
-			end
+			--m:newBuilding(v.x1+1, v.y1+1, 32, nil, nil)
 			--self:addBase(m, v.x1+1, v.y1+1)
 			m.baseTilePt = Point:new(v.x1+4,v.y1+3)
 			--m.baseTilePt = Point:new(v.x1+1,v.y1+1)
