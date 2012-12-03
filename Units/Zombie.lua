@@ -301,15 +301,17 @@ function Zombie:update(dt, zi, paused)
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
 		if self.dirVec == 0 then			-- positive direction	( opposite of conventional as y increases downwards )
 			if self.followingSP == true then
-				self.angle = self.angle + 1.0
+				self.angle = self.angle + 0.7
+				print("WTF !"..self.tag)
 			else
-				self.angle = self.angle + 0.3
+				
+				self.angle = self.angle + 0.2
 			end
 		elseif self.dirVec == 1 then		-- negative direction
 			if self.followingSP == true then
-				self.angle = self.angle - 1.0
+				self.angle = self.angle - 0.7
 			else
-				self.angle = self.angle - 0.3
+				self.angle = self.angle - 0.2
 			end
 		end
 		
