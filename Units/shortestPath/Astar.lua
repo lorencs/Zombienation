@@ -32,7 +32,8 @@ function Astar:init()
 end
 
 function Astar:findPath(startX, startY, endX, endY)
-	if not(map.tiles[endX][endY].id == "G") and not (map.tiles[endX][endY].id == "R") and not (map.tiles[endX][endY].id == "F") then
+	if not(map.tiles[endX][endY].id == "G") and not (map.tiles[endX][endY].id == "R") and not (map.tiles[endX][endY].id == "F") 
+		and not (map.tiles[endX][endY].id == "P") then
 		print("No Path Found !")
 		return nil
 	end
