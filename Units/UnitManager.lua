@@ -53,10 +53,6 @@ function UnitManager:initUnits()
 	print(map.tiles[10][17].id)
 	print(map.tiles[10][18].id)]]
 	unitTag = 1
-	--human_tag = 1								-- each unit has a unique tag
-	--zombie_tag = 1
-	--ranger_tag = 1
-	--worker_tag = 1
 	zombie_list = {}							-- array of zombie objects
 	human_list = {}								-- array of human objects
 	ranger_list = {}								-- array of ranger objects
@@ -73,7 +69,6 @@ function UnitManager:initUnits()
 		zombie_list[i] = Zombie:new()
 		zombie_list[i]:setupUnit()
 		unitTag = unitTag + 1
-		--zombie_tag = zombie_tag + 1
 	end
 	
 	-- set up humans
@@ -576,6 +571,7 @@ function UnitManager:convertUnits(convType)
 		end
 		local suppliesNeeded = selectedU * 2
 		
+		--local listindexDelete = {}
 		if supplies >= suppliesNeeded then
 			supplies = supplies - suppliesNeeded
 			for i,v in pairs (human_list) do
@@ -590,9 +586,15 @@ function UnitManager:convertUnits(convType)
 					self:checkIfFollowed("Worker", v.tag, unitTag)		-- check if this unit is followed and update zombie the new tag
 					unitTag = unitTag + 1
 					table.remove(human_list, i)
+					--table.insert(listindexDelete, i)
 					number_of_humans = number_of_humans - 1
 				end
 			end
+			
+			--for i,v in pairs(listindexDelete) do
+				
+			--end
+			
 			if selectedU > 1 then
 				infoText:addText(selectedU.." civilians have been recruited to Workers")
 			else
