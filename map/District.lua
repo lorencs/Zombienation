@@ -118,15 +118,19 @@ function District:createSectors(map)
 		-- bound check
 		if v.y1 == self.y1+1 then
 			v.boundN = true
+			if v.y1 == 0 then v.boundN = false end
 		end
 		if v.x1 == self.x1+1 then
 			v.boundW = true
+			if v.x1 == 0 then v.boundW = false end
 		end
 		if v.y2 == self.y2-1 then
 			v.boundS = true
+			if v.y2 == map.height-2 then v.boundS = false end
 		end
 		if v.x2 == self.x2-1 then
 			v.boundE = true
+			if v.x2 == map.width-2 then v.boundE = false end
 		end
 		
 		v.sectorType = self:getType(id)
