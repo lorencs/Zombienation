@@ -199,8 +199,8 @@ function Sector:commercial(map)
 		local dirY = 0
 		if math.random() < 0.5 then
 			startX = math.random(x1,x2)
-			if math.random() < 0.5 then s
-				tartY = y1 
+			if math.random() < 0.5 then 
+				startY = y1 
 				dirY = -1 
 			else 
 				startY = y2 
