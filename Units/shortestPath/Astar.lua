@@ -65,7 +65,6 @@ function Astar:findPath(startX, startY, endX, endY)
 	self.openVec[startX][startY] = self.gc
 	
 	--local n = 0
-	print("Calculating Shortest Path ")
 	while not openList:isempty() do --#openList > 0 do
 		
 		--[[n = n + 1
@@ -80,7 +79,6 @@ function Astar:findPath(startX, startY, endX, endY)
 		--if currentNode == 0 then return end
 		-- if the current node is at endX and endY, path found
 		if (currentNode.nodeX == endX) and (currentNode.nodeY == endY) then
-			print("Path found !")
 			
 			local listToRet = currentNode--.parentNode
 			while (listToRet.parentNode ~= nil) do

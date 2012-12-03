@@ -200,7 +200,6 @@ function Sector:commercial(map)
 			else
 				local bRand = math.random(1,4)
 				map.tiles[x][y1+1]:setId("D")
-				map.tiles[x][y1+1]:resetImg()
 				map.tiles[x][y1+1].img = b2x2[bRand]
 				map.tiles[x][y1+1].sprite = love.graphics.newQuad(0,0, map.tileSize*2, map.tileSize*2, b2x2[bRand]:getWidth(), b2x2[bRand]:getHeight())
 				map.tiles[x][y1+2]:setId("D")	map.tiles[x][y1+2]:setDraw(false)
@@ -215,7 +214,6 @@ function Sector:commercial(map)
 			else
 				local bRand = math.random(1,6)
 				map.tiles[x][y1+1]:setId("D")
-				map.tiles[x][y1+1]:resetImg()
 				map.tiles[x][y1+1].img = b2x1[bRand]
 				map.tiles[x][y1+1].sprite = love.graphics.newQuad(0,0, map.tileSize*2, map.tileSize, b2x1[bRand]:getWidth(), b2x1[bRand]:getHeight())
 				map.tiles[x+1][y1+1]:setId("D")	map.tiles[x+1][y1+1]:setDraw(false)
@@ -228,37 +226,34 @@ function Sector:commercial(map)
 			else
 				local bRand = math.random(1,6)
 				map.tiles[x][y1+1]:setId("D")
-				map.tiles[x][y1+1]:resetImg()
 				map.tiles[x][y1+1].img = b1x2[bRand]
 				map.tiles[x][y1+1].sprite = love.graphics.newQuad(0,0, map.tileSize, map.tileSize*2, b1x2[bRand]:getWidth(), b1x2[bRand]:getHeight())
-				map.tiles[x][y1+2]:setId("D")	map.tiles[x][y1+1]:setDraw(false)
+				map.tiles[x][y1+2]:setId("D")	map.tiles[x][y1+2]:setDraw(false)
 			end
 		end
-		
+		--1x1 buildings
 		if (bType == 1) and self:areaClear(map,x,y1+1,x,y1+1) then
 			local bRand = math.random(1,20)
 			map.tiles[x][y1+1]:setId("D")
-			map.tiles[x][y1+1]:resetImg()
 			map.tiles[x][y1+1].img = b1x1[bRand]
 			map.tiles[x][y1+1].sprite = love.graphics.newQuad(0,0, map.tileSize, map.tileSize, b1x1[bRand]:getWidth(), b1x1[bRand]:getHeight())
 		end
 		
 		
 		--SOUTH
-		--[[bType = math.random(1,4)
+		bType = math.random(1,4)
 		-- 2x2 buildings
 		if (bType == 4) then
-			if not(self:areaClear(map,x,y2-1,x+1,y2)) then
-				bType = math.random(1,3)						-- try smaller size
+			if not(self:areaClear(map,x,y2-2,x+1,y2-1)) then
+				bType =math.random(1,3)						-- try smaller size
 			else
 				local bRand = math.random(1,4)
-				map.tiles[x][y2-1]:setId("D")
-				map.tiles[x][y2-1]:resetImg()
-				map.tiles[x][y2-1].img = b2x2[bRand]
-				map.tiles[x][y2-1].sprite = love.graphics.newQuad(0,0, map.tileSize*2, map.tileSize*2, b2x2[bRand]:getWidth(), b2x2[bRand]:getHeight())
-				map.tiles[x][y2]:setId("D")	map.tiles[x][y2]:setDraw(false)
+				map.tiles[x][y2-2]:setId("D")
+				map.tiles[x][y2-2].img = b2x2[bRand]
+				map.tiles[x][y2-2].sprite = love.graphics.newQuad(0,0, map.tileSize*2, map.tileSize*2, b2x2[bRand]:getWidth(), b2x2[bRand]:getHeight())
+				map.tiles[x][y2-1]:setId("D")	map.tiles[x][y2-1]:setDraw(false)
+				map.tiles[x+1][y2-2]:setId("D")	map.tiles[x+1][y2-2]:setDraw(false)
 				map.tiles[x+1][y2-1]:setId("D")	map.tiles[x+1][y2-1]:setDraw(false)
-				map.tiles[x+1][y2]:setId("D")	map.tiles[x+1][y2]:setDraw(false)
 			end
 		end
 		--2x1 buildings
@@ -268,7 +263,6 @@ function Sector:commercial(map)
 			else
 				local bRand = math.random(1,6)
 				map.tiles[x][y2-1]:setId("D")
-				map.tiles[x][y2-1]:resetImg()
 				map.tiles[x][y2-1].img = b2x1[bRand]
 				map.tiles[x][y2-1].sprite = love.graphics.newQuad(0,0, map.tileSize*2, map.tileSize, b2x1[bRand]:getWidth(), b2x1[bRand]:getHeight())
 				map.tiles[x+1][y2-1]:setId("D")	map.tiles[x+1][y2-1]:setDraw(false)
@@ -276,15 +270,14 @@ function Sector:commercial(map)
 		end
 		--1x2 buildings
 		if (bType == 2) then
-			if not self:areaClear(map,x,y2-1,x,y1) then
+			if not self:areaClear(map,x,y2-2,x,y2-1) then
 				bType = 1										-- try smaller size
 			else
 				local bRand = math.random(1,6)
-				map.tiles[x][y2-1]:setId("D")
-				map.tiles[x][y2-1]:resetImg()
-				map.tiles[x][y2-1].img = b1x2[bRand]
-				map.tiles[x][y2-1].sprite = love.graphics.newQuad(0,0, map.tileSize, map.tileSize*2, b1x2[bRand]:getWidth(), b1x2[bRand]:getHeight())
-				map.tiles[x][y2]:setId("D")	map.tiles[x][y1+1]:setDraw(false)
+				map.tiles[x][y2-2]:setId("D")
+				map.tiles[x][y2-2].img = b1x2[bRand]
+				map.tiles[x][y2-2].sprite = love.graphics.newQuad(0,0, map.tileSize, map.tileSize*2, b1x2[bRand]:getWidth(), b1x2[bRand]:getHeight())
+				map.tiles[x][y2-1]:setId("D")	map.tiles[x][y2-1]:setDraw(false)
 			end
 		end
 		if (bType == 1) then
@@ -293,29 +286,118 @@ function Sector:commercial(map)
 			map.tiles[x][y2-1]:resetImg()
 			map.tiles[x][y2-1].img = b1x1[bRand]
 			map.tiles[x][y2-1].sprite = love.graphics.newQuad(0,0, map.tileSize, map.tileSize, b1x1[bRand]:getWidth(), b1x1[bRand]:getHeight())
-		end]]--
+		end
 	end
 	
 	-- place buildings along east and west
 	for y=y1+1, y2-1 do
+	------WEST
 		local bType = math.random(1,4)
-		if (bType == 1) then
+		-- 2x2 buildings
+		if (bType == 4) then
+			if not(self:areaClear(map,x1+1,y,x1+2,y+1)) then
+				bType =math.random(1,3)						-- try smaller size
+			else
+				local bRand = math.random(1,4)
+				map.tiles[x1+1][y]:setId("D")
+				map.tiles[x1+1][y].img = b2x2[bRand]
+				map.tiles[x1+1][y].sprite = love.graphics.newQuad(0,0, map.tileSize*2, map.tileSize*2, b2x2[bRand]:getWidth(), b2x2[bRand]:getHeight())
+				map.tiles[x1+1][y+1]:setId("D")	map.tiles[x1+1][y+1]:setDraw(false)
+				map.tiles[x1+2][y]:setId("D")	map.tiles[x1+2][y]:setDraw(false)
+				map.tiles[x1+2][y+1]:setId("D")	map.tiles[x1+2][y+1]:setDraw(false)
+			end
+		end
+		--2x1 buildings
+		if (bType == 3) then
+			if not self:areaClear(map,x1+1,y,x1+2,y) then
+				bType = math.random(1,2)						-- try smaller size
+			else
+				local bRand = math.random(1,6)
+				map.tiles[x1+1][y]:setId("D")
+				map.tiles[x1+1][y].img = b2x1[bRand]
+				map.tiles[x1+1][y].sprite = love.graphics.newQuad(0,0, map.tileSize*2, map.tileSize, b2x1[bRand]:getWidth(), b2x1[bRand]:getHeight())
+				map.tiles[x1+2][y]:setId("D")	map.tiles[x1+2][y]:setDraw(false)
+			end
+		end
+		--1x2 buildings
+		if (bType == 2) then
+			if not self:areaClear(map,x1+1,y,x1+1,y+1) then
+				bType = 1										-- try smaller size
+			else
+				local bRand = math.random(1,6)
+				map.tiles[x1+1][y]:setId("D")
+				map.tiles[x1+1][y].img = b1x2[bRand]
+				map.tiles[x1+1][y].sprite = love.graphics.newQuad(0,0, map.tileSize, map.tileSize*2, b1x2[bRand]:getWidth(), b1x2[bRand]:getHeight())
+				map.tiles[x1+1][y+1]:setId("D")	map.tiles[x1+1][y+1]:setDraw(false)
+			end
+		end
+		--1x1 buildings
+		if (bType == 1) and self:areaClear(map,x1+1,y,x1+1,y) then
 			local bRand = math.random(1,20)
 			map.tiles[x1+1][y]:setId("D")
-			map.tiles[x1+1][y]:resetImg()
 			map.tiles[x1+1][y].img = b1x1[bRand]
 			map.tiles[x1+1][y].sprite = love.graphics.newQuad(0,0, map.tileSize, map.tileSize, b1x1[bRand]:getWidth(), b1x1[bRand]:getHeight())
 		end
-		bType = math.random(1,4)
-		if (bType == 1) and self:areaClear(map,x1+1,y,x1+1,y) then
+		
+	----EAST
+		local bType = math.random(1,4)
+		-- 2x2 buildings
+		if (bType == 4) then
+			if not(self:areaClear(map,x2-2,y,x2-1,y+1)) then
+				bType =math.random(1,3)						-- try smaller size
+			else
+				local bRand = math.random(1,4)
+				map.tiles[x2-2][y]:setId("D")
+				map.tiles[x2-2][y].img = b2x2[bRand]
+				map.tiles[x2-2][y].sprite = love.graphics.newQuad(0,0, map.tileSize*2, map.tileSize*2, b2x2[bRand]:getWidth(), b2x2[bRand]:getHeight())
+				map.tiles[x2-2][y+1]:setId("D")	map.tiles[x2-2][y+1]:setDraw(false)
+				map.tiles[x2-1][y]:setId("D")	map.tiles[x2-1][y]:setDraw(false)
+				map.tiles[x2-1][y+1]:setId("D")	map.tiles[x2-1][y+1]:setDraw(false)
+			end
+		end
+		--2x1 buildings
+		if (bType == 3) then
+			if not self:areaClear(map,x2-2,y,x2-1,y) then
+				bType = math.random(1,2)						-- try smaller size
+			else
+				local bRand = math.random(1,6)
+				map.tiles[x2-2][y]:setId("D")
+				map.tiles[x2-2][y].img = b2x1[bRand]
+				map.tiles[x2-2][y].sprite = love.graphics.newQuad(0,0, map.tileSize*2, map.tileSize, b2x1[bRand]:getWidth(), b2x1[bRand]:getHeight())
+				map.tiles[x2-1][y]:setId("D")	map.tiles[x2-1][y]:setDraw(false)
+			end
+		end
+		--1x2 buildings
+		if (bType == 2) then
+			if not self:areaClear(map,x2-1,y,x2-1,y+1) then
+				bType = 1										-- try smaller size
+			else
+				local bRand = math.random(1,6)
+				map.tiles[x2-1][y]:setId("D")
+				map.tiles[x2-1][y].img = b1x2[bRand]
+				map.tiles[x2-1][y].sprite = love.graphics.newQuad(0,0, map.tileSize, map.tileSize*2, b1x2[bRand]:getWidth(), b1x2[bRand]:getHeight())
+				map.tiles[x2-1][y+1]:setId("D")	map.tiles[x2-1][y+1]:setDraw(false)
+			end
+		end
+		--1x1 buildings
+		if (bType == 1) and self:areaClear(map,x2-1,y,x2-1,y) then
 			local bRand = math.random(1,20)
 			map.tiles[x2-1][y]:setId("D")
-			map.tiles[x2-1][y]:resetImg()
 			map.tiles[x2-1][y].img = b1x1[bRand]
 			map.tiles[x2-1][y].sprite = love.graphics.newQuad(0,0, map.tileSize, map.tileSize, b1x1[bRand]:getWidth(), b1x1[bRand]:getHeight())
 		end
 	end
 	
+	-- put cement tile on any blocks not occupied
+	for x=x1+1, x2-1 do
+		for y=y1+1, y2-1 do
+			if not (map.tiles[x][y].id == "D") then
+				map.tiles[x][y]:setId("D")
+				map.tiles[x][y].img = cementImg
+				map.tiles[x][y].sprite = love.graphics.newQuad(0,0, map.tileSize, map.tileSize, cementImg:getWidth(), cementImg:getHeight())
+			end
+		end
+	end
 end
 
 -- place crops
@@ -473,8 +555,8 @@ end
 
 -- returns true if are from x1,y1 to x2,y2 is clear
 function Sector:areaClear(map,x1,y1,x2,y2)
-	for xx = x1, x2+1 do
-		for yy = y1, y2+1 do
+	for xx = x1, x2 do
+		for yy = y1, y2 do
 			if (map.tiles[xx][yy].id == "R") or (map.tiles[xx][yy].id == "D") then
 				return false
 			end

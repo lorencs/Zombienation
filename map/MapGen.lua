@@ -50,6 +50,7 @@ b2x2[1] = love.graphics.newImage("map/buildings/b2x2_1.png")
 b2x2[2] = love.graphics.newImage("map/buildings/b2x2_2.png")
 b2x2[3] = love.graphics.newImage("map/buildings/b2x2_3.png")
 b2x2[4] = love.graphics.newImage("map/buildings/b2x2_4.png")
+cementImg = love.graphics.newImage("map/buildings/commercialGround.png")
 
 -- constructor
 function MapGen:new()
