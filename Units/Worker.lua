@@ -46,7 +46,8 @@ function Worker:new(xnew,ynew)
 	controlled = false,
 	onCurrentTile = 0,
 	neighbourTiles = {},
-	animation = SpriteAnimation:new("Units/images/worker1.png", 10, 8, 8, 1)
+	animation = SpriteAnimation:new("Units/images/worker1.png", 10, 8, 8, 1),
+	randomDirectionTimer = math.random(7, 10)
 	}
 
 	setmetatable(new_object, Worker_mt )				-- add the new_object to metatable of Human
@@ -250,7 +251,7 @@ function Worker:update(dt, zi, paused)
 		if self.panicMode == false then
 		------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS.. unless it's controlled by penguins !
 			-- after 5 seconds, the zombie should change his direction (x and y)
-			if self.directionTimer > 5 then 
+			if self.directionTimer > self.randomDirectionTimer then 
 			
 				-- randomize a degree, 0 to 360
 				self.targetAngle = math.random(360)
@@ -259,7 +260,9 @@ function Worker:update(dt, zi, paused)
 				self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
 				
 				-- reset directionTimer
-				self.directionTimer = 0						
+				self.directionTimer = 0
+
+				self.randomDirectionTimer = math.random(7, 10)				
 			end
 		end
 	end

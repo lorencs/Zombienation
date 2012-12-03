@@ -49,7 +49,8 @@ function Ranger:new(xnew,ynew)
 	targetY = -1,
 	tilesCrossed = 0,
 	turnFast = false,
-	animation = SpriteAnimation:new("Units/images/ranger1.png", 10, 12, 8, 1)
+	animation = SpriteAnimation:new("Units/images/ranger1.png", 10, 12, 8, 1),
+	randomDirectionTimer = math.random(7, 10)
 	}
 
 	setmetatable(new_object, Ranger_mt )				-- add the new_object to metatable of Ranger

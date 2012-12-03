@@ -143,13 +143,19 @@ function UnitManager:getClosestIdleWorker()
 	end
 end
 
--- gets the ranger (if any) that is the closest to your current screen view
-function UnitManager:getClosestRanger()
+-- gets the idle worker (if any) that is the closest to your current screen view
+function UnitManager:getClosestWorker(posa, other)
 	local unitRet = nil
 	local closestDist = nil
 	
-	for i,v in pairs(ranger_list) do
-		local distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
+	for i,v in pairs(worker_list) do
+		local distance = nil
+		if other == "zombie" then
+			distance = Unit:distanceBetweenPoints( posa.x, posa.y, v.x, v.y )
+		else
+			distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
+		end
+		
 		if distance ~= nil then
 			if closestDist == nil then 
 					unitRet = v 
@@ -164,19 +170,69 @@ function UnitManager:getClosestRanger()
 	
 	if unitRet ~= nil then
 		local pt = Point:new(unitRet.x, unitRet.y)
+		if other == "zombie" then
+			return closestDist, unitRet
+		end
 		return pt
 	else
+		if other == "zombie" then
+			return 9999
+		end
+		return Point:new(view.x + width / 2, view.y + height / 2)
+	end
+end
+
+-- gets the ranger (if any) that is the closest to your current screen view
+function UnitManager:getClosestRanger(posa, other)
+	local unitRet = nil
+	local closestDist = nil
+	
+	for i,v in pairs(ranger_list) do
+		local distance = nil
+		if other == "zombie" then
+			distance = Unit:distanceBetweenPoints( posa.x, posa.y, v.x, v.y )
+		else
+			distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
+		end
+		
+		if distance ~= nil then
+			if closestDist == nil then 
+					unitRet = v 
+					closestDist = distance
+			end
+			if distance < closestDist then
+				closestDist = distance
+				unitRet = v
+			end
+		end
+	end
+	
+	if unitRet ~= nil then
+		local pt = Point:new(unitRet.x, unitRet.y)
+		if other == "zombie" then
+			return closestDist, unitRet
+		end
+		return pt
+	else
+		if other == "zombie" then
+			return 9999
+		end
 		return Point:new(view.x, view.y)
 	end
 end
 
 -- gets the human (if any) that is the closest to your current screen view
-function UnitManager:getClosestHuman()
+function UnitManager:getClosestCivilian(posa, other)
 	local unitRet = nil
 	local closestDist = nil
 	
 	for i,v in pairs(human_list) do
-		local distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
+		local distance = nil
+		if other == "zombie" then
+			distance = Unit:distanceBetweenPoints( posa.x, posa.y, v.x, v.y )
+		else
+			distance = Unit:distanceBetweenPoints( (view.x + width / 2), (view.y + height / 2), v.x, v.y )
+		end
 		if distance ~= nil then
 			if closestDist == nil then 
 					unitRet = v 
@@ -191,10 +247,36 @@ function UnitManager:getClosestHuman()
 	
 	if unitRet ~= nil then
 		local pt = Point:new(unitRet.x, unitRet.y)
+		if other == "zombie" then
+			return closestDist, unitRet
+		end
 		return pt
 	else
+		if other == "zombie" then
+			return 9999
+		end
 		return Point:new(view.x, view.y)
 	end
+end
+
+function UnitManager:getClosestHuman(unitPos)
+	local cdist1, p1 = self:getClosestWorker(unitPos, "zombie")
+	local cdist2, p2 = self:getClosestRanger(unitPos, "zombie")
+	local cdist3, p3 = self:getClosestCivilian(unitPos, "zombie")
+	local cdist = cdist1
+	local p = p1
+	if cdist2 < cdist then
+		cdist = cdist2
+		p = p2
+	end
+	if cdist3 < cdist then
+		cdist = cdist3
+		p = p3
+	end
+	
+	if cdist < 9990 then
+		return p				-- return closest human unit
+	else return nil end
 end
 
 function UnitManager:resetUnits()

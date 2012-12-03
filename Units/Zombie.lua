@@ -49,8 +49,17 @@ function Zombie:new(x_new, y_new)
 	onCurrentTile = 0,
 	neighbourTiles = {},
 	delete = false,				-- if this is set to true, this zombie will be deleted by unitManager on the next update
-	animation = SpriteAnimation:new("Units/images/zombie2.png", 10, 12, 8, 1)
-	}												-- is not following a human (yet !)
+	animation = SpriteAnimation:new("Units/images/zombie2.png", 10, 12, 8, 1),
+	zombieSniffTimer = 0,						-- after 20-30 seconds of checking one place around, the zombie gets shortest path
+	hangAroundAreaTimer = math.random(25, 35),	-- to the nearest human (civilian, worker or ranger ) and goes there 
+	followingSP = false,							-- following shortest path to the nearest human.. no boundary check req.
+	followingTileCount = 0,
+	tarXTile = -1,
+	tarYTile = -1,
+	path = nil,
+	randomDirectionTimer = math.random(7, 10)
+	}											
+													
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
 	setmetatable(Zombie, { __index = Unit })        -- Zombie is a subclass of class Unit, so set inheritance..
@@ -89,6 +98,8 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	
 	--print(self:xyToTileType(250,350))				-- FIRST WATER
 	
+	self.followingTileCount = 0
+	self.followingSP = false
 	self.cx = self.x + self.radius
 	self.cy = self.y - self.radius
 	
@@ -171,6 +182,15 @@ function Zombie:draw(i)
 	--love.graphics.rectangle("line", self.x, self.y - see_human_dist, 10, 10)
 	-- end debugging
 	
+	local j = 0
+	if (self.path ~= nil) then
+		for i = #self.path, 1, -1 do
+			if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
+			love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
+			j = j + 1
+		end
+	end
+	
 	--draw sprite
 	love.graphics.reset()
 	self.animation:draw(self.cx,self.cy)
@@ -178,7 +198,8 @@ end
 
 -- Update function
 function Zombie:update(dt, zi, paused)
-	--update animation
+		
+	-- update animation
 	self.animation:rotate(self.angle)
 	self.animation:update(dt)
 	
@@ -196,28 +217,97 @@ function Zombie:update(dt, zi, paused)
 		end
 	end
 	
-	------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS
-	if self.directionTimer > 5 then
+	if self.followingSP == false then
+		------------------------------- CHECK SNIFF TIMER AND IF ZOMBIE NEEDS TO MOVE TO ANOTHER HUMAN LOCATION
+		-- increase zombieSniffTimer // look around in one area // go to nearest human
+		if self.zombieSniffTimer > self.hangAroundAreaTimer then
+			-- get nearest human location, get shortest path to it
+			local zposition = Point:new(self.x, self.y)
+			local hUnit = unitManager:getClosestHuman(zposition)
+			if hUnit ~= nil then
+				print("zombie: "..self.tag.." is moving towards human: "..hUnit.tag)
+				self.followingTileCount = 0
+				self.followingSP = true
+				-- this should set self.path
+				self:getShortestPath(self.x, self.y, hUnit.x, hUnit.y)
+				
+				-- if self.path is set ..
+				if (self.path ~= nil) then
+					self.tarXTile = self.path[#self.path - self.followingTileCount].x 
+					self.tarYTile = self.path[#self.path - self.followingTileCount].y
+					self.followingTileCount = self.followingTileCount + 1
+					-- its + map.tileSize / 2 because the targetAngle is aiming for the middle of the tile !
+					self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
+					--self.angle = self.targetAngle
+					self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+				end
+			end
+			
+			self.hangAroundAreaTimer = math.random(20,30)
+			self.zombieSniffTimer = 0
+		else
+			self.zombieSniffTimer = self.zombieSniffTimer + dt
+		end
+	end
 	
-		-- randomize a degree, 0 to 360
-		self.targetAngle = math.random(360)
-		
-	-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
-		self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+	if self.followingSP == false then			-- randomize direction only if the zombie is not in motion to another human location
+		------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS
+		if self.directionTimer > self.randomDirectionTimer then
+			print("->>>randomizing .. tag:"..self.tag)
+			-- randomize a degree, 0 to 360
+			self.targetAngle = math.random(360)
+			
+		-- get the angle direction ( positive or negative on axis ) given the current angle and the targetAngle
+			self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
 
-		-- reset directionTimer
-		self.directionTimer = 0						
+			-- reset directionTimer
+			self.directionTimer = 0		
+
+			self.randomDirectionTimer = math.random(7, 10)
+		end
 	end
 	
 	------------------------------- UPDATE SELF.ANGLE
 	if ((self.targetAngle - 1) < self.angle) and ((self.targetAngle + 1) > self.angle) then		-- targetAngle reached
+	
+		------------------------------- IF THE ZOMBIE IS FOLLOWING SHORTEST PATH....
+		if self.followingSP == true then
+		print("TAGGGGG:"..self.tag)
+			if (self.tarXTile == math.floor(self.x / map.tileSize)) and (self.tarYTile == math.floor(self.y / map.tileSize)) then
+				if (#self.path == self.followingTileCount) then
+					self.followingSP = false
+					self.followingTileCount = 0
+					self.tarXTile = self.path[#self.path - self.followingTileCount].x 
+					self.tarYTile = self.path[#self.path - self.followingTileCount].y
+					self.followingTileCount = self.followingTileCount + 1
+					self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
+					self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+					print("zombie: "..self.tag.. " GOING RANDOM AGAIN !")
+				else
+					self.tarXTile = self.path[#self.path - self.followingTileCount].x -- else worker is still on path to a destination..
+					self.tarYTile = self.path[#self.path - self.followingTileCount].y
+					self.followingTileCount = self.followingTileCount + 1
+					self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
+					self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+				end
+			end
+		end
+	
 	else																						-- else.. 
 	
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
 		if self.dirVec == 0 then			-- positive direction	( opposite of conventional as y increases downwards )
-			self.angle = self.angle + 0.3
+			if self.followingSP == true then
+				self.angle = self.angle + 1.0
+			else
+				self.angle = self.angle + 0.3
+			end
 		elseif self.dirVec == 1 then		-- negative direction
-			self.angle = self.angle - 0.3
+			if self.followingSP == true then
+				self.angle = self.angle - 1.0
+			else
+				self.angle = self.angle - 0.3
+			end
 		end
 		
 		-- reset angles if they go over 360 or if they go under 0
@@ -234,47 +324,48 @@ function Zombie:update(dt, zi, paused)
 	-- get direction vector
 	self.dirVector = self:getDirection(self.angle, self.speed)
 	
-	-- checking the tile that the unit is or will be on
-	local next_x = self.x + (self.radius * self:signOf(self.dirVector.x)) + (dt * self.dirVector.x)
-	local next_y = self.y + (self.radius * self:signOf(self.dirVector.y)) + (dt * self.dirVector.y)
-	
-	-- determine the direction of the tile the unit will most likely next collide with
-	local dx = math.floor(next_x/map.tileSize) - math.floor(self.cx/map.tileSize)
-	local dy = math.floor(next_y/map.tileSize) - math.floor(self.cy/map.tileSize)
-	local nextTileDir = ""
-	
-	if 	   (dx == 0) and (dy == -1) then 	nextTileDir = "N"
-	elseif (dx == 1) and (dy == -1) then 	nextTileDir = "NE"
-	elseif (dx == 1) and (dy == 0) then 	nextTileDir = "E"
-	elseif (dx == 1) and (dy == 1) then 	nextTileDir = "SE"
-	elseif (dx == 0) and (dy == 1) then 	nextTileDir = "S"
-	elseif (dx == -1) and (dy == 1) then 	nextTileDir = "SW"
-	elseif (dx == -1) and (dy == 0) then 	nextTileDir = "W"
-	elseif (dx == -1) and (dy == -1) then 	nextTileDir = "NW" end
-	
-	local nextTileType = self:xyToTileType(next_x,next_y)
-	-- check next tile (not in panic mode)
-	if  not (nextTileType == "G" or nextTileType == "R" or nextTileType == "F") then
-		self.directionTimer = self.directionTimer + dt
-		self.state = "STUCK !"
-		self:avoidTile2(self,nextTileDir)
-		return
+	if self.followingSP == false then
+		-- checking the tile that the unit is or will be on
+		local next_x = self.x + (self.radius * self:signOf(self.dirVector.x)) + (dt * self.dirVector.x)
+		local next_y = self.y + (self.radius * self:signOf(self.dirVector.y)) + (dt * self.dirVector.y)
+		
+		-- determine the direction of the tile the unit will most likely next collide with
+		local dx = math.floor(next_x/map.tileSize) - math.floor(self.cx/map.tileSize)
+		local dy = math.floor(next_y/map.tileSize) - math.floor(self.cy/map.tileSize)
+		local nextTileDir = ""
+		
+		if 	   (dx == 0) and (dy == -1) then 	nextTileDir = "N"
+		elseif (dx == 1) and (dy == -1) then 	nextTileDir = "NE"
+		elseif (dx == 1) and (dy == 0) then 	nextTileDir = "E"
+		elseif (dx == 1) and (dy == 1) then 	nextTileDir = "SE"
+		elseif (dx == 0) and (dy == 1) then 	nextTileDir = "S"
+		elseif (dx == -1) and (dy == 1) then 	nextTileDir = "SW"
+		elseif (dx == -1) and (dy == 0) then 	nextTileDir = "W"
+		elseif (dx == -1) and (dy == -1) then 	nextTileDir = "NW" end
+		
+		local nextTileType = self:xyToTileType(next_x,next_y)
+		-- check next tile (not in panic mode)
+		if  not (nextTileType == "G" or nextTileType == "R" or nextTileType == "F") then
+			self.directionTimer = self.directionTimer + dt
+			self.state = "STUCK !"
+			self:avoidTile2(self,nextTileDir)
+			return
+		end
+		
+		------------------------------- CHECK MAP BOUNDARIES 						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE
+		-- next move would be out of bounds so cancel it and return !
+		if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
+			self.state = "WTF"
+			self.directionTimer = self.directionTimer + dt
+			return
+		end																															-- ** IN THE OTHER DIRECTION !
+		local val = self:checkMapBoundaries(next_x,next_y, self.radius)											
+		if val ~= 999 then			-- if it is too close to a boundary..
+			self.angle = val
+			self.targetAngle = val
+			--return
+		end
 	end
-	
-	------------------------------- CHECK MAP BOUNDARIES 						** IF IN PANIC MODE, MAYBE SHOULD CHECK WHERE ZOMBIE IS COMING FROM AND THEN SET THE TARGET ANGLE
-	-- next move would be out of bounds so cancel it and return !
-	if next_x < 0 or next_x > map.tileSize*map.width or next_y < 0 or next_y > map.tileSize*map.height then
-		self.state = "WTF"
-		self.directionTimer = self.directionTimer + dt
-		return
-	end																															-- ** IN THE OTHER DIRECTION !
-	local val = self:checkMapBoundaries(next_x,next_y, self.radius)											
-	if val ~= 999 then			-- if it is too close to a boundary..
-		self.angle = val
-		self.targetAngle = val
-		--return
-	end
-	------------------------------- END OF BOUNDARY CHECK
 	
 	-- update zombie's movement
 	self.x = self.x + (dt * self.dirVector.x)
@@ -304,6 +395,11 @@ function Zombie:update(dt, zi, paused)
 				self.followingType = "Human"
 				self.state = "Chasing ".. self.followingTag	
 				human_list[i].color = 1
+				
+				-- disable following shortest path as the zombie is now chasing a human
+				self.followingSP = false
+				self.path = nil
+				self.zombieSniffTimer = 0
 			end
 		--end
 		
@@ -421,6 +517,10 @@ function Zombie:update(dt, zi, paused)
 				infoText:addText("A worker has been killed by a zombie !")
 			end
 			
+			-- disable following shortest path as the zombie is now chasing a human
+			self.followingSP = false
+			self.path = nil
+			self.zombieSniffTimer = 0
 			number_of_zombies = number_of_zombies + 1					-- increase count of zombies alive
 			zombie_list[number_of_zombies] = Zombie:new(deadx, deady)	-- create new zombie at the location of this zombie
 			zombie_list[number_of_zombies]:setupUnit()					-- setup zombie
@@ -441,7 +541,13 @@ function Zombie:update(dt, zi, paused)
 	elseif	dist > 120 then					-- if zombie is too far, abandon the follow
 		self.followingTag = 0					-- unset follow
 		self.state = "Looking around"
-		human_list[h_index].panicMode = false		-- the human is not in panicMode anymore as it is not being followed anymore
+		if self.followingType == "Human" then
+			human_list[h_index].panicMode = false		-- the human is not in panicMode anymore as it is not being followed anymore
+		elseif self.followingType == "Ranger" then
+			ranger_list[h_index].panicMode = false
+		elseif self.followingType == "Worker" then
+			worker_list[h_index].panicMode = false
+		end
 	end
 
 	
@@ -497,7 +603,7 @@ function Zombie:update(dt, zi, paused)
 	if  not (nextTileType == "G" or nextTileType == "R" or nextTileType == "F") then
 		self.directionTimer = self.directionTimer + dt
 		--self.state = "STUCK !"
-		self:avoidTile(self)
+		self:avoidTile2(self)
 		return
 	end
 	
@@ -513,7 +619,7 @@ function Zombie:update(dt, zi, paused)
  function Zombie:tellZombies(unit_tag)
 	-- if zombie i is following human with index followingTag, it should stop as that human is dead
 	for i = 1, number_of_zombies do
-		if zombie_list[i].followingTag == unit_tag then		
+		if zombie_list[i].followingTag == unit_tag then
 			zombie_list[i].followingTag = 0
 			zombie_list[i].time_kill = 0
 			zombie_list[i].state = "Looking around"
@@ -534,6 +640,7 @@ function Zombie:die()
 		for i = 1, number_of_humans do
 			if human_list[i].tag == self.followingTag then
 				h_index = i
+				human_list[i].attacked = 0
 				break
 			end
 		end
@@ -542,6 +649,7 @@ function Zombie:die()
 		for i = 1, number_of_workers do
 			if worker_list[i].tag == self.followingTag then
 				h_index = i
+				worker_list[i].attacked = 0
 				break
 			end
 		end
@@ -550,6 +658,7 @@ function Zombie:die()
 		for i = 1, number_of_rangers do
 			if ranger_list[i].tag == self.followingTag then
 				h_index = i
+				ranger_list[i].attacked = 0
 				break
 			end
 		end

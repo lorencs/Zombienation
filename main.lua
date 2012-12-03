@@ -45,10 +45,10 @@ H
 -- game settings
 supplies = 7
 
-orig_number_of_zombies = 2			-- zombies are red
-orig_number_of_humans = 100			-- humans are blue
+orig_number_of_zombies = 1			-- zombies are red
+orig_number_of_humans = 11			-- humans are blue
 orig_number_of_rangers = 3			-- i thought this was a poem
-orig_number_of_workers = 3			-- i wish it was too
+orig_number_of_workers = 1			-- i wish it was too
 orig_number_of_cars = 5
 
 -- map size
@@ -354,7 +354,7 @@ function gameSTATE:mousepressed(x, y, button)
 			end
 			--unitManager:createRanger(x,y)
 			local timer = os.clock()
-			unitManager:moveTo(x+view.x,y+view.y)
+			--unitManager:moveTo(x+view.x,y+view.y)
 			print(string.format("elapsed time: %.2f\n", os.clock() - timer))
 		end
 	end
