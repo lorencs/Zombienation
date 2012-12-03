@@ -107,30 +107,53 @@ end
 -- create sectors for this district
 function District:createSectors(map)
 	local octaves = 10
-	
-	-- generate depth map
-	self.depth = generatePerlinNoise(octaves, self:xd()+1, self:yd()+1)
+
 	-- split into sectors
 	self.sectors = getSectors(Point:new(self.x1, self.y1), self:xd(), self:yd())
 	
-	-- assign sector types
+	local id = 0
+	-- assign sector types and check boundaries
 	for _,v in pairs(self.sectors) do
-		
-		-- get sector depth value
-		local count = 0
-		local sum = 0
-		for x=v.x1-self.x1,v.x2-self.x1-1 do
-			for y=v.y1-self.y1,v.y2-self.y1-1 do				
-				sum = sum + self.depth[x][y]
-				count = count+1
-			end
+	
+		-- bound check
+		if v.y1 == 0 or v.y1 == self.y1+1 then
+			v.boundN = true
 		end
-		local avgDepth = math.floor(sum / count)
-
-		v.sectorType = self:getTypeFromDepth(avgDepth)
-		v.depthValue = math.floor((avgDepth / 20) % 5)
+		if v.x1 == 0 or v.x1 == self.x1+1 then
+			v.boundW = true
+		end
+		if v.y2 == map.height-1 or v.y2 == self.y2-1 then
+			v.boundS = true
+		end
+		if v.x1 == map.width-1 or v.x1 == self.x2-1 then
+			v.boundE = true
+		end
+		
+		v.sectorType = self:getType(id)
+		id = id + 1
+		if id > 4 then id = 0 end		
 	end
-	--
+end
+
+function District:getType(id)
+	if id == 2 then
+		self.sectorCount_residential = self.sectorCount_residential + 1
+		return "residential"		
+	elseif id == 3 then
+		self.sectorCount_commercial = self.sectorCount_commercial + 1
+		return "commercial"
+	elseif id == 4 then
+		self.sectorCount_rural = self.sectorCount_rural + 1
+		return "rural"
+	elseif id == 1 then
+		self.sectorCount_park = self.sectorCount_park + 1
+		return "park"
+	elseif id == 0 then
+		self.sectorCount_industrial = self.sectorCount_industrial + 1
+		return "industrial"
+	else
+		return "undefined"
+	end	
 end
 
 -- use depth value to determine sector type

@@ -8,7 +8,13 @@ function Sector:new(xa, ya, xb, yb, d)
 		y2 = yb,
 		sectorType = nil,
 		divide = d,		-- orientation of bisector
-		depthValue = nil
+		depthValue = nil,
+		
+		-- is this sector on a district boundary?
+		boundN = false,
+		boundE = false,
+		boundS = false,
+		boundW = false
 	}
 	setmetatable(object, { __index = Sector })
 	return object
