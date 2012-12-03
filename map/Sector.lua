@@ -169,14 +169,14 @@ end
 
 -- place commercial buildings
 function Sector:commercial(map)
-	local numSizes = 4
+	--[[local numSizes = 4
 	
-	--[[ here i was going to keep track of the sector tiles that have a building in
+	 here i was going to keep track of the sector tiles that have a building in
 		them already
 		
 	local sectorTiles = {}
 	for x=
-	--]]
+	
 
 	-- place random buildings on all commercial tiles
 	for x=x1+1,x2-1 do
@@ -194,7 +194,27 @@ function Sector:commercial(map)
 			
 			end
 		end	
+	end]]--
+	-- self ref
+	local x1,y1,x2,y2 = self.x1, self.y1, self.x2, self.y2
+	
+	local orientation = math.random(0,1)
+	for x=x1+1, x2-1 do
+		for y = y1+1, y2-1 do
+			local i = 8
+			if (x == x1+1) then i = 0 end 
+			if (x == x2-1) then i = 2 end 
+			if (y == y1+1) then i = 1 end 
+			if (y == y2-1) then i = 3 end 
+			if (x == x1+1) and (y == y1+1) then i = 4 end 
+			if (x == x2-1) and (y == y1+1) then i = 5 end 
+			if (x == x2-1) and (y == y2-1) then i = 6 end 
+			if (x == x1+1) and (y == y2-1) then i = 7 end 	
+			
+			map:newFarm(x,y,orientation, i)
+		end
 	end
+	
 end
 
 -- place crops
@@ -266,7 +286,7 @@ function Sector:park(map)
 	
 	
 	-- find appropriate gapSide
-	local gapSide = math.floor(math.random() * 4)
+	--[[local gapSide = math.floor(math.random() * 4)
 	while true do
 		if N and gapSide == 0 then break end
 		if W and gapSide == 1 then break end
@@ -274,7 +294,7 @@ function Sector:park(map)
 		if E and gapSode == 3 then break end
 		
 		gapSide = math.floor(math.random() * 4)
-	end
+	end]]--
 	
 	-- north side
 	local yn = y1+1 -- building placement y 

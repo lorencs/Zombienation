@@ -45,6 +45,7 @@ H
 -- game settings
 supplies = 7
 
+
 orig_number_of_zombies = 111			-- zombies are red
 orig_number_of_humans = 10			-- humans are blue
 orig_number_of_rangers = 3			-- i thought this was a poem

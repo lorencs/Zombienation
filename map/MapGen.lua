@@ -8,6 +8,49 @@ require "map/District"
 
 MapGen = {}
 
+-- building sprites
+b1x1 = {}
+b1x1[1] = love.graphics.newImage("map/buildings/b1x1_1.png")
+b1x1[2] = love.graphics.newImage("map/buildings/b1x1_2.png")
+b1x1[3] = love.graphics.newImage("map/buildings/b1x1_3.png")
+b1x1[4] = love.graphics.newImage("map/buildings/b1x1_4.png")
+b1x1[5] = love.graphics.newImage("map/buildings/b1x1_5.png")
+b1x1[6] = love.graphics.newImage("map/buildings/b1x1_6.png")
+b1x1[7] = love.graphics.newImage("map/buildings/b1x1_7.png")
+b1x1[8] = love.graphics.newImage("map/buildings/b1x1_8.png")
+b1x1[9] = love.graphics.newImage("map/buildings/b1x1_9.png")
+b1x1[10] = love.graphics.newImage("map/buildings/b1x1_10.png")
+b1x1[11] = love.graphics.newImage("map/buildings/b1x1_11.png")
+b1x1[12] = love.graphics.newImage("map/buildings/b1x1_12.png")
+b1x1[13] = love.graphics.newImage("map/buildings/b1x1_13.png")
+b1x1[14] = love.graphics.newImage("map/buildings/b1x1_14.png")
+b1x1[15] = love.graphics.newImage("map/buildings/b1x1_15.png")
+b1x1[16] = love.graphics.newImage("map/buildings/b1x1_16.png")
+b1x1[17] = love.graphics.newImage("map/buildings/b1x1_17.png")
+b1x1[18] = love.graphics.newImage("map/buildings/b1x1_18.png")
+b1x1[19] = love.graphics.newImage("map/buildings/b1x1_19.png")
+b1x1[20] = love.graphics.newImage("map/buildings/b1x1_20.png")
+b1x2 = {}
+b1x2[1] = love.graphics.newImage("map/buildings/b1x2_1.png")
+b1x2[2] = love.graphics.newImage("map/buildings/b1x2_2.png")
+b1x2[3] = love.graphics.newImage("map/buildings/b1x2_3.png")
+b1x2[4] = love.graphics.newImage("map/buildings/b1x2_4.png")
+b1x2[5] = love.graphics.newImage("map/buildings/b1x2_5.png")
+b1x2[6] = love.graphics.newImage("map/buildings/b1x2_6.png")
+b2x1 = {}
+b2x1[1] = love.graphics.newImage("map/buildings/b2x1_1.png")
+b2x1[2] = love.graphics.newImage("map/buildings/b2x1_2.png")
+b2x1[3] = love.graphics.newImage("map/buildings/b2x1_3.png")
+b2x1[4] = love.graphics.newImage("map/buildings/b2x1_4.png")
+b2x1[5] = love.graphics.newImage("map/buildings/b2x1_5.png")
+b2x1[6] = love.graphics.newImage("map/buildings/b2x1_6.png")
+
+b2x2 = {}
+b2x2[1] = love.graphics.newImage("map/buildings/b2x2_1.png")
+b2x2[2] = love.graphics.newImage("map/buildings/b2x2_2.png")
+b2x2[3] = love.graphics.newImage("map/buildings/b2x2_3.png")
+b2x2[4] = love.graphics.newImage("map/buildings/b2x2_4.png")
+
 -- constructor
 function MapGen:new()
 	local object = {

@@ -150,7 +150,7 @@ function Ranger:draw(i)
 		love.graphics.print(self.statestr, self.x, self.y + 15)
 		
 		local j = 0
-		if (self.path ~= nil) then
+		if (self.path ~= nil) and self.state == "moving" then
 			for i = #self.path, 1, -1 do
 				if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
 				love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
@@ -499,14 +499,14 @@ function Ranger:stopChasing()
 	self.huntee = nil
 	self.state = "seeking"
 	self.statestr = "seeking"
-	self.shootingTimer = 2
+	self.shootingTimer = 0
 	self.animation:start()
 end
 
 function Ranger:patrol()
 	if (self.path ~= nil) then
 		self.state = "moving"
-
+		self.huntee = nil
 		self.tilesCrossed = 0
 		
 		self.targetX = self.path[#self.path - self.tilesCrossed].x 
