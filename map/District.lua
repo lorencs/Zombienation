@@ -136,9 +136,9 @@ function District:createSectors(map)
 end
 
 function District:setType(map, sector, id)
-	if id == 2 then
-		sector.sectorType = "residential"	
-	elseif id == 3 then
+	--if id == 2 then
+		--sector.sectorType = "residential"	
+	if id == 2 or id == 3 then
 		local qx = math.floor(map.width / 4)
 		local qy = math.floor(map.height / 4)
 		
@@ -153,18 +153,12 @@ function District:setType(map, sector, id)
 		local qx = math.floor(map.width / 4)
 		local qy = math.floor(map.height / 4)
 		
-		if sector.x1 < qx or sector.y1 < qy or 
-			sector.x2 > (3*qx) or sector.y2 > (3*qy) then
+		if sector.x1 == 0 or sector.y1 == 0 or
+			sector.x2 == map.width-1 or sector.y2 == map.height-1 then
 			
-			if self.y2 == map.height-1 or self.x2 == map.width-1 or
-				self.x1 == 0 or self.y1 == 0 then
-				
-				sector.sectorType = "rural"
-			else
-				sector.sectorType = "residential"
-			end
+			sector.sectorType = "rural"
 		else
-			sector.sectorType = "commercial"
+			sector.sectorType = "residential"
 		end
 	elseif id == 1 then
 		sector.sectorType = "park"

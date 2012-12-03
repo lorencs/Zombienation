@@ -443,6 +443,12 @@ function Sector:rural(map)
 	-- self ref
 	local x1,y1,x2,y2 = self.x1, self.y1, self.x2, self.y2
 	
+	-- kill small farmers
+	if self:area() < 25 then
+		self:park(map)
+		return
+	end
+	
 	local orientation = math.random(0,1)
 	for x=x1+1, x2-1 do
 		for y = y1+1, y2-1 do
