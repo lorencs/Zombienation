@@ -53,8 +53,8 @@ orig_number_of_workers = 25			-- i wish it was too
 orig_number_of_cars = 5
 
 -- map size
-mapW = 75
-mapH = 75
+mapW = 100
+mapH = 100
 
 -- gamestate
 Gamestate = require "utils/gamestate"

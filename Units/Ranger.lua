@@ -346,22 +346,25 @@ function Ranger:update(dt, zi, paused)
 		end
 		
 		if self.state == "moving" then
-			if self.tilesCrossed > 0 then self.turnFast = false end
-			if (self.targetX == math.floor(self.x / map.tileSize)) and (self.targetY == math.floor(self.y / map.tileSize)) then
-				
-				if (#self.path == self.tilesCrossed) then
-					self.state = "seeking"
-					self.huntee = nil
-				else
-					self.targetX = self.path[#self.path - self.tilesCrossed].x 
-					self.targetY = self.path[#self.path - self.tilesCrossed].y
-					self.tilesCrossed = self.tilesCrossed + 1
-					self.targetAngle = self:angleToXY( self.x, self.y, self.targetX * map.tileSize + map.tileSize / 2, self.targetY * map.tileSize + map.tileSize / 2 )
-					--self.angle = self.targetAngle
-					self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+			if (self.path ~= nil) then
+				if self.tilesCrossed > 0 then self.turnFast = false end
+				if (self.targetX == math.floor(self.x / map.tileSize)) and (self.targetY == math.floor(self.y / map.tileSize)) then
+					
+					if (#self.path == self.tilesCrossed) then
+						self.state = "seeking"
+						self.huntee = nil
+					else
+						self.targetX = self.path[#self.path - self.tilesCrossed].x 
+						self.targetY = self.path[#self.path - self.tilesCrossed].y
+						self.tilesCrossed = self.tilesCrossed + 1
+						self.targetAngle = self:angleToXY( self.x, self.y, self.targetX * map.tileSize + map.tileSize / 2, self.targetY * map.tileSize + map.tileSize / 2 )
+						--self.angle = self.targetAngle
+						self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+					end
 				end
+			else 
+				self.state = "seeking"
 			end
-			
 		end
 	else
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
