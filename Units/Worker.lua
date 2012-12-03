@@ -153,15 +153,18 @@ function Worker:draw(i)
 		
 		-- draw state of unit
 		love.graphics.print(self.state, self.x, self.y + 15)
-	end
-	local j = 0
-	if (self.path ~= nil) then
-		for i = #self.path, 1, -1 do
-			if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
-			love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
-			j = j + 1
+		
+		local j = 0
+		if (self.path ~= nil) then
+			for i = #self.path, 1, -1 do
+				if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
+				love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
+				j = j + 1
+			end
 		end
+		
 	end
+
 		love.graphics.setColor(0,255,60, 150, 150)
 		--love.graphics.rectangle( "fill", (22) * 54 , (30) * 54 , 54, 54 )
 		--love.graphics.rectangle( "fill", (24) * 54 , (30) * 54 , 54, 54 )

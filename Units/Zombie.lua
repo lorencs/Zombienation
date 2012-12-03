@@ -164,6 +164,16 @@ function Zombie:draw(i)
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 10, 15 )
 		
 		--love.graphics.circle( "fill", self.x + self.radius, self.y + self.radius, 70, 25 )
+		
+		local j = 0
+		if (self.path ~= nil) then
+			for i = #self.path, 1, -1 do
+				if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
+				love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
+				j = j + 1
+			end
+		end
+	
 	end
 	
 	playerColor = {255,0,0}
@@ -182,14 +192,7 @@ function Zombie:draw(i)
 	--love.graphics.rectangle("line", self.x, self.y - see_human_dist, 10, 10)
 	-- end debugging
 	
-	local j = 0
-	if (self.path ~= nil) then
-		for i = #self.path, 1, -1 do
-			if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
-			love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
-			j = j + 1
-		end
-	end
+
 	
 	--draw sprite
 	love.graphics.reset()

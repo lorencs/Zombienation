@@ -146,6 +146,15 @@ function Human:draw(i)
 		
 		-- draw state of unit
 		love.graphics.print(self.state, self.x, self.y + 15)
+		
+		local j = 0
+		if (self.path ~= nil) then
+			for i = #self.path, 1, -1 do
+				if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
+				love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
+				j = j + 1
+			end
+		end
 	end
 	
 	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
@@ -163,14 +172,7 @@ function Human:draw(i)
 	
 	--draw path (in reverse, red is first block)
 	love.graphics.setColor(0,255,0,50)
-	local j = 0
-	if (self.path ~= nil) then
-		for i = #self.path, 1, -1 do
-			if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
-			love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
-			j = j + 1
-		end
-	end
+
 end
 
 function Human:runAwayFrom(zom_x, zom_y)
