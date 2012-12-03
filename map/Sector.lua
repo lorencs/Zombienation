@@ -35,7 +35,7 @@ function getSectors(start, width, height)
 	sectors = {}
 	cycle = {}
 
-	s = Sector:new(start.x , start.y , start.x + width-1, start.y + height-1, "H")
+	s = Sector:new(start.x , start.y , start.x + width, start.y + height, "H")
 	table.insert(sectors, s)
 	table.insert(cycle, s)
 	

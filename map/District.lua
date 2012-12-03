@@ -106,8 +106,6 @@ end
 
 -- create sectors for this district
 function District:createSectors(map)
-	local octaves = 10
-
 	-- split into sectors
 	self.sectors = getSectors(Point:new(self.x1, self.y1), self:xd(), self:yd())
 	
