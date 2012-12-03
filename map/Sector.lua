@@ -68,12 +68,13 @@ function Sector:split()
 	local minLen = 10
 	local minArea = 30
 	
-	if (yd < minLen and xd < minLen) or self:area() < minArea then
-		return self, nil
-	elseif yd < minLen and xd > 2*yd then
+	-- sector size check
+	if yd < minLen and xd > 2*yd then
 		self.divide = "V"
 	elseif xd < minLen and yd > 2*xd then
 		self.divide = "H"
+	elseif yd < minLen or xd < minLen or self:area() < minArea then
+		return self, nil	
 	end
 
 	if self.divide == "H" then
