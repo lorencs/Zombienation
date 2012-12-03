@@ -505,18 +505,6 @@ function Sector:park(map)
 	-- change sector into grass
 	self:fillWithGrass(map)
 	
-	
-	-- find appropriate gapSide
-	--[[local gapSide = math.floor(math.random() * 4)
-	while true do
-		if N and gapSide == 0 then break end
-		if W and gapSide == 1 then break end
-		if S and gapSide == 2 then break end
-		if E and gapSode == 3 then break end
-		
-		gapSide = math.floor(math.random() * 4)
-	end]]--
-	
 	-- north side
 	local yn = y1+1 -- building placement y 
 	for x=x1+1,x2-1 do		

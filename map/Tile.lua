@@ -61,3 +61,9 @@ end
 function Tile:setDraw(bool)
 	self.draw = false
 end
+
+function Tile:isWalkable()
+	local i = self.id
+	
+	return (i == "G") or (i == "R") or (i == "P") or (i == "F")
+end
