@@ -245,14 +245,55 @@ function Sector:commercial(map)
 		
 		
 		--SOUTH
-		bType = math.random(1,4)
+		--[[bType = math.random(1,4)
+		-- 2x2 buildings
+		if (bType == 4) then
+			if not(self:areaClear(map,x,y2-1,x+1,y2)) then
+				bType = math.random(1,3)						-- try smaller size
+			else
+				local bRand = math.random(1,4)
+				map.tiles[x][y2-1]:setId("D")
+				map.tiles[x][y2-1]:resetImg()
+				map.tiles[x][y2-1].img = b2x2[bRand]
+				map.tiles[x][y2-1].sprite = love.graphics.newQuad(0,0, map.tileSize*2, map.tileSize*2, b2x2[bRand]:getWidth(), b2x2[bRand]:getHeight())
+				map.tiles[x][y2]:setId("D")	map.tiles[x][y2]:setDraw(false)
+				map.tiles[x+1][y2-1]:setId("D")	map.tiles[x+1][y2-1]:setDraw(false)
+				map.tiles[x+1][y2]:setId("D")	map.tiles[x+1][y2]:setDraw(false)
+			end
+		end
+		--2x1 buildings
+		if (bType == 3) then
+			if not self:areaClear(map,x,y2-1,x+1,y2-1) then
+				bType = math.random(1,2)						-- try smaller size
+			else
+				local bRand = math.random(1,6)
+				map.tiles[x][y2-1]:setId("D")
+				map.tiles[x][y2-1]:resetImg()
+				map.tiles[x][y2-1].img = b2x1[bRand]
+				map.tiles[x][y2-1].sprite = love.graphics.newQuad(0,0, map.tileSize*2, map.tileSize, b2x1[bRand]:getWidth(), b2x1[bRand]:getHeight())
+				map.tiles[x+1][y2-1]:setId("D")	map.tiles[x+1][y2-1]:setDraw(false)
+			end
+		end
+		--1x2 buildings
+		if (bType == 2) then
+			if not self:areaClear(map,x,y2-1,x,y1) then
+				bType = 1										-- try smaller size
+			else
+				local bRand = math.random(1,6)
+				map.tiles[x][y2-1]:setId("D")
+				map.tiles[x][y2-1]:resetImg()
+				map.tiles[x][y2-1].img = b1x2[bRand]
+				map.tiles[x][y2-1].sprite = love.graphics.newQuad(0,0, map.tileSize, map.tileSize*2, b1x2[bRand]:getWidth(), b1x2[bRand]:getHeight())
+				map.tiles[x][y2]:setId("D")	map.tiles[x][y1+1]:setDraw(false)
+			end
+		end
 		if (bType == 1) then
 			local bRand = math.random(1,20)
 			map.tiles[x][y2-1]:setId("D")
 			map.tiles[x][y2-1]:resetImg()
 			map.tiles[x][y2-1].img = b1x1[bRand]
 			map.tiles[x][y2-1].sprite = love.graphics.newQuad(0,0, map.tileSize, map.tileSize, b1x1[bRand]:getWidth(), b1x1[bRand]:getHeight())
-		end
+		end]]--
 	end
 	
 	-- place buildings along east and west
