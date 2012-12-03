@@ -181,16 +181,12 @@ function Sector:commercial(map)
 	
 	-- setup roads around commerical sectors (or find another fix becasue right now most commercialal sectors are in the middle of a huge field)
 	for x=x1, x2 do
-		map.tiles[x][y1]:setId("R")
-		map.tiles[x][y1]:resetImg()
-		map.tiles[x][y2]:setId("R")
-		map.tiles[x][y2]:resetImg()
+		if not(self.boundN) then map.tiles[x][y1]:setId("R") end
+		if not(self.boundS) then map.tiles[x][y2]:setId("R") end
 	end
 	for y=y1, y2 do
-		map.tiles[x1][y]:setId("R")
-		map.tiles[x1][y]:resetImg()
-		map.tiles[x2][y]:setId("R")
-		map.tiles[x2][y]:resetImg()
+		if not(self.boundW) then map.tiles[x1][y]:setId("R") end
+		if not(self.boundE) then map.tiles[x2][y]:setId("R") end
 	end
 	
 	-- place buildings along north and south edges

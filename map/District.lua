@@ -116,16 +116,16 @@ function District:createSectors(map)
 	for _,v in pairs(self.sectors) do
 	
 		-- bound check
-		if v.y1 == 0 or v.y1 == self.y1+1 then
+		if v.y1 == self.y1+1 then
 			v.boundN = true
 		end
-		if v.x1 == 0 or v.x1 == self.x1+1 then
+		if v.x1 == self.x1+1 then
 			v.boundW = true
 		end
-		if v.y2 == map.height-1 or v.y2 == self.y2-1 then
+		if v.y2 == self.y2-1 then
 			v.boundS = true
 		end
-		if v.x1 == map.width-1 or v.x1 == self.x2-1 then
+		if v.x2 == self.x2-1 then
 			v.boundE = true
 		end
 		
