@@ -131,7 +131,7 @@ function District:createSectors(map)
 		
 		v.sectorType = self:getType(id)
 		id = id + 1
-		if id > 4 then id = 0 end		
+		if id > 3 then id = 0 end		
 	end
 end
 
@@ -142,15 +142,12 @@ function District:getType(id)
 	elseif id == 3 then
 		self.sectorCount_commercial = self.sectorCount_commercial + 1
 		return "commercial"
-	elseif id == 4 then
+	elseif id == 0 then
 		self.sectorCount_rural = self.sectorCount_rural + 1
 		return "rural"
 	elseif id == 1 then
 		self.sectorCount_park = self.sectorCount_park + 1
 		return "park"
-	elseif id == 0 then
-		self.sectorCount_industrial = self.sectorCount_industrial + 1
-		return "industrial"
 	else
 		return "undefined"
 	end	
