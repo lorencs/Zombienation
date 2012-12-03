@@ -430,6 +430,7 @@ function Sector:areaClear(map,x1,y1,x2,y2)
 			if (map.tiles[xx][yy] == "R") or (map.tiles[xx][yy] == "D") then
 				return false
 			end
+			print (xx..","..yy.." is good")
 		end
 	end
 	
