@@ -463,11 +463,11 @@ end
 
 -- place a park
 function Sector:park(map)
-	-- no tiny parks
+	--[[ no tiny parks
 	if self:xd() < 6 or self:yd() < 6 or self:area() < 50 then
 		return
 	end
-	
+	--]]
 	-- self ref
 	local x1,y1,x2,y2 = self.x1, self.y1, self.x2, self.y2
 	
