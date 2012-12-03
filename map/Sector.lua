@@ -218,9 +218,6 @@ function Sector:park(map)
 		return
 	end
 	
-	-- change sector into grass
-	self:fillWithGrass(map)
-	
 	-- self ref
 	local x1,y1,x2,y2 = self.x1, self.y1, self.x2, self.y2
 	
@@ -254,6 +251,10 @@ function Sector:park(map)
 	if not(N) and not(S) and not(W) and not(E) then 
 		return 
 	end
+	
+	-- change sector into grass
+	self:fillWithGrass(map)
+	
 	
 	-- find appropriate gapSide
 	local gapSide = math.floor(math.random() * 4)
