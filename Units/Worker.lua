@@ -408,7 +408,7 @@ function Worker:update(dt, zi, paused)
 		
 		local nextTileType = self:xyToTileType(next_x,next_y)
 		-- check next tile (not in panic mode)
-		if  not (nextTileType == "G" or nextTileType == "R") then
+		if  not (nextTileType == "G" or nextTileType == "R" or nextTileType == "P" or nextTileType == "F") then
 			self.directionTimer = self.directionTimer + dt
 			--self.state = "STUCK !"
 			self:avoidTile2(self, nextTileDir)

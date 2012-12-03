@@ -173,7 +173,11 @@ function Zombie:draw(i)
 				j = j + 1
 			end
 		end
-	
+		if self.followingSP == true then
+			love.graphics.print("TRUE", self.x, self.y + 10)
+		else
+			love.graphics.print("FALSE", self.x, self.y + 10)
+		end
 	end
 	
 	playerColor = {255,0,0}
@@ -181,7 +185,7 @@ function Zombie:draw(i)
 	
 	------------------------------- DRAW UNIT ( A CIRCLE FOR NOW )
 	--love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
-	love.graphics.print(self.tag.. " ".. self.state, self.x, self.y + 10)
+	--love.graphics.print(self.tag.. " ".. self.state, self.x, self.y + 10)
 	
 	------------------------------- DEBUG CODE -------------------------------------
 	
@@ -598,7 +602,7 @@ function Zombie:update(dt, zi, paused)
 	
 	local nextTileType = self:xyToTileType(next_x,next_y)
 	-- check next tile (not in panic mode)
-	if  not (nextTileType == "G" or nextTileType == "R" or nextTileType == "F") then
+	if  not (nextTileType == "G" or nextTileType == "R" or nextTileType == "F" or nextTileType == "P") then
 		self.directionTimer = self.directionTimer + dt
 		--self.state = "STUCK !"
 		self:avoidTile2(self)
