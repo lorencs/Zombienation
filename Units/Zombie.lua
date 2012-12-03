@@ -510,10 +510,12 @@ function Zombie:update(dt, zi, paused)
 				deady = worker_list[h_index].y
 				if worker_list[h_index].working == false then
 					unitManager.idleWorkers = unitManager.idleWorkers - 1
+					infoText:addText("An idle worker has been killed by a zombie !")
+				else
+					infoText:addText("A worker has been killed by a zombie !")
 				end
 				table.remove(worker_list, h_index)							-- remove human from human_list array
 				number_of_workers = number_of_workers - 1						-- decrease count of humans alive
-				infoText:addText("A worker has been killed by a zombie !")
 			end
 			
 			-- disable following shortest path as the zombie is now chasing a human
