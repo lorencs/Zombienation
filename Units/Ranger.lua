@@ -240,6 +240,15 @@ end
  
 -- update function
 function Ranger:update(dt, zi, paused)
+	-- update bullets
+	for i,_ in pairs(self.bullets) do
+		self.bullets[i]:update(dt, paused)
+		if self.bullets[i].delete then
+			table.remove(self.bullets, i)
+		end
+	end
+	
+
 	-- check if the zombie youre hunting or shooting is dead
 	if not (self.huntee == nil) then
 		if self.huntee.delete then 
@@ -475,14 +484,6 @@ function Ranger:update(dt, zi, paused)
 	self.zombieCheckTimer = self.zombieCheckTimer + dt
 	if self.state == "shooting" then self.shootingTimer = self.shootingTimer + dt end	-- only increment shooting timer if youre shooting
 	self.searchTimer = self.searchTimer + dt	
-	
-	-- update bullets
-	for i,_ in pairs(self.bullets) do
-		self.bullets[i]:update(dt, paused)
-		if self.bullets[i].delete then
-			table.remove(self.bullets, i)
-		end
-	end
 	
 	--update animation
 	self.animation:rotate(self.angle)
