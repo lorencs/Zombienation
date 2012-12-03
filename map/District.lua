@@ -49,7 +49,6 @@ function getDistricts(width, height)
 	local splitChance = 0.85
 	
 	local minArea = (width * height) - 1
-	local secondMinArea = width * height
 
 	for d=0,depth do
 		cycle = {}	-- reset cycle
@@ -58,23 +57,17 @@ function getDistricts(width, height)
 				a,b = v:split()				
 				if not(a == nil) then 
 					local aa = a:area()
-					if aa < minArea then minArea = aa 
-					elseif aa > minArea and aa < secondMinArea then secondMinArea = aa
-					end
+					if aa < minArea then minArea = aa end
 					table.insert(cycle, a) 
 				end
 				if not(b == nil) then 
 					local ba = b:area()
-					if ba < minArea then minArea = ba 
-					elseif ba > minArea and ba < secondMinArea then secondMinArea = ba
-					end
+					if ba < minArea then minArea = ba end
 					table.insert(cycle, b) 
 				end				
 			else
 				local va = v:area()
-				if va < minArea then minArea = va 
-				elseif va > minArea and va < secondMinArea then secondMinArea = va
-				end
+				if va < minArea then minArea = va end
 				table.insert(cycle, v)
 			end
 		end
@@ -84,7 +77,7 @@ function getDistricts(width, height)
 	
 	-- set baseDistrict
 	for _,d in pairs(districts) do
-		if d:area() == secondMinArea then
+		if d:area() == minArea then
 			d.isBase = true
 		end
 	end

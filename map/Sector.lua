@@ -209,11 +209,46 @@ function Sector:park(map)
 	local x1,y1,x2,y2 = self.x1, self.y1, self.x2, self.y2
 	
 	-- local vars
-	--  NO RANDOM GATES
-	local gapSide = math.floor(math.random() * 4)
 	local xmid = x1 + math.floor(self:xd() / 2) + 1
 	local ymid = y1 + math.floor(self:yd() / 2) + 1	
 	local dir,style = nil,nil
+	
+	-- detect roads
+	local N,W,E,S = true, true, true, true
+	-- north/south side
+	for xi=x1,x2 do
+		if not(tileHere(map,xi,y1,"R")) then 
+			N = false 
+		end
+		if not(tileHere(map,xi,y2,"R")) then 
+			S = false 
+		end
+	end
+	-- east/west side
+	for yi=y1,y2 do
+		if not(tileHere(map,x1,yi,"R")) then 
+			W = false 
+		end
+		if not(tileHere(map,x2,yi,"R")) then
+			E = false
+		end
+	end
+	
+	-- no roads means no park
+	if not(N) and not(S) and not(W) and not(E) then 
+		return 
+	end
+	
+	-- find appropriate gapSide
+	local gapSide = math.floor(math.random() * 4)
+	while true do
+		if N and gapSide == 0 then break end
+		if W and gapSide == 1 then break end
+		if S and gapSide == 2 then break end
+		if E and gapSode == 3 then break end
+		
+		gapSide = math.floor(math.random() * 4)
+	end
 	
 	-- north side
 	local yn = y1+1 -- building placement y 
