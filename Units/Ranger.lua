@@ -90,6 +90,7 @@ function Ranger:setupUnit()
 	
 	self.state = "seeking"
 	self.statestr = "seeking"
+	self.huntee = nil
 	self.speed = self.normalSpeed
 	--self.tag = ranger_tag
 	self.tag = unitTag
@@ -254,6 +255,7 @@ function Ranger:update(dt, zi, paused)
 		if self.huntee.delete then 
 			self.state = "seeking"
 			self.statestr = "seeking"
+			self.huntee = nil
 		end
 	end
 	------------------------------- CHECK PAUSE AND ATTACKED; LOOK AROUND FOR ZOMBIES
@@ -349,6 +351,7 @@ function Ranger:update(dt, zi, paused)
 				
 				if (#self.path == self.tilesCrossed) then
 					self.state = "seeking"
+					self.huntee = nil
 				else
 					self.targetX = self.path[#self.path - self.tilesCrossed].x 
 					self.targetY = self.path[#self.path - self.tilesCrossed].y
