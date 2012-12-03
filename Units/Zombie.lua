@@ -228,7 +228,7 @@ function Zombie:update(dt, zi, paused)
 			local zposition = Point:new(self.x, self.y)
 			local hUnit = unitManager:getClosestHuman(zposition)
 			if hUnit ~= nil then
-				print("zombie: "..self.tag.." is moving towards human: "..hUnit.tag)
+				--print("zombie: "..self.tag.." is moving towards human: "..hUnit.tag)
 				self.followingTileCount = 0
 				self.followingSP = true
 				-- this should set self.path
@@ -256,7 +256,6 @@ function Zombie:update(dt, zi, paused)
 	if self.followingSP == false then			-- randomize direction only if the zombie is not in motion to another human location
 		------------------------------- RANDOMIZING DIRECTION AFTER 5 SECONDS
 		if self.directionTimer > self.randomDirectionTimer then
-			print("->>>randomizing .. tag:"..self.tag)
 			-- randomize a degree, 0 to 360
 			self.targetAngle = math.random(360)
 			
@@ -275,7 +274,6 @@ function Zombie:update(dt, zi, paused)
 	
 		------------------------------- IF THE ZOMBIE IS FOLLOWING SHORTEST PATH....
 		if self.followingSP == true then
-		print("TAGGGGG:"..self.tag)
 			if (self.tarXTile == math.floor(self.x / map.tileSize)) and (self.tarYTile == math.floor(self.y / map.tileSize)) then
 				if (#self.path == self.followingTileCount) then
 					self.followingSP = false
@@ -285,7 +283,7 @@ function Zombie:update(dt, zi, paused)
 					self.followingTileCount = self.followingTileCount + 1
 					self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
 					self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
-					print("zombie: "..self.tag.. " GOING RANDOM AGAIN !")
+					self.path = nil
 				else
 					self.tarXTile = self.path[#self.path - self.followingTileCount].x -- else worker is still on path to a destination..
 					self.tarYTile = self.path[#self.path - self.followingTileCount].y
@@ -302,7 +300,6 @@ function Zombie:update(dt, zi, paused)
 		if self.dirVec == 0 then			-- positive direction	( opposite of conventional as y increases downwards )
 			if self.followingSP == true then
 				self.angle = self.angle + 0.7
-				print("WTF !"..self.tag)
 			else
 				
 				self.angle = self.angle + 0.2
@@ -389,8 +386,6 @@ function Zombie:update(dt, zi, paused)
 	-- followingTag stores the tag of the human to be followed ( if any )
 	for i = 1, number_of_humans do
 	
-		--if (self.v1.x ~= 0) then									-- initially, v1.x is 0 as it has not been set so this is an exception case.
-			
 			local human_point = Point:new(human_list[i].cx, human_list[i].cy)
 			--local val = self:pTriangle(human_point, self.v1, self.v2, self.v3)						-- detect humans in a triangle
 			local val = self:pointInArc(self.x, self.y, human_point.x, human_point.y, 
@@ -406,18 +401,14 @@ function Zombie:update(dt, zi, paused)
 				self.path = nil
 				self.zombieSniffTimer = 0
 			end
-		--end
 		
 		-- zombie found a human to chase; break out of loop
 		if self.followingTag ~= 0 then break end
 	end
 	
-	
-	-- followingTag stores the tag of the human to be followed ( if any )
+	-- followingTag stores the  of the human to be followed ( if any )
 	for i,v in pairs (ranger_list) do
 	
-		--if (self.v1.x ~= 0) then									-- initially, v1.x is 0 as it has not been set so this is an exception case.
-			
 			local ranger_point = Point:new(v.cx, v.cy)
 			local val = self:pointInArc(self.x, self.y, ranger_point.x, ranger_point.y, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
@@ -426,7 +417,6 @@ function Zombie:update(dt, zi, paused)
 				self.followingType = "Ranger"
 				self.state = "Chasing ".. self.followingTag
 			end
-		--end
 		
 		-- zombie found a human to chase; break out of loop
 		if self.followingTag ~= 0 then break end
@@ -435,8 +425,6 @@ function Zombie:update(dt, zi, paused)
 	-- followingTag stores the tag of the worker to be followed ( if any )
 	for i,v in pairs (worker_list) do
 	
-		--if (self.v1.x ~= 0) then									-- initially, v1.x is 0 as it has not been set so this is an exception case.
-			
 			local worker_point = Point:new(v.cx, v.cy)
 			local val = self:pointInArc(self.x, self.y, worker_point.x, worker_point.y, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
@@ -445,12 +433,10 @@ function Zombie:update(dt, zi, paused)
 				self.followingType = "Worker"
 				self.state = "Chasing ".. self.followingTag
 			end
-		--end
 		
 		-- zombie found a human to chase; break out of loop
 		if self.followingTag ~= 0 then break end
 	end
-	
 	
  end
  
@@ -486,8 +472,6 @@ function Zombie:update(dt, zi, paused)
 		dist = self:distanceBetweenPoints(self.cx,self.cy,worker_list[h_index].cx, worker_list[h_index].cy)
 	end
 
-
-	
 	-- if its very close, zombie eats human
 	if dist < (self.radius * 2 + 7) then
 	   
@@ -526,6 +510,7 @@ function Zombie:update(dt, zi, paused)
 			self.followingSP = false
 			self.path = nil
 			self.zombieSniffTimer = 0
+			
 			number_of_zombies = number_of_zombies + 1					-- increase count of zombies alive
 			zombie_list[number_of_zombies] = Zombie:new(deadx, deady)	-- create new zombie at the location of this zombie
 			zombie_list[number_of_zombies]:setupUnit()					-- setup zombie
@@ -554,7 +539,6 @@ function Zombie:update(dt, zi, paused)
 			worker_list[h_index].panicMode = false
 		end
 	end
-
 	
 	------------------------------- FOLLOWING THE HUMAN
 	
