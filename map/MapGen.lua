@@ -194,9 +194,7 @@ function MapGen:divideCity()
 				self:generateWater(v:xd()-6, v:yd()-6, Point:new(v.x1+3, v.y1+3))
 			end
 		else -- set the base and store 
-			-- ACCOUNT FOR BUILDING SIZE
-			--m:newBuilding(v.x1+1, v.y1+1, 32, nil, nil)
-			--self:addBase(m, v.x1+1, v.y1+1)
+			--m:newBuilding(v.x1+1, v.y1+1, 32)
 			m.baseTilePt = Point:new(v.x1+4,v.y1+3)
 			--m.baseTilePt = Point:new(v.x1+1,v.y1+1)
 			m.storeTilePt = Point:new(v.x2-1,v.y2-1)
@@ -207,23 +205,6 @@ function MapGen:divideCity()
 	local size = 25
 	self:thinRoads(size)
 	
-end
-
--- add the base and update worker point
-function MapGen:addBase(map, xs, ys)
-	local t = map.tileSize
-	local w,h = t * 3, t * 2
-	
-	for x=xs,xs+3 do
-		for y=ys,ys+2 do
-			map.tiles[x][y]:setId("D")
-			map.tiles[x][y].img = base
-			map.tiles[x][y].sprite = love.graphics.newQuad(x,y,t,t,w,h)
-			
-		end
-	end
-	
-	map.baseTilePt = Point:new(xs+4, ys+3)
 end
 
 -- thin roads and remove ones that don't make sense

@@ -131,27 +131,30 @@ function District:createSectors(map)
 			v.boundE = true
 		end
 		
-		v.sectorType = self:getType(id)
+		self:setType(map, v, id)
 		id = id + 1
 		if id > 3 then id = 0 end		
 	end
 end
 
-function District:getType(id)
+function District:setType(map, sector, id)
 	if id == 2 then
-		self.sectorCount_residential = self.sectorCount_residential + 1
-		return "residential"		
+		sector.sectorType = "residential"	
 	elseif id == 3 then
-		self.sectorCount_commercial = self.sectorCount_commercial + 1
-		return "commercial"
+		sector.sectorType = "commercial"	 
 	elseif id == 0 then
-		self.sectorCount_rural = self.sectorCount_rural + 1
-		return "rural"
+		local qx = math.floor(map.width / 4)
+		local qy = math.floor(map.height / 4)
+		
+		if sector.x1 < qx or sector.y1 < qy or 
+			sector.x2 > (3*qx) or sector.y2 > (3*qy) then
+			
+			sector.sectorType = "rural"
+		else
+			sector.sectorType = "commercial"	
+		end
 	elseif id == 1 then
-		self.sectorCount_park = self.sectorCount_park + 1
-		return "park"
-	else
-		return "undefined"
+		sector.sectorType = "park"
 	end	
 end
 
