@@ -333,8 +333,7 @@ function Worker:update(dt, zi, paused)
 					--self.angle = self.targetAngle
 					self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
 				end
-			end
-			
+			end			
 		end
 		
 	else

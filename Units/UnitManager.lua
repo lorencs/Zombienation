@@ -566,21 +566,19 @@ function UnitManager:convertUnits(convType)
 		local suppliesNeeded = selectedU * 2
 		
 		if supplies >= suppliesNeeded then
+			supplies = supplies - suppliesNeeded
 			for i,v in pairs (human_list) do
 				if v.selected == true then
-					if supplies >= 2 then
-						local dx = v.x
-						local dy = v.y
-						number_of_workers = number_of_workers + 1
-						newWorker = Worker:new(dx,dy)
-						table.insert(worker_list, newWorker)
-						worker_list[number_of_workers]:setupUnit()
-						unitTag = unitTag + 1
-						--worker_tag = worker_tag + 1
-						table.remove(human_list, i)
-						number_of_humans = number_of_humans - 1
-						supplies = supplies - 2
-					end
+					local dx = v.x
+					local dy = v.y
+					number_of_workers = number_of_workers + 1
+					self.idleWorkers = self.idleWorkers + 1
+					newWorker = Worker:new(dx,dy)
+					table.insert(worker_list, newWorker)
+					newWorker:setupUnit()
+					unitTag = unitTag + 1
+					table.remove(human_list, i)
+					number_of_humans = number_of_humans - 1
 				end
 			end
 			if selectedU > 1 then
@@ -588,6 +586,8 @@ function UnitManager:convertUnits(convType)
 			else
 				infoText:addText(selectedU.." civilian has been recruited to a Worker")
 			end
+		else
+			infoText:addText("Insufficient funds ! ".. suppliesNeeded.. " supplies needed.")
 		end
 	elseif (convType == "Ranger") then
 		local selectedU = 0
@@ -607,8 +607,7 @@ function UnitManager:convertUnits(convType)
 						number_of_rangers = number_of_rangers + 1
 						newRanger = Ranger:new(dx,dy)
 						table.insert(ranger_list, newRanger)
-						ranger_list[number_of_rangers]:setupUnit()
-						--ranger_tag = ranger_tag + 1
+						newRanger:setupUnit()
 						unitTag = unitTag + 1
 						table.remove(human_list, i)
 						number_of_humans = number_of_humans - 1
@@ -619,6 +618,8 @@ function UnitManager:convertUnits(convType)
 			else
 				infoText:addText(selectedU.." civilian has been recruited to a Ranger")
 			end
+		else
+			infoText:addText("Insufficient funds ! ".. suppliesNeeded.. " supplies needed.")
 		end
 	end	
 end
