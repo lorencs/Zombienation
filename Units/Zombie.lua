@@ -59,7 +59,6 @@ function Zombie:new(x_new, y_new)
 	path = nil,
 	randomDirectionTimer = math.random(7, 10)
 	}											
-													
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
 	setmetatable(Zombie, { __index = Unit })        -- Zombie is a subclass of class Unit, so set inheritance..
