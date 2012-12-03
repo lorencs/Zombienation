@@ -117,10 +117,10 @@ function Astar:findPath(startX, startY, endX, endY)
 							--if not (self:nodeInArray(closedList, newX, newY)) then
 							if self.closedVec[newX][newY] ~= self.gc then
 								local tid = map.tiles[newX][newY].id
-								if (tid == "G") or (tid == "R") or (tid == "F") then
+								if (tid == "G") or (tid == "R") or (tid == "F") or (tid == "P")then
 									local id1 = map.tiles[currentX+xx][currentY].id
 									local id2 = map.tiles[currentX][currentY+yy].id
-									if (id1=="R" or id1=="G" or id1 == "F") and (id2=="R" or id2=="G" or id2 == "F") then	
+									if (id1=="R" or id1=="G" or id1 == "F" or id1 == "P") and (id2=="R" or id2=="G" or id2 == "F" or id2 == "P") then	
 										if self.nodeVec[newX][newY] == nil then
 											newNode = Node:new(newX,newY)
 											--newNode.gcost,newNode.fcost = 0
