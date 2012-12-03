@@ -178,11 +178,19 @@ function Sector:rural(map)
 	local x1,y1,x2,y2 = self.x1, self.y1, self.x2, self.y2
 	
 	local orientation = math.random(0,1)
-	print("new farm, orienation: "..orientation)
 	for x=x1+1, x2-1 do
 		for y = y1+1, y2-1 do
-			print("--"..orientation)
-			map:newFarm(x,y,orientation)
+			local i = 8
+			if (x == x1+1) then i = 0 end 
+			if (x == x2-1) then i = 2 end 
+			if (y == y1+1) then i = 1 end 
+			if (y == y2-1) then i = 3 end 
+			if (x == x1+1) and (y == y1+1) then i = 4 end 
+			if (x == x2-1) and (y == y1+1) then i = 5 end 
+			if (x == x2-1) and (y == y2-1) then i = 6 end 
+			if (x == x1+1) and (y == y2-1) then i = 7 end 	
+			
+			map:newFarm(x,y,orientation, i)
 		end
 	end
 end

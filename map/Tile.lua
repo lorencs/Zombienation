@@ -47,6 +47,9 @@ function Tile:resetImg()
 	elseif self.id == "P" then
 		self.img = fence
 		self.mm = fenceMM
+	elseif self.id == "F" then
+		self.img = farm1
+		self.mm = farmMM
 	end
 end
 function Tile:getImg()

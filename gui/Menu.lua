@@ -166,7 +166,7 @@ function Menu:setMainMenu()
 	closestHumanBtn:SetImage(love.graphics.newImage("gui/gotohumanbutton.png"))
 	closestHumanBtn:SetVisible(false)
 	closestHumanBtn.OnClick = function(object)
-		humanPoint = unitManager:getClosestHuman()
+		humanPoint = unitManager:getClosestCivilian()
 		view.x = humanPoint.x - width/2
 		view.y = humanPoint.y - height/2
 		unitManager:deselectUnits()
