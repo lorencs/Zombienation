@@ -25,11 +25,11 @@ garageS2 = love.graphics.newImage("map/buildings/garageS2.png")
 garageE2 = love.graphics.newImage("map/buildings/garageE2.png")
 
 -- base
-base = love.graphics.newImage("map/buildings/base.png") -- 3x2
+home = love.graphics.newImage("map/buildings/basecamp.png") -- 3x2
 
 -- need minimap images
 
-function Building:new()
+function Building:new(t_size)
 	local object = {
 		x = 0,
 		y = 0,
@@ -37,6 +37,7 @@ function Building:new()
 		yend = 0,
 		width = 0,
 		height = 0,
+		tileSize = t_size,
 		img = nil
 	}
 	setmetatable(object, { __index = Building })
@@ -120,7 +121,7 @@ function Building:getImg(selector)
 	
 	-- base
 	elseif selector == "base" then
-		return base
+		return home
 	end
 end
 
@@ -128,5 +129,6 @@ function Building:getSprite(x, y, w)
 	local xi = (x - self.x) * w
 	local yi = (y - self.y) * w
 	
-	return love.graphics.newQuad(xi, yi, w, w, self.img:getWidth(), self.img:getHeight())
+	return love.graphics.newQuad(xi, yi, w, w, 
+		self.tileSize * self.width, self.tileSize * self.height)
 end

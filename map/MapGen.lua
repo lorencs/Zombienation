@@ -52,8 +52,6 @@ b2x2[3] = love.graphics.newImage("map/buildings/b2x2_3.png")
 b2x2[4] = love.graphics.newImage("map/buildings/b2x2_4.png")
 cementImg = love.graphics.newImage("map/buildings/commercialGround.png")
 
--- base
-base = love.graphics.newImage("map/buildings/base.png") -- 3x2
 
 -- constructor
 function MapGen:new()
@@ -119,6 +117,13 @@ function MapGen:randomMap()
 	-- buildings
 	print("--placing buildings")
 	self:generateBuildings()
+	-- remove roads to nowhere
+	local size = 25
+	--self:thinRoads(size)
+	self:thin("R", "G", size)	
+	-- remove silly lakes
+	self:thin("W", "G", size)
+	
 	
 	print("--updating tile info")
 	-- update tiles
@@ -194,20 +199,30 @@ function MapGen:divideCity()
 				self:generateWater(v:xd()-6, v:yd()-6, Point:new(v.x1+3, v.y1+3))
 			end
 		else -- set the base and store 
-			--m:newBuilding(v.x1+1, v.y1+1, 32)
+			m:newBuilding(v.x1+1, v.y1+1, 32, nil, nil)
 			m.baseTilePt = Point:new(v.x1+4,v.y1+3)
 			--m.baseTilePt = Point:new(v.x1+1,v.y1+1)
 			m.storeTilePt = Point:new(v.x2-1,v.y2-1)
 		end
 	end
 	
-	-- remove roads to nowhere
+	--[[ remove roads to nowhere
 	local size = 25
-	self:thinRoads(size)
-	
+	--self:thinRoads(size)
+	self:thin("R", "G", size)	
+	-- remove silly lakes
+	self:thin("W", "G", size)
+	--]]
 end
 
--- thin roads and remove ones that don't make sense
+function MapGen:thin(from, to, size)
+	-- remove small connected components
+	small = self:findConnectedComponents(0, size, from)
+	self:removeComponents(small, to)
+	-- remove dead ends
+	while self:removeTiles(from, from, to, 2, 4, false) > 0 do end
+end
+--[[ thin roads and remove ones that don't make sense
 function MapGen:thinRoads(size)
 	-- find and remove connected components
 	smallRoads = self:findConnectedComponents(0, size, "R")
@@ -217,6 +232,7 @@ function MapGen:thinRoads(size)
 	while self:removeTiles("R", "R", "G", 2, 4, false) > 0 do end
 	
 end
+--]]
 
 -- set neighbors (neighborType) of tile (tileType) to resetValue 
 -- if not(minN < #neighbors < maxN)
@@ -409,39 +425,7 @@ function MapGen:generateBuildings()
 		end
 	end
 end
---[[
-function MapGen:placeBuildings(minSize, maxSize, b_type, middle)
-	local chance = 0.05
-	build = self:findConnectedComponents(minSize, maxSize, "G")
-	for i,v in pairs(build) do
-		if middle then
-			pos = self:findMiddle(v)
-		else
-			pos = table.remove(v)
-		end
-				
-		if math.random() > chance then
-			if self.map:newBuilding(pos.x, pos.y, b_type) then
-				print("----"..i)
-			end
-		end
-	end
-end
 
--- find a midpoint in a connected component
-function MapGen:findMiddle(component)
-	local x,y,c = 0,0,0
-	for i,v in pairs(component) do
-		x = x + v.x
-		y = y + v.y
-		c = c + 1
-	end
-	local xn = math.floor(x / c)
-	local yn = math.floor(y / c)
-	
-	return Point:new(xn, yn)
-end
---]]
 -- load default map
 function MapGen:defaultMap()
 	-- load default map if it exists

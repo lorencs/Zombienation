@@ -223,7 +223,7 @@ function Map:getNeighborInfo(x,y)
 	
 	--self.canvas:renderTo(function()
 	love.graphics.setCanvas(self.canvas)
-		love.graphics.drawq(tile:getImg(), tile.sprite, xb, yb)
+		love.graphics.drawq(tile.img, tile.sprite, xb, yb)
 		if (tile.id == "W") then
 			local w = self.tileSize
 			local NEcorner = love.graphics.newQuad(0, 16*w, w, w, w*16, w*20)
@@ -394,6 +394,9 @@ end
 function Map:selectBuildingSprite(tile, x, y)
 	local building = self:findBuilding(x, y) 
 	if not(building == nil) then
+		if building.width == 3 and building.height == 2 then
+			print("FUCKING HALLELUJA")
+		end
 		tile.img = building.img
 		tile.sprite = building:getSprite(x, y, self.tileSize)
 	end
@@ -457,7 +460,7 @@ end
 -- return success as boolean
 function Map:newBuilding(x, y, b_type, dir, style)
 	-- add building to list
-	local b = Building:new()
+	local b = Building:new(self.tileSize)
 	b:set(x, y, b_type, dir, style)
 	
 	-- building out of bounds
