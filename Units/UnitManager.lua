@@ -555,6 +555,17 @@ function UnitManager:selectedType()
 	return total_units_selected, uType
 end
 
+-- check if the unit (argument) is being followed by a zombie ! if it is, give the zombie the new tag
+-- that it is supposed to follow !
+function UnitManager:checkIfFollowed(newType, oldTag, newTag)
+	for i,v in pairs(zombie_list) do
+		if v.followingTag == oldTag and v.followingType == "Human" then
+			v.followingTag = newTag
+			v.followingType = newType
+		end
+	end
+end
+
 function UnitManager:convertUnits(convType)
 	if (convType == "Worker") then
 		local selectedU = 0
@@ -576,6 +587,7 @@ function UnitManager:convertUnits(convType)
 					newWorker = Worker:new(dx,dy)
 					table.insert(worker_list, newWorker)
 					newWorker:setupUnit()
+					self:checkIfFollowed("Worker", v.tag, unitTag)		-- check if this unit is followed and update zombie the new tag
 					unitTag = unitTag + 1
 					table.remove(human_list, i)
 					number_of_humans = number_of_humans - 1
@@ -608,6 +620,7 @@ function UnitManager:convertUnits(convType)
 						newRanger = Ranger:new(dx,dy)
 						table.insert(ranger_list, newRanger)
 						newRanger:setupUnit()
+						self:checkIfFollowed("Ranger", v.tag, unitTag)		-- check if this unit is followed and update zombie the new tag
 						unitTag = unitTag + 1
 						table.remove(human_list, i)
 						number_of_humans = number_of_humans - 1
