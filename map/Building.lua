@@ -59,7 +59,7 @@ function Building:set(x, y, b_type, dir, style)
 	elseif b_type == 21 or b_type == 12 then
 		selector = selector.."garage"
 	elseif b_type == 32 then
-		selector = selector.."base"
+		selector = "base"
 	end
 	
 	
