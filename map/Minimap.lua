@@ -102,8 +102,8 @@ function Minimap:draw()
 		end
 
 		-- draw humans
-		--love.graphics.setColor(153,217,234)
-		love.graphics.setColor(50,50,255)
+		love.graphics.setColor(153,217,234)
+		--love.graphics.setColor(50,50,255)
 		for i = 1, #human_list do
 			local hx = human_list[i].x / self.map.tileSize
 			local hy = human_list[i].y / self.map.tileSize

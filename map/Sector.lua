@@ -199,16 +199,28 @@ function Sector:commercial(map)
 		local dirY = 0
 		if math.random() < 0.5 then
 			startX = math.random(x1,x2)
-			if math.random() < 0.5 then startY = y1 dirY = -1 else startY = y2 dirY = 1 end
+			if math.random() < 0.5 then s
+				tartY = y1 
+				dirY = -1 
+			else 
+				startY = y2 
+				dirY = 1 
+			end
 		else
 			startY = math.random(y1,y2)
-			if math.random() < 0.5 then startX = x1 dirX = -1 else startX = x2 dirX = 1 end
+			if math.random() < 0.5 then 
+				startX = 
+				x1 dirX = -1
+			else 
+				startX = x2 
+				dirX = 1 
+			end
 		end
 		
 		-- shoot a road out until it hits another road
 		local xx = startX+dirX local yy = startY+dirY
 		while(not(map.tiles[xx][yy].id == "R")) do
-			print("tracing: "..xx..","..yy)
+			--print("tracing: "..xx..","..yy)
 			map.tiles[xx][yy]:setId("R")
 			xx = xx + dirX
 			yy = yy + dirY
