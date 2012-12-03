@@ -416,6 +416,11 @@ function Zombie:update(dt, zi, paused)
 				self.followingTag = ranger_list[i].tag
 				self.followingType = "Ranger"
 				self.state = "Chasing ".. self.followingTag
+				
+				-- disable following shortest path as the zombie is now chasing a human
+				self.followingSP = false
+				self.path = nil
+				self.zombieSniffTimer = 0
 			end
 		
 		-- zombie found a human to chase; break out of loop
@@ -432,6 +437,11 @@ function Zombie:update(dt, zi, paused)
 				self.followingTag = worker_list[i].tag
 				self.followingType = "Worker"
 				self.state = "Chasing ".. self.followingTag
+				
+				-- disable following shortest path as the zombie is now chasing a human
+				self.followingSP = false
+				self.path = nil
+				self.zombieSniffTimer = 0
 			end
 		
 		-- zombie found a human to chase; break out of loop
