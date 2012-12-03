@@ -169,7 +169,14 @@ end
 
 -- place commercial buildings
 function Sector:commercial(map)
-	local numSizes = 3
+	local numSizes = 4
+	
+	--[[ here i was going to keep track of the sector tiles that have a building in
+		them already
+		
+	local sectorTiles = {}
+	for x=
+	--]]
 
 	-- place random buildings on all commercial tiles
 	for x=x1+1,x2-1 do
@@ -177,11 +184,13 @@ function Sector:commercial(map)
 			local size = math.floor(math.random() * numSizes)
 			
 			-- choose sprite of correct size
-			if size == 0 then
+			if size == 0 then -- 1x1
+				local spriteid = math.floor(math.random() * numSprites[size])
+			elseif size == 1 then -- 2x1
 			
-			elseif size == 1 then
+			elseif size == 2 then -- 1x2
 			
-			elseif size == 2 then
+			elseif size == 3 then -- 2x2
 			
 			end
 		end	
