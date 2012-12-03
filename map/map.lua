@@ -394,9 +394,6 @@ end
 function Map:selectBuildingSprite(tile, x, y)
 	local building = self:findBuilding(x, y) 
 	if not(building == nil) then
-		if building.width == 3 and building.height == 2 then
-			print("FUCKING HALLELUJA")
-		end
 		tile.img = building.img
 		tile.sprite = building:getSprite(x, y, self.tileSize)
 	end
