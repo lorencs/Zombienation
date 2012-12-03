@@ -57,7 +57,8 @@ function Zombie:new(x_new, y_new)
 	tarXTile = -1,
 	tarYTile = -1,
 	path = nil,
-	randomDirectionTimer = math.random(7, 10)
+	randomDirectionTimer = math.random(7, 10),
+	timerToGetToNextTile = 0
 	}											
 
 	setmetatable(new_object, Zombie_mt )			-- add the new_object to metatable of Zombie
@@ -97,6 +98,7 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	
 	--print(self:xyToTileType(250,350))				-- FIRST WATER
 	
+	self.timerToGetToNextTile = 0
 	self.followingTileCount = 0
 	self.followingSP = false
 	self.cx = self.x + self.radius
@@ -172,13 +174,13 @@ function Zombie:draw(i)
 				j = j + 1
 			end
 		end
-		if self.followingSP == true then
-			love.graphics.print("TRUE", self.x, self.y + 10)
-		else
-			love.graphics.print("FALSE", self.x, self.y + 10)
-		end
+
 	end
-	
+	if self.followingSP == true then
+		love.graphics.print("TRUE", self.x, self.y + 10)
+	else
+		love.graphics.print("FALSE", self.x, self.y + 10)
+	end
 	playerColor = {255,0,0}
 	love.graphics.setColor(playerColor)
 	
@@ -239,6 +241,7 @@ function Zombie:update(dt, zi, paused)
 				if (self.path ~= nil) then
 					self.followingTileCount = 0
 					self.followingSP = true
+					self.timerToGetToNextTile = 0
 					self.tarXTile = self.path[#self.path - self.followingTileCount].x 
 					self.tarYTile = self.path[#self.path - self.followingTileCount].y
 					self.followingTileCount = self.followingTileCount + 1
@@ -292,8 +295,20 @@ function Zombie:update(dt, zi, paused)
 					self.tarYTile = self.path[#self.path - self.followingTileCount].y
 					self.followingTileCount = self.followingTileCount + 1
 					self.targetAngle = self:angleToXY( self.x, self.y, self.tarXTile * map.tileSize + map.tileSize / 2, self.tarYTile * map.tileSize + map.tileSize / 2 )
+					--self.angle = self.targetAngle
 					self.dirVec = self:calcShortestDirection(self.angle, self.targetAngle)
+					
 				end
+				--print("Next Tile ! ".. self.timerToGetToNextTile)
+				self.timerToGetToNextTile = 0
+			end
+
+			self.timerToGetToNextTile = self.timerToGetToNextTile + dt
+			-- EXCEPTION CATCHER:
+			if self.timerToGetToNextTile > 5 then
+				self.followingSP = false
+				self.path = nil
+				self.followingTileCount = 0
 			end
 		end
 	
@@ -302,14 +317,14 @@ function Zombie:update(dt, zi, paused)
 		-- every update, the unit is trying to get towards the target angle by changing its angle slowly.
 		if self.dirVec == 0 then			-- positive direction	( opposite of conventional as y increases downwards )
 			if self.followingSP == true then
-				self.angle = self.angle + 0.7
+				self.angle = self.angle + 1.1
 			else
 				
 				self.angle = self.angle + 0.2
 			end
 		elseif self.dirVec == 1 then		-- negative direction
 			if self.followingSP == true then
-				self.angle = self.angle - 0.7
+				self.angle = self.angle - 1.1
 			else
 				self.angle = self.angle - 0.2
 			end
