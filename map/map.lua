@@ -481,7 +481,7 @@ function Map:newBuilding(x, y, b_type, dir, style)
 	for xi=x,b.xend do
 		for yi=y,b.yend do
 			self.tiles[xi][yi]:setId("D")
-			self:updateTileInfo(xi, yi)
+			--self:updateTileInfo(xi, yi)
 		end
 	end
 	
