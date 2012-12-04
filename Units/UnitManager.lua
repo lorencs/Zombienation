@@ -531,8 +531,8 @@ function UnitManager:patrol(xtar,ytar)
 	for i,v in pairs (ranger_list) do
 		if v.selected == true then
 			print("patrol")
-			v:getShortestPath(v.x,v.y,xtar,ytar)
-			v:patrol()
+			local bool = v:getShortestPath(v.x,v.y,xtar,ytar)
+			if bool then v:patrol() end
 		end
 	end
 end
