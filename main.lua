@@ -46,9 +46,9 @@ H
 supplies = 50
 
 orig_number_of_zombies = 25			-- zombies are red
-orig_number_of_humans = 110			-- humans are blue
-orig_number_of_rangers = 11			-- i thought this was a poem
-orig_number_of_workers = 25			-- i wish it was too
+orig_number_of_humans = 0			-- humans are blue
+orig_number_of_rangers = 1			-- i thought this was a poem
+orig_number_of_workers = 0			-- i wish it was too
 
 orig_number_of_cars = 5
 
@@ -358,7 +358,7 @@ function gameSTATE:mousepressed(x, y, button)
 			if selectPatrol then
 				selectPatrol = false
 			end
-			--unitManager:createRanger(x,y)
+			unitManager:createRanger(x,y)
 			local timer = os.clock()
 			--unitManager:moveTo(x+view.x,y+view.y)
 			print(string.format("elapsed time: %.2f\n", os.clock() - timer))

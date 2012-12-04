@@ -353,13 +353,16 @@ end
 function Unit:inLineOfSight(cx, cy)
 	local curTile = map:tileAt(self.cx, self.cy)		-- tile you are checking from
 	local tAngle = self:angleToXY(self.cx, self.cy, cx,cy)
-	local targetTile = map:tileAt(cx,cy)				-- tile of your target
+	local targetTileX = math.floor(cx/map.tileSize)				-- tile of your target
+	local targetTileY = math.floor(cy/map.tileSize)
 	local selfTileX = math.floor(self.cx/map.tileSize)		
 	local selfTileY = math.floor(self.cy/map.tileSize)
 	local nextX = self.cx
 	local nextY = self.cy
-	
-	while (not(curTile.id == targetTile.id)) do
+	local dx = 0
+	local dy = 0
+		
+	while (not((selfTileX + dx == targetTileX) and (selfTileY + dy == targetTileY))) do
 		-- somehow get the next tile that your self angle intersects
 		-- trying to use code from ranger class that gets next time to collide with
 		-- checking the tile that the unit is or will be on
@@ -367,13 +370,11 @@ function Unit:inLineOfSight(cx, cy)
 		nextY = nextY + math.sin(tAngle * (math.pi/180))*1
 		
 		-- determine the direction of the tile the unit will most likely next collide with
-		local dx = math.floor(nextX/map.tileSize) - math.floor(self.cx/map.tileSize)
-		local dy = math.floor(nextY/map.tileSize) - math.floor(self.cy/map.tileSize)
-		
+		dx = math.floor(nextX/map.tileSize) - math.floor(self.cx/map.tileSize)
+		dy = math.floor(nextY/map.tileSize) - math.floor(self.cy/map.tileSize)
+		--print(selfTileX + dx..","..selfTileY + dy..":"..curTile.id.."  (target: "..targetTileX..","..targetTileY..")")
 		-- go up to next tile
-		selfTileX = selfTileX + dx
-		selfTileY = selfTileY + dy
-		curTile = map:tileAt(selfTileX,selfTileY)
+		curTile = map.tiles[math.floor(selfTileX + dx/map.tileSize)][math.floor(selfTileY + dy/map.tileSize)]
 		if curTile.id == "X" then return true end
 		
 		-- if next tile building, you cant see the target
