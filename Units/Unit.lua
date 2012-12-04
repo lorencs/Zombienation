@@ -349,3 +349,36 @@ function Unit:getShortestPath(x1,y1,x2,y2)
 		return true
 	else return false end
 end
+
+function Unit:inLineOfSight(cx, cy)
+	local curTile = map:tileAt(self.cx, self.cy)		-- tile you are checking from
+	local tAngle = self:angleToXY(self.cx, self.cy, cx,cy)
+	local targetTile = map:tileAt(cx,cy)				-- tile of your target
+	local selfTileX = math.floor(self.cx/map.tileSize)		
+	local selfTileY = math.floor(self.cy/map.tileSize)
+	local nextX = self.cx
+	local nextY = self.cy
+	
+	while (not(curTile.id == targetTile.id)) do
+		-- somehow get the next tile that your self angle intersects
+		-- trying to use code from ranger class that gets next time to collide with
+		-- checking the tile that the unit is or will be on
+		nextX = nextX + math.cos(tAngle * (math.pi/180))*1
+		nextY = nextY + math.sin(tAngle * (math.pi/180))*1
+		
+		-- determine the direction of the tile the unit will most likely next collide with
+		local dx = math.floor(nextX/map.tileSize) - math.floor(self.cx/map.tileSize)
+		local dy = math.floor(nextY/map.tileSize) - math.floor(self.cy/map.tileSize)
+		
+		-- go up to next tile
+		selfTileX = selfTileX + dx
+		selfTileY = selfTileY + dy
+		curTile = map:tileAt(selfTileX,selfTileY)
+		if curTile.id == "X" then return true end
+		
+		-- if next tile building, you cant see the target
+		if curTile.id == "D" then return false end
+	end
+	
+	return true
+end

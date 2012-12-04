@@ -218,7 +218,7 @@ end
 			local distToCurrZomb = self:distanceBetweenPoints(self.cx,self.cy,zombie_list[i].cx, zombie_list[i].cy)		-- redundant but i have no choice 
 			local val = self:pointInArc(self.cx, self.cy, zombie_list[i].cx, zombie_list[i].cy, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect zomvies in an arc (pie shape)
-			if val and (distToCurrZomb < distToHuntee) then										-- if zombie i is in the field of view of this Ranger
+			if val and (distToCurrZomb < distToHuntee) and self:inLineOfSight(zombie_list[i].cx, zombie_list[i].cy) then				-- if zombie i is in the field of view of this Ranger
 				self.statestr = "Hunting  ".. zombie_list[i].tag								-- and it's closer than the currently chased zombie
 				self.state = "hunting"
 				self.huntee = zombie_list[i]

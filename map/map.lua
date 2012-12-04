@@ -520,3 +520,8 @@ function Map:findi(spritei)
 	print ("didn't find i")
 	return 1
 end
+
+-- returns tile at x,y pixel coordinates
+function Map:tileAt(x,y)
+	return self.tiles[math.floor(x/self.tileSize)][math.floor(y/self.tileSize)]
+end

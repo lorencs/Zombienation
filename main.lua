@@ -64,6 +64,7 @@ gameSTATE = Gamestate.new()
 winSTATE = Gamestate.new()
 loseSTATE = Gamestate.new()
 paused = false
+multiplier = 1
 
 function love:load()	
 	-- debug menu bools
@@ -211,6 +212,7 @@ function gameSTATE:pauseResume(menubool, mmbool)
 end
 
 function gameSTATE:update(dt)
+	dt = dt*multiplier
 	-- restrict drag select
 	if dragSelect and (love.mouse.getY() >= viewHeight) then
 		love.mouse.setPosition(love.mouse.getX(), height - menuWidth)
@@ -401,6 +403,12 @@ function gameSTATE:keyreleased(key)
 		camera:scale(1/1.3,1/1.3)
 	elseif key == "["  then
 		camera:scale(1.3,1.3)
+	elseif key == "kp+"  then
+		multiplier = multiplier*2
+		infoText:addText("Fast Forward: "..multiplier.."X")
+	elseif key == "kp-"  then
+		multiplier = multiplier/2
+		infoText:addText("Fast Forward: "..multiplier.."X")
 	elseif key == "m" then
 		love.audio.play(music)
 	end
