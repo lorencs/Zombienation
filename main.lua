@@ -61,7 +61,8 @@ Gamestate = require "utils/gamestate"
 Timer = require "utils/timer"
 startMenuSTATE = Gamestate.new()
 gameSTATE = Gamestate.new()
-endingSTATE = Gamestate.new()
+winSTATE = Gamestate.new()
+loseSTATE = Gamestate.new()
 paused = false
 
 function love:load()	
@@ -406,6 +407,40 @@ function gameSTATE:keyreleased(key)
 	
 	--loveframes
 	loveframes.keyreleased(key)
+end
+
+----------win state
+function winSTATE:enter()
+	winPic = love.graphics.newImage("gui/youwinbg.png")
+end
+
+function winSTATE:draw()
+	love.graphics.draw(winPic,0,0)
+end
+
+function winSTATE:keyreleased(key)
+	Gamestate.switch(startMenuSTATE)
+end
+
+function winSTATE:mousereleased(key)
+	Gamestate.switch(startMenuSTATE)
+end
+
+----------lose state
+function loseSTATE:enter()
+	losePic = love.graphics.newImage("gui/gameoverbg.png")
+end
+
+function loseSTATE:draw()
+	love.graphics.draw(losePic,0,0)
+end
+
+function loseSTATE:keyreleased(key)
+	Gamestate.switch(startMenuSTATE)
+end
+
+function loseSTATE:mousereleased(key)
+	Gamestate.switch(startMenuSTATE)
 end
 
 -- love callbacks redirected to gamestate

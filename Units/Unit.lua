@@ -342,5 +342,10 @@ function Unit:getShortestPath(x1,y1,x2,y2)
 	local x2tile = math.floor(x2 / map.tileSize)
 	local y2tile = math.floor(y2 / map.tileSize)
 	
-	self.path = astar:findPath(x1tile,y1tile,x2tile,y2tile)	
+	local path = astar:findPath(x1tile,y1tile,x2tile,y2tile)
+
+	if path ~= nil then 
+		self.path = path 
+		return true
+	else return false end
 end

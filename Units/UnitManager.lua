@@ -317,6 +317,10 @@ end
 
 -- Update function
 function UnitManager:update(dt, gravity)
+	--check if user won/lost
+	if number_of_humans <= 0 and number_of_rangers <= 0 and number_of_workers <= 1 then Gamestate.switch(loseSTATE) end
+	if number_of_zombies <= 0 then Gamestate.switch(winSTATE) end
+	
 	--[[
 	-- if there are no humans left, or zombies, end game
 	local humans = number_of_humans + number_of_rangers + number_of_workers
