@@ -148,7 +148,7 @@ function Human:draw(i)
 		]]
 		
 		-- draw state of unit
-		love.graphics.print(self.state, self.x, self.y + 15)
+		if menu.debugMode then love.graphics.print(self.state, self.x, self.y + 15) end
 		
 		local j = 0
 		if (self.path ~= nil) then
