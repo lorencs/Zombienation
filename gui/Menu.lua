@@ -188,7 +188,7 @@ function Menu:setMainMenu()
 	humanCount:SetVisible(false)
 	
 	--options menu
-	local optionsFrame = loveframes.Create("frame")
+	--[[local optionsFrame = loveframes.Create("frame")
 	optionsFrame:SetName("Select Unit Counts")
 	optionsFrame:SetSize(500, 60)
 	optionsFrame:Center()
@@ -203,7 +203,7 @@ function Menu:setMainMenu()
 	civiliansInput:SetWidth(490)
 	civiliansInput.OnTextChanged = function(object, text)
 		orig_number_of_humans = text + 0
-	end
+	end]]--
 	
 	table.insert(self.mainMenu, upgradeWorkerBtn)
 	table.insert(self.mainMenu, workerText)
