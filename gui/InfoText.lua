@@ -56,3 +56,7 @@ function InfoText:addText(_string)
 	newText = Text:new(_string)
 	table.insert(self.texts, newText)
 end
+
+function InfoText:reset()
+	self.texts = {}
+end

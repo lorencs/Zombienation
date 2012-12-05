@@ -156,7 +156,7 @@ function Map:getNeighborInfo(x,y)
 	xb = x * self.tileSize
 	yb = y * self.tileSize
 	
-	if not(minimap == nil) then self.minimap:updateCanvas(x,y) end
+	if not(self.minimap == nil) then self.minimap:updateCanvas(x,y) end
 	
 	--index = self:index(x,y)
 	tile = self.tiles[x][y]

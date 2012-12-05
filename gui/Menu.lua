@@ -187,24 +187,6 @@ function Menu:setMainMenu()
 	humanCount:SetText({self.normalTextColor, "("..number_of_humans.." Civilians)"})
 	humanCount:SetVisible(false)
 	
-	--options menu
-	--[[local optionsFrame = loveframes.Create("frame")
-	optionsFrame:SetName("Select Unit Counts")
-	optionsFrame:SetSize(500, 60)
-	optionsFrame:Center()
-		
-	local textinput = loveframes.Create("text", optionsFrame)
-	textinput:SetPos(5, 30)
-	textinput:SetWidth(490)
-	textinput:SetText("Civilians:")
-	
-	local civiliansInput = loveframes.Create("textinput", optionsFrame)
-	civiliansInput:SetPos(10, 30)
-	civiliansInput:SetWidth(490)
-	civiliansInput.OnTextChanged = function(object, text)
-		orig_number_of_humans = text + 0
-	end]]--
-	
 	table.insert(self.mainMenu, upgradeWorkerBtn)
 	table.insert(self.mainMenu, workerText)
 	table.insert(self.mainMenu, upgradeRangerBtn)

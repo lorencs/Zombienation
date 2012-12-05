@@ -149,9 +149,10 @@ function startMenuSTATE:update(dt)
 	Timer.update(dt)
 	if (alpha == 255) then Timer.clear() end
 	if love.keyboard.isDown(" ") then
-		Gamestate.switch(gameSTATE)
+		--Gamestate.switch(gameSTATE)
 	end
 	
+	startMenu:update()
 	loveframes.update(dt)
 end
 
@@ -200,6 +201,7 @@ function gameSTATE:enter()
 	-- reset camera
 	view.x, view.y = 0,0
 	paused = false
+	infoText:reset()
 end
 
 function gameSTATE:leave()
@@ -370,7 +372,7 @@ function gameSTATE:mousepressed(x, y, button)
 			if selectPatrol then
 				selectPatrol = false
 			end
-			--unitManager:createRanger(x,y)
+			unitManager:createRanger(x,y)
 			--unitManager:createWorker(x,y)
 			--local timer = os.clock()
 			--unitManager:moveTo(x+view.x,y+view.y)

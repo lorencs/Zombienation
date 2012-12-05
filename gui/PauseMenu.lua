@@ -36,18 +36,18 @@ function PauseMenu:setup()
 	end
 	
 	-- create buttons
-	buttonOptions = loveframes.Create("imagebutton")
+	--[[buttonOptions = loveframes.Create("imagebutton")
 	buttonOptions:SetPos(self.x, self.y + 35)
 	buttonOptions:SetImage(bOpt)
 	buttonOptions:SizeToImage() 
 	buttonOptions:SetVisible(false)
 	buttonOptions.OnClick = function(object)
 		print("NO OPTIONS YET SON")
-	end
+	end]]--
 	
 	-- create buttons
 	buttonRestart = loveframes.Create("imagebutton")
-	buttonRestart:SetPos(self.x, self.y + 70)
+	buttonRestart:SetPos(self.x, self.y + 35)
 	buttonRestart:SetImage(bR)
 	buttonRestart:SizeToImage() 
 	buttonRestart:SetVisible(false)
@@ -59,13 +59,15 @@ function PauseMenu:setup()
 	
 	-- create buttons
 	buttonQuit = loveframes.Create("imagebutton")
-	buttonQuit:SetPos(self.x, self.y + 105)
+	buttonQuit:SetPos(self.x, self.y + 70)
 	buttonQuit:SetImage(bQt)
 	buttonQuit:SizeToImage() 
 	buttonQuit:SetVisible(false)
 	buttonQuit.OnClick = function(object)
 		--map:saveMap("map/defaultMap.txt")
-		love.event.quit()
+		gameSTATE:pauseResume(false,true)
+		minimap:showHide()
+		Gamestate.switch(startMenuSTATE)
 	end
 end
 

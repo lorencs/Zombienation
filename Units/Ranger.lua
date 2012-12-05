@@ -302,8 +302,8 @@ function Ranger:update(dt, zi, paused)
 	if self.state == "hunting" then
 		-- check if there are any other closer zombies every 1 sec
 		if self.zombieCheckTimer > 1 then
-			self:lookAround()				-- look around for more zombies
-			self:checkLOS()					-- check if the current huntee got out yo sight
+			self:lookAround()									-- look around for more zombies
+			if self:checkLOS() then return end					-- check if the current huntee got out yo sight
 			self.zombieCheckTimer = 0
 		end
 		
