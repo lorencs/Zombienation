@@ -372,9 +372,12 @@ function Unit:inLineOfSight(cx, cy)
 		-- determine the direction of the tile the unit will most likely next collide with
 		dx = math.floor(nextX/map.tileSize) - math.floor(self.cx/map.tileSize)
 		dy = math.floor(nextY/map.tileSize) - math.floor(self.cy/map.tileSize)
-		--print(selfTileX + dx..","..selfTileY + dy..":"..curTile.id.."  (target: "..targetTileX..","..targetTileY..")")
+		
 		-- go up to next tile
-		curTile = map.tiles[math.floor(selfTileX + dx/map.tileSize)][math.floor(selfTileY + dy/map.tileSize)]
+		curTile = map.tiles[selfTileX + dx][selfTileY + dy]
+		
+		print(selfTileX + dx..","..selfTileY + dy..":"..curTile.id.."  (target: "..targetTileX..","..targetTileY..")")
+		
 		if curTile.id == "X" then return true end
 		
 		-- if next tile building, you cant see the target

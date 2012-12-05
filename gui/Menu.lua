@@ -387,4 +387,6 @@ for _,v in pairs(self.mainMenu) do
 	
 	textDebug:Remove()
 	checkDebug:Remove()
+	goToNearest:Remove()
+	selectText:Remove()
 end

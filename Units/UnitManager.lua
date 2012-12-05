@@ -318,7 +318,7 @@ end
 -- Update function
 function UnitManager:update(dt, gravity)
 	--check if user won/lost
-	if number_of_humans <= 0 and number_of_rangers <= 0 and number_of_workers <= 1 then Gamestate.switch(loseSTATE) end
+	if number_of_humans <= 0 and number_of_rangers <= 0 and number_of_workers <= 0 then Gamestate.switch(loseSTATE) end
 	if number_of_zombies <= 0 then Gamestate.switch(winSTATE) end
 	
 	--[[
@@ -497,6 +497,15 @@ function UnitManager:createRanger(xo,yo)
 	number_of_rangers = number_of_rangers + 1					-- increase count of zombies alive
 	ranger_list[number_of_rangers] = Ranger:new(xo+view.x, yo+view.y)	-- create new zombie at the location of this zombie
 	ranger_list[number_of_rangers]:setupUnit()
+	unitTag = unitTag + 1
+	--ranger_tag = ranger_tag + 1
+end
+
+function UnitManager:createWorker(xo,yo)
+	print("Creating a Ranger at x:"..xo..",y:"..yo)
+	number_of_workers = number_of_workers + 1					-- increase count of zombies alive
+	worker_list[number_of_workers] = Worker:new(xo+view.x, yo+view.y)	-- create new zombie at the location of this zombie
+	worker_list[number_of_workers]:setupUnit()
 	unitTag = unitTag + 1
 	--ranger_tag = ranger_tag + 1
 end

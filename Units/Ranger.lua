@@ -206,7 +206,7 @@ function Ranger:hunt(zom_x, zom_y)
 end
 
  -- look around for zombies; hunt if one is around !
- function Ranger:lookAround()
+ function Ranger:lookAround() 
 	local distToHuntee = 9999
 	if not(self.huntee == nil) then distToHuntee = self:distanceBetweenPoints(self.cx,self.cy,self.huntee.cx, self.huntee.cy) end
 	local ztag = -1
@@ -300,7 +300,8 @@ function Ranger:update(dt, zi, paused)
 	if self.state == "hunting" then
 		-- check if there are any other closer zombies every 1 sec
 		if self.zombieCheckTimer > 1 then
-			self:lookAround()
+			self:lookAround()				-- look around for more zombies
+			self:checkLOS()					-- check if the current huntee got out yo sight
 			self.zombieCheckTimer = 0
 		end
 		
@@ -469,7 +470,8 @@ function Ranger:update(dt, zi, paused)
 	------------------------------SHOOTING MODE
 		-- check if there are any other closer zombies every 1 sec
 		if self.zombieCheckTimer > 1 then
-			self:lookAround()
+			self:lookAround()						-- look around for more zombies
+			if self:checkLOS() then return end		-- check if the current huntee got out yo sight
 			self.zombieCheckTimer = 0
 		end
 	
@@ -497,6 +499,17 @@ function Ranger:update(dt, zi, paused)
 	self.animation:update(dt)
  end
 
+-- if huntee not in line of sight, follow shortest path to his last seen location
+function Ranger:checkLOS()
+	print("checking los")
+	if not self:inLineOfSight(self.huntee.cx, self.huntee.cy) then
+		print("bitch aint in los")
+		if self:getShortestPath(self.cx,self.cy,self.huntee.cx, self.huntee.cy) then self:patrol() return true end
+	end
+	
+	return false
+end 
+ 
 function Ranger:shoot()
 	local bulletAngle = self:angleToXY(self.cx,self.cy,self.huntee.cx,self.huntee.cy)
 	local newBullet = Bullet:new(self.cx, self.cy, self.targetAngle, self)

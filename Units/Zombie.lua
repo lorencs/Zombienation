@@ -406,9 +406,9 @@ function Zombie:update(dt, zi, paused)
 	
 			local human_point = Point:new(human_list[i].cx, human_list[i].cy)
 			--local val = self:pTriangle(human_point, self.v1, self.v2, self.v3)						-- detect humans in a triangle
-			local val = self:pointInArc(self.x, self.y, human_point.x, human_point.y, 
+			local val = self:pointInArc(self.x, self.y, human_point.cx, human_point.cy, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
-			if val == true then										-- if human i is in the field of view of the zombie
+			if val and self.inLineOfSight(human_list[i].cx, human_list[i].cy) then										-- if human i is in the field of view of the zombie
 				self.followingTag = human_list[i].tag
 				self.followingType = "Human"
 				self.state = "Chasing ".. self.followingTag	
@@ -428,9 +428,9 @@ function Zombie:update(dt, zi, paused)
 	for i,v in pairs (ranger_list) do
 	
 			local ranger_point = Point:new(v.cx, v.cy)
-			local val = self:pointInArc(self.x, self.y, ranger_point.x, ranger_point.y, 
+			local val = self:pointInArc(self.x, self.y, ranger_point.cx, ranger_point.cy, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
-			if val == true then										-- if human i is in the field of view of the zombie
+			if val and self.inLineOfSight(v.cx, v.cy) then										-- if human i is in the field of view of the zombie
 				self.followingTag = ranger_list[i].tag
 				self.followingType = "Ranger"
 				self.state = "Chasing ".. self.followingTag
@@ -449,9 +449,9 @@ function Zombie:update(dt, zi, paused)
 	for i,v in pairs (worker_list) do
 	
 			local worker_point = Point:new(v.cx, v.cy)
-			local val = self:pointInArc(self.x, self.y, worker_point.x, worker_point.y, 
+			local val = self:pointInArc(self.x, self.y, worker_point.cx, worker_point.cy, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
-			if val == true then										-- if human i is in the field of view of the zombie
+			if val and self.inLineOfSight(v.cx, v.cy) then										-- if human i is in the field of view of the zombie
 				self.followingTag = worker_list[i].tag
 				self.followingType = "Worker"
 				self.state = "Chasing ".. self.followingTag

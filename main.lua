@@ -47,8 +47,8 @@ supplies = 50
 
 orig_number_of_zombies = 25			-- zombies are red
 orig_number_of_humans = 0			-- humans are blue
-orig_number_of_rangers = 1			-- i thought this was a poem
-orig_number_of_workers = 0			-- i wish it was too
+orig_number_of_rangers = 0			-- i thought this was a poem
+orig_number_of_workers = 1			-- i wish it was too
 
 orig_number_of_cars = 5
 
@@ -131,13 +131,18 @@ function love:load()
 end
 
 ------------------ START STATE CODE ----------------------------------------------
-
-function startMenuSTATE:init()
+function startMenuSTATE:enter()
+	Timer.clear()	
+	titleScreen = love.graphics.newImage("gui/titleScreen.png")
 	startMenu = StartMenu:new(width/2 - 100, height/2 + 100)
 	startMenu:setup()
-	titleScreen = love.graphics.newImage("gui/titleScreen.png")
 	alpha = 0
 	Timer.add(0.005, function(func) alpha = alpha+1 Timer.add(0.005, func) end)
+	
+end
+
+function startMenuSTATE:leave()
+	Timer.clear()	
 end
 
 function startMenuSTATE:update(dt)
@@ -341,12 +346,17 @@ end
 
 -- callback functions needed by loveframes, we can use them too
 function gameSTATE:mousepressed(x, y, button)
+	if (y < viewHeight) and (button == "l") then
+			local xmap  = math.floor((x+view.x)/map.tileSize)
+			local ymap  = math.floor((y+view.y)/map.tileSize)
+		print(xmap..","..ymap..": "..map.tiles[xmap][ymap].id)
+	end
 	if (y < viewHeight) and not menu.debugMode and not paused then
 		--unitManager:deselectUnits()
 		if (button == "l") then	
-			local xmap  = math.floor((x+view.x)/map.tileSize)
+			--[[local xmap  = math.floor((x+view.x)/map.tileSize)
 			local ymap  = math.floor((y+view.y)/map.tileSize)
-			print(xmap..","..ymap..": "..map.tiles[xmap][ymap].id)
+			print(xmap..","..ymap..": "..map.tiles[xmap][ymap].id)]]--
 			if selectPatrol then
 				selectPatrol = false
 				unitManager:patrol(x+view.x, y+view.y)
@@ -358,10 +368,11 @@ function gameSTATE:mousepressed(x, y, button)
 			if selectPatrol then
 				selectPatrol = false
 			end
-			unitManager:createRanger(x,y)
-			local timer = os.clock()
+			--unitManager:createRanger(x,y)
+			unitManager:createWorker(x,y)
+			--local timer = os.clock()
 			--unitManager:moveTo(x+view.x,y+view.y)
-			print(string.format("elapsed time: %.2f\n", os.clock() - timer))
+			--print(string.format("elapsed time: %.2f\n", os.clock() - timer))
 		end
 	end
 	
