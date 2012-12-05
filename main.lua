@@ -43,14 +43,14 @@ H
 ]]--
 
 -- game settings
-supplies = 50
+supplies = 0
 
-orig_number_of_zombies = 25			-- zombies are red
-orig_number_of_humans = 1			-- humans are blue
-orig_number_of_rangers = 1			-- i thought this was a poem
-orig_number_of_workers = 1			-- i wish it was too
+orig_number_of_zombies = 1			-- zombies are red
+orig_number_of_humans = 100			-- humans are blue
+orig_number_of_rangers = 0			-- i thought this was a poem
+orig_number_of_workers = 5			-- i wish it was too
 
-orig_number_of_cars = 5
+orig_number_of_cars = 5				--cars?? whesn this commin
 
 -- map size
 mapW = 100
