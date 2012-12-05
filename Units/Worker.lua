@@ -107,7 +107,7 @@ function Worker:draw(i)
 	self.fovEndAngle = self.angle + 45
 	------------------------------- IF UNIT IS SELECTED.. DRAW:
 	if self.selected then
-		love.graphics.setColor(0,0,255,125)
+		love.graphics.setColor(0,0,255,70)
 		-- draw triangle field of view
 		--[[love.graphics.triangle( "fill", 
 			self.v1.x,self.v1.y,
@@ -116,17 +116,19 @@ function Worker:draw(i)
 		)]]
 		
 		-- draw the arc field of view
-		love.graphics.arc( "fill", self.x + self.radius, self.y + self.radius, self.fov_radius, math.rad(self.angle + (self.fov_angle / 2)), math.rad(self.angle - (self.fov_angle / 2)) )
 		
-		-- draw line for angle and targetAngle
-		love.graphics.line(self.x + self.radius,self.y + self.radius, 
-							self.x + math.cos(self.angle * (math.pi/180) )*30 + self.radius , 
-							self.y + math.sin(self.angle * (math.pi/180))* 30 + self.radius)
-		love.graphics.setColor(0,255,0)
-		love.graphics.line(self.x + self.radius,self.y + self.radius, 
-							self.x + math.cos(self.targetAngle * (math.pi/180) )*30 + self.radius , 
-							self.y + math.sin(self.targetAngle * (math.pi/180))* 30 + self.radius)
-			
+			love.graphics.arc( "fill", self.x + self.radius, self.y + self.radius, self.fov_radius, math.rad(self.angle + (self.fov_angle / 2)), math.rad(self.angle - (self.fov_angle / 2)) )
+		if menu.debugMode then	
+			-- draw line for angle and targetAngle
+			love.graphics.line(self.x + self.radius,self.y + self.radius, 
+								self.x + math.cos(self.angle * (math.pi/180) )*30 + self.radius , 
+								self.y + math.sin(self.angle * (math.pi/180))* 30 + self.radius)
+			love.graphics.setColor(0,255,0)
+			love.graphics.line(self.x + self.radius,self.y + self.radius, 
+								self.x + math.cos(self.targetAngle * (math.pi/180) )*30 + self.radius , 
+								self.y + math.sin(self.targetAngle * (math.pi/180))* 30 + self.radius)
+		end
+		
 		-- draw circle around selected unit
 		love.graphics.setColor(0,0,255, 150)
 		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 5, 15 )
@@ -157,7 +159,7 @@ function Worker:draw(i)
 		local j = 0
 		if (self.path ~= nil) then
 			for i = #self.path, 1, -1 do
-				if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
+				love.graphics.setColor(0,255,0,50)
 				love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
 				j = j + 1
 			end
@@ -175,9 +177,11 @@ function Worker:draw(i)
 	love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)]]--
 	
 	-- print tag to screen.. for debug !
-	love.graphics.print(self.tag, self.x, self.y + 10)
-	love.graphics.print(self.x, self.x, self.y + 20)
-	love.graphics.print(self.y, self.x, self.y + 30)
+	if menu.debugMode then
+		love.graphics.print(self.tag, self.x, self.y + 10)
+		love.graphics.print(self.x, self.x, self.y + 20)
+		love.graphics.print(self.y, self.x, self.y + 30)
+	end
 	
 	--draw sprite
 	love.graphics.reset()

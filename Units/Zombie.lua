@@ -137,7 +137,7 @@ function Zombie:draw(i)
 	------------------------------- IF UNIT IS SELECTED.. DRAW:
 	if self.selected then	
 	
-		love.graphics.setColor(201,85,91,125)	
+		love.graphics.setColor(201,85,91,70)	
 		
 		-- draw the arc field of view
 		love.graphics.arc( "fill", self.x + self.radius, self.y + self.radius, self.fov_radius, math.rad(self.angle + self.fov_angle / 2), math.rad(self.angle - self.fov_angle / 2) )
@@ -151,36 +151,43 @@ function Zombie:draw(i)
 			)--]]
 		
 		-- draw line for angle and targetAngle
-		love.graphics.line(self.x + self.radius,self.y + self.radius, 
-							self.x + math.cos(self.angle * (math.pi/180) )*30 + self.radius , 
-							self.y + math.sin(self.angle * (math.pi/180))* 30 + self.radius)
-		love.graphics.setColor(0,255,0)
-		love.graphics.line(self.x + self.radius,self.y + self.radius, 
-							self.x + math.cos(self.targetAngle * (math.pi/180) )*30 + self.radius , 
-							self.y + math.sin(self.targetAngle * (math.pi/180))* 30 + self.radius)
+		if menu.debugMode then
+			love.graphics.line(self.x + self.radius,self.y + self.radius, 
+								self.x + math.cos(self.angle * (math.pi/180) )*30 + self.radius , 
+								self.y + math.sin(self.angle * (math.pi/180))* 30 + self.radius)
+			love.graphics.setColor(0,255,0)
+			love.graphics.line(self.x + self.radius,self.y + self.radius, 
+								self.x + math.cos(self.targetAngle * (math.pi/180) )*30 + self.radius , 
+								self.y + math.sin(self.targetAngle * (math.pi/180))* 30 + self.radius)
+		end
 		
-		-- draw green circle around him
-		love.graphics.setColor(0,255,0, 150)
-		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 9, 15 )
-		love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 10, 15 )
+			-- draw green circle around him
+			love.graphics.setColor(0,255,0, 150)
+			love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 9, 15 )
+			love.graphics.circle( "line", self.x + self.radius, self.y + self.radius, 10, 15 )
+		
 		
 		--love.graphics.circle( "fill", self.x + self.radius, self.y + self.radius, 70, 25 )
 		
 		local j = 0
 		if (self.path ~= nil) then
 			for i = #self.path, 1, -1 do
-				if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
+				love.graphics.setColor(0,255,0,50)
 				love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
 				j = j + 1
 			end
 		end
 
 	end
-	if self.followingSP == true then
-		love.graphics.print("TRUE", self.x, self.y + 10)
-	else
-		love.graphics.print("FALSE", self.x, self.y + 10)
+	
+	if menu.debugMode then
+		if self.followingSP == true then
+			love.graphics.print("TRUE", self.x, self.y + 10)
+		else
+			love.graphics.print("FALSE", self.x, self.y + 10)
+		end
 	end
+	
 	playerColor = {255,0,0}
 	love.graphics.setColor(playerColor)
 	
@@ -406,9 +413,9 @@ function Zombie:update(dt, zi, paused)
 	
 			local human_point = Point:new(human_list[i].cx, human_list[i].cy)
 			--local val = self:pTriangle(human_point, self.v1, self.v2, self.v3)						-- detect humans in a triangle
-			local val = self:pointInArc(self.x, self.y, human_point.cx, human_point.cy, 
+			local val = self:pointInArc(self.x, self.y, human_point.x, human_point.y, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
-			if val and self.inLineOfSight(human_list[i].cx, human_list[i].cy) then										-- if human i is in the field of view of the zombie
+			if val == true then										-- if human i is in the field of view of the zombie
 				self.followingTag = human_list[i].tag
 				self.followingType = "Human"
 				self.state = "Chasing ".. self.followingTag	
@@ -428,9 +435,9 @@ function Zombie:update(dt, zi, paused)
 	for i,v in pairs (ranger_list) do
 	
 			local ranger_point = Point:new(v.cx, v.cy)
-			local val = self:pointInArc(self.x, self.y, ranger_point.cx, ranger_point.cy, 
+			local val = self:pointInArc(self.x, self.y, ranger_point.x, ranger_point.y, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
-			if val and self.inLineOfSight(v.cx, v.cy) then										-- if human i is in the field of view of the zombie
+			if val == true then										-- if human i is in the field of view of the zombie
 				self.followingTag = ranger_list[i].tag
 				self.followingType = "Ranger"
 				self.state = "Chasing ".. self.followingTag
@@ -449,9 +456,9 @@ function Zombie:update(dt, zi, paused)
 	for i,v in pairs (worker_list) do
 	
 			local worker_point = Point:new(v.cx, v.cy)
-			local val = self:pointInArc(self.x, self.y, worker_point.cx, worker_point.cy, 
+			local val = self:pointInArc(self.x, self.y, worker_point.x, worker_point.y, 
 										self.fov_radius, self.fovStartAngle, self.fovEndAngle)	-- detect humans in an arc (pie shape)
-			if val and self.inLineOfSight(v.cx, v.cy) then										-- if human i is in the field of view of the zombie
+			if val == true then										-- if human i is in the field of view of the zombie
 				self.followingTag = worker_list[i].tag
 				self.followingType = "Worker"
 				self.state = "Chasing ".. self.followingTag

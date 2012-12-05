@@ -46,8 +46,8 @@ H
 supplies = 50
 
 orig_number_of_zombies = 25			-- zombies are red
-orig_number_of_humans = 0			-- humans are blue
-orig_number_of_rangers = 0			-- i thought this was a poem
+orig_number_of_humans = 1			-- humans are blue
+orig_number_of_rangers = 1			-- i thought this was a poem
 orig_number_of_workers = 1			-- i wish it was too
 
 orig_number_of_cars = 5
@@ -317,13 +317,14 @@ function gameSTATE:draw()
 	pauseMenu:draw()
 	
 	-- debug
-	love.graphics.setColor(255,255,255)
-	love.graphics.print("Camera Cood: ["..view.x..","..view.y.."]", 0, 0)
-	love.graphics.print("Mouse Cood: ["..mx..","..my.."]", 0, 15)
-	love.graphics.print("Zombies alive: " .. number_of_zombies, 0, 30)
-	love.graphics.print("Humans alive: " .. number_of_humans, 0, 45)
-	love.graphics.print("Framerate: " .. love.timer.getFPS(), 0, 60)
-	love.graphics.print("Press ( P / S ) for music", 0, 75)
+	if menu.debugMode then
+		love.graphics.setColor(255,255,255)
+		love.graphics.print("Camera Cood: ["..view.x..","..view.y.."]", 0, 0)
+		love.graphics.print("Mouse Cood: ["..mx..","..my.."]", 0, 15)
+		love.graphics.print("Zombies alive: " .. number_of_zombies, 0, 30)
+		love.graphics.print("Humans alive: " .. number_of_humans, 0, 45)
+		love.graphics.print("Framerate: " .. love.timer.getFPS(), 0, 60)
+	end
 	--love.graphics.print("Gold: ".. gold, 715, 0)
 	--love.graphics.print("Under Ranger: ".. gold, 715, 0)
 	
@@ -369,7 +370,7 @@ function gameSTATE:mousepressed(x, y, button)
 				selectPatrol = false
 			end
 			--unitManager:createRanger(x,y)
-			unitManager:createWorker(x,y)
+			--unitManager:createWorker(x,y)
 			--local timer = os.clock()
 			--unitManager:moveTo(x+view.x,y+view.y)
 			--print(string.format("elapsed time: %.2f\n", os.clock() - timer))

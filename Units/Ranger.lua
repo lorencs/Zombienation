@@ -129,13 +129,15 @@ function Ranger:draw(i)
 		love.graphics.arc( "fill", self.x + self.radius, self.y + self.radius, self.fov_radius, math.rad(self.angle + self.fov_angle/2), math.rad(self.angle - self.fov_angle/2) )
 		
 		-- draw line for angle and targetAngle
-		love.graphics.line(self.x + self.radius,self.y + self.radius, 
-							self.x + math.cos(self.angle * (math.pi/180))* 30 + self.radius , 
-							self.y + math.sin(self.angle * (math.pi/180))* 30 + self.radius)
-		love.graphics.setColor(255,0,0)
-		love.graphics.line(self.x + self.radius,self.y + self.radius, 
-							self.x + math.cos(self.targetAngle * (math.pi/180))*30 + self.radius , 
-							self.y + math.sin(self.targetAngle * (math.pi/180))* 30 + self.radius)
+		if menu.debugMode then
+			love.graphics.line(self.x + self.radius,self.y + self.radius, 
+								self.x + math.cos(self.angle * (math.pi/180))* 30 + self.radius , 
+								self.y + math.sin(self.angle * (math.pi/180))* 30 + self.radius)
+			love.graphics.setColor(255,0,0)
+			love.graphics.line(self.x + self.radius,self.y + self.radius, 
+								self.x + math.cos(self.targetAngle * (math.pi/180))*30 + self.radius , 
+								self.y + math.sin(self.targetAngle * (math.pi/180))* 30 + self.radius)
+		end
 			
 		-- draw circle around selected unit
 		love.graphics.setColor(0,255,0, 150)
@@ -148,12 +150,12 @@ function Ranger:draw(i)
 		
 		
 		-- draw state of unit
-		love.graphics.print(self.statestr, self.x, self.y + 15)
+		if menu.debugMode then love.graphics.print(self.statestr, self.x, self.y + 15) end
 		
 		local j = 0
 		if (self.path ~= nil) and self.state == "moving" then
-			for i = #self.path, 1, -1 do
-				if (j == 0) then love.graphics.setColor(255,0,0,50) else love.graphics.setColor(0,255,0,50) end
+			love.graphics.setColor(0,255,0,50)
+			for i = #self.path, 1, -1 do				
 				love.graphics.rectangle("fill", self.path[i].x*54, self.path[i].y*54, 54, 54)
 				j = j + 1
 			end
@@ -168,7 +170,7 @@ function Ranger:draw(i)
 	--love.graphics.circle("fill", self.x + self.radius, self.y + self.radius, self.radius, 15)
 	
 	-- print tag to screen.. for debug !
-	love.graphics.print(self.tag, self.x, self.y + 10)
+	if menu.debugMode then love.graphics.print(self.tag, self.x, self.y + 10) end
 
 	-- draw bullets
 	for i,_ in pairs(self.bullets) do
@@ -501,9 +503,7 @@ function Ranger:update(dt, zi, paused)
 
 -- if huntee not in line of sight, follow shortest path to his last seen location
 function Ranger:checkLOS()
-	print("checking los")
 	if not self:inLineOfSight(self.huntee.cx, self.huntee.cy) then
-		print("bitch aint in los")
 		if self:getShortestPath(self.cx,self.cy,self.huntee.cx, self.huntee.cy) then self:patrol() return true end
 	end
 	
