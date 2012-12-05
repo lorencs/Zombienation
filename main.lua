@@ -53,8 +53,8 @@ orig_number_of_workers = 5			-- i wish it was too
 orig_number_of_cars = 5				--cars?? whesn this commin
 
 -- map size
-mapW = 100
-mapH = 100
+mapW = 75
+mapH = 75
 
 -- gamestate
 Gamestate = require "utils/gamestate"
