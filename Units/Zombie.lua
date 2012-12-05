@@ -79,13 +79,17 @@ function Zombie:setupUnit()							-- init vars for Zombie unit
 	--print("spawning boundaries: y:".. (self.radius * 3) .. ", ".. (map_h - self.radius * 3) )
 	if not self.x then self.x = math.random(self.radius * 3, map_w - self.radius * 3) end
 	if not self.y then self.y = math.random(self.radius * 3, map_h - self.radius * 3) end
-	
-	self.onCurrentTile = self:xyToTileType(self.x, self.y)
+
+	self.cx = self.x + self.radius
+	self.cy = self.y + self.radius
+	self.onCurrentTile = self:xyToTileType(self.cx, self.cy)
 	
 	while not (self.onCurrentTile == "R" or self.onCurrentTile == "G" or self.onCurrentTile == "F" or self.onCurrentTile == "P") do
 		self.x = math.random(self.radius * 3, map_w - self.radius * 3)
 		self.y = math.random(self.radius * 3, map_h - self.radius * 3)
-		self.onCurrentTile = self:xyToTileType(self.x, self.y)
+		self.cx = self.x + self.radius
+		self.cy = self.y + self.radius
+		self.onCurrentTile = self:xyToTileType(self.cx, self.cy)
 	end
 	
 	-- get neighbour tile types
@@ -212,7 +216,7 @@ function Zombie:draw(i)
 end
 
 -- Update function
-function Zombie:update(dt, zi, paused)
+function Zombie:update(dt, zi)
 		
 	-- update animation
 	self.animation:rotate(self.angle)
@@ -220,7 +224,7 @@ function Zombie:update(dt, zi, paused)
 	
 	------------------------------- CHECK PAUSE AND LOOK AROUND / FOLLOW HUMAN
 	-- if game is paused, do not update any values
-	if paused == true then return end
+	--if paused == true then return end
 	
 	if self.followingTag ~= 0 then			-- if zombie is following a human				
 		self:follow_human(dt)			-- zombie is following a human

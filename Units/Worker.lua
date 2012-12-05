@@ -64,23 +64,24 @@ function Worker:setupUnit()
 	if not self.x then self.x = math.random(self.radius * 3, map_w - self.radius * 3) end
 	if not self.y then self.y = math.random(self.radius * 3, map_h - self.radius * 3) end
 	
+	self.cx = self.x + self.radius
+	self.cy = self.y + self.radius
 	--------------------------               TILE CHECKS
 	--print("Tile type:".. map.tiles[self.y][self.x].id)
 	-- the unit must be randomized on a GROUND tile
-	self.onCurrentTile = self:xyToTileType(self.x, self.y)
+	self.onCurrentTile = self:xyToTileType(self.cx, self.cy)
 	
 	while not (self.onCurrentTile == "R" or self.onCurrentTile == "G" or self.onCurrentTile == "F"  or self.onCurrentTile == "P") do
 		self.x = math.random(self.radius * 3, map_w - self.radius * 3)
 		self.y = math.random(self.radius * 3, map_h - self.radius * 3)
-		self.onCurrentTile = self:xyToTileType(self.x, self.y)
+		self.cx = self.x + self.radius
+		self.cy = self.y + self.radius
+		self.onCurrentTile = self:xyToTileType(self.cx, self.cy)
 	end
 	--print("W:"..map.tiles[-1][-1].id)
 	-- get neighbour tile types
 	self:updateNeighbours(self)
 	--------------------------		  TILE CHECKS
-	
-	self.cx = self.x + self.radius
-	self.cy = self.y + self.radius
 	
 	self.fovStartAngle = self.angle - 45
 	self.fovEndAngle = self.angle + 45
@@ -246,10 +247,10 @@ end
  end
  
 -- update function
-function Worker:update(dt, zi, paused)
+function Worker:update(dt, zi)
 	------------------------------- CHECK PAUSE AND ATTACKED; LOOK AROUND FOR ZOMBIES
 	-- if game is paused, do not update any values
-	if paused == true then return end
+	-- if paused == true then return end
 	
 	-- if the worker is attacked, then he can't move (or could make him move very slow?)
 	if self.attacked == 1 then return end

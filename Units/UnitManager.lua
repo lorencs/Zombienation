@@ -321,55 +321,41 @@ function UnitManager:update(dt, gravity)
 	if number_of_humans <= 0 and number_of_rangers <= 0 and number_of_workers <= 0 then Gamestate.switch(loseSTATE) end
 	if number_of_zombies <= 0 then Gamestate.switch(winSTATE) end
 	
-	--[[
-	-- if there are no humans left, or zombies, end game
-	local humans = number_of_humans + number_of_rangers + number_of_workers
-	if humans < 1 and number_of_zombies > 0 then
-		infoText:addText("Game Over ! Zombies Win !")
-		self:pauseGame()
-	elseif number_of_zombies < 1 and humans > 0 then
-		infoText:addText("Game Over ! Humans Win !")
-		self:pauseGame()
-	else
-		infoText:addText("Game Over ! It's a tie !")
-		self:pauseGame()
-	end
-	--]]
+	if self.paused == false then		-- IF THE GAME IS NOT PAUSED..
+		-- every minute, the user receives 1 supply IF the game is not paused !
+		if self.supplyTimer > 60 then
+			supplies = supplies + 1
+			infoText:addText("Additional supply has arrived ( + 1 )")
+			self.supplyTimer = 0
+		else
+			self.supplyTimer = self.supplyTimer + dt
+		end
+		-- update the unit's position
+		
+		-- update zombies
+		for i = 1, number_of_zombies do
+			zombie_list[i]:update(dt, i)
+			--zombie_list[i].animation:update(dt)
+		end
+		-- update humans
+		for i = 1, number_of_humans do
+			human_list[i]:update(dt,i)
+		end
+		-- update rangers
+		for i = 1, number_of_rangers do
+			ranger_list[i]:update(dt,i)
+		end
+		-- update workers
+		for i = 1, number_of_workers do
+			worker_list[i]:update(dt,i)
+		end
 	
-	-- every minute, the user receives 1 supply
-	if self.supplyTimer > 60 then
-		supplies = supplies + 1
-		infoText:addText("Additional supply has arrived ( + 1 )")
-		self.supplyTimer = 0
-	else
-		self.supplyTimer = self.supplyTimer + dt
-    end
-	-- update the unit's position
-	
-	-- update zombies
-	for i = 1, number_of_zombies do
-		zombie_list[i]:update(dt, i, self.paused)
-		--zombie_list[i].animation:update(dt)
-	end
-	-- update humans
-	for i = 1, number_of_humans do
-		human_list[i]:update(dt,i, self.paused)
-	end
-	-- update rangers
-	for i = 1, number_of_rangers do
-		ranger_list[i]:update(dt,i, self.paused)
-	end
-	-- update workers
-	for i = 1, number_of_workers do
-		worker_list[i]:update(dt,i, self.paused)
-	end
-	
-	
-	-- check if zombies need to be deleted (needs to be done separate from updating units otherwise 'it messed things up')
-	for i,v in pairs(zombie_list) do
-		if v.delete then
-			table.remove(zombie_list, i)
-			number_of_zombies = number_of_zombies - 1
+		-- check if zombies need to be deleted (needs to be done separate from updating units otherwise 'it messed things up')
+		for i,v in pairs(zombie_list) do
+			if v.delete then
+				table.remove(zombie_list, i)
+				number_of_zombies = number_of_zombies - 1
+			end
 		end
 	end
 end
