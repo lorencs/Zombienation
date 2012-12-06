@@ -53,8 +53,8 @@ orig_number_of_workers = 5			-- i wish it was too
 orig_number_of_cars = 5				--cars?? whesn this commin
 
 -- map size
-mapW = 75
-mapH = 75
+mapW = 100
+mapH = 100
 
 -- gamestate
 Gamestate = require "utils/gamestate"
@@ -350,11 +350,11 @@ end
 
 -- callback functions needed by loveframes, we can use them too
 function gameSTATE:mousepressed(x, y, button)
-	if (y < viewHeight) and (button == "l") then
+	--[[if (y < viewHeight) and (button == "l") then
 			local xmap  = math.floor((x+view.x)/map.tileSize)
 			local ymap  = math.floor((y+view.y)/map.tileSize)
 		print(xmap..","..ymap..": "..map.tiles[xmap][ymap].id)
-	end
+	end]]--
 	if (y < viewHeight) and not menu.debugMode and not paused then
 		--unitManager:deselectUnits()
 		if (button == "l") then	
@@ -372,7 +372,7 @@ function gameSTATE:mousepressed(x, y, button)
 			if selectPatrol then
 				selectPatrol = false
 			end
-			unitManager:createRanger(x,y)
+			--unitManager:createRanger(x,y)
 			--unitManager:createWorker(x,y)
 			--local timer = os.clock()
 			--unitManager:moveTo(x+view.x,y+view.y)
@@ -414,10 +414,12 @@ function gameSTATE:keyreleased(key)
 	elseif key == "r" and (not paused) then
 		--if paused then gameSTATE:pauseResume() end
 		Gamestate.switch(gameSTATE)
-	elseif key == "]"  then
+	elseif key == "]"  then		
 		camera:scale(1/1.3,1/1.3)
-	elseif key == "["  then
+		infoText:addText("Zoom Level: "..1/camera.scaleX.."X")
+	elseif key == "["  then		
 		camera:scale(1.3,1.3)
+		infoText:addText("Zoom Level: "..1/camera.scaleX.."X")
 	elseif key == "kp+"  then
 		multiplier = multiplier*2
 		infoText:addText("Fast Forward: "..multiplier.."X")
