@@ -16,7 +16,7 @@ Controls:
 
 Options:
 
-	- at the start of the game you can modify how many of each units spawn (for easer testing) as well as regenerate the map
+	- at the start of the game you can modify how many of each units spawn (for easier testing) as well as regenerate the map
 
 
 
